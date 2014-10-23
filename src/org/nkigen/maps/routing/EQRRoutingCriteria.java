@@ -8,13 +8,23 @@ package org.nkigen.maps.routing;
 public class EQRRoutingCriteria {
 
 	public static String VEHICLE_CAR = "car";
-	private String longitude;
-	private String latitude;
-	private String locale;
-	private String vehicle;
-	public EQRRoutingCriteria(String lon, String lat){
-		longitude = lon;
-		latitude = lat;
+	protected String locale;
+	protected String vehicle;
+	protected EQRPoint routeFrom;
+	protected EQRPoint routeTo;
+	public EQRRoutingCriteria(EQRPoint from, EQRPoint to){
+		routeFrom = from;
+		routeTo = to;
+		vehicle="car";
+	}
+	public String getVehicle(){
+		return vehicle;
+	}
+	public EQRPoint getFrom(){
+		return routeFrom;
+	}
+	public EQRPoint getTo(){
+		return routeTo;
 	}
 	
 }

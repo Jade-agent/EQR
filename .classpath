@@ -4,7 +4,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/home/nkigen/development/jade/jade/lib/jade.jar"/>
 	<classpathentry kind="lib" path="/development/development/jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="/development/development/desmo-j/desmoj-2.4.1-core-bin.jar"/>
-	<classpathentry kind="lib" path="/development/development/mapsforge/SwingMapViewer-0.4.0.jar"/>
+	<classpathentry kind="lib" path="/home/nkigen/development/aose/desmo-j/desmoj-2.4.1-core-bin.jar"/>
+	<classpathentry kind="lib" path="/home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+	<classpathentry kind="lib" path="/development/development/graphhopper/graphhopper-0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
