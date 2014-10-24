@@ -7,6 +7,10 @@ import jade.content.AgentAction;
 
 public class RoutingOperation implements AgentAction{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7435104305564523928L;
 	private EQRRoutingCriteria criteria;
 	private EQRRoutingResult result;
 	
