@@ -1,7 +1,7 @@
 package org.nkigen.maps.routing.graphhopper;
 
+import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
 import org.nkigen.maps.routing.EQRPoint;
-import org.nkigen.maps.routing.EQRRoutingCriteria;
 
 /**
  * Graphhopper specific routing info 

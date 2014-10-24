@@ -7,23 +7,23 @@ package org.nkigen.maps.routing;
  */
 public class EQRPoint {
 
-	private String longitude;
-	private String latitude;
+	private double longitude;
+	private double latitude;
 	
-	public EQRPoint(String lat, String lon){
+	public EQRPoint(double lat, double lon){
 		longitude = lon;
 		latitude = lat;
 	}
-	public void setLongitude(String lon){
+	public void setLongitude(double lon){
 		this.longitude = lon;
 	}
-	public void setLatitude(String lat){
+	public void setLatitude(double lat){
 		this.latitude = lat;
 	}
-	public String getLongitude(){
+	public double getLongitude(){
 		return longitude;
 	}
-	public String getLatitude(){
+	public double getLatitude(){
 		return latitude;
 	}
 	
