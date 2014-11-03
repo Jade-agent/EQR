@@ -3,6 +3,7 @@ package org.nkigen.eqr.agents;
 import org.nkigen.eqr.agents.behaviours.RoutingBehaviour;
 
 import jade.core.Agent;
+import jade.core.behaviours.SequentialBehaviour;
 
 /**
  * RoutingAgent 
@@ -20,9 +21,13 @@ public class RoutingAgent extends Agent {
 		if(args != null)
 		if(args.length < NUM_ARGS)
 			return; /*TODO: to something better!!*/
-			
-		addBehaviour(new RoutingBehaviour(this,String.valueOf(args[0]),String.valueOf(args[0])));
-
+		SequentialBehaviour sb = new SequentialBehaviour();
+		sb.addSubBehaviour(new RegisterInDF(this,getMyType()));			
+		sb.addSubBehaviour(new RoutingBehaviour(this,String.valueOf(args[0]),String.valueOf(args[0])));
+		addBehaviour(sb);
+	}
+	private String getMyType(){
+		return EQRAgentTypes.ROUTING_AGENT;
 	}
 
 }

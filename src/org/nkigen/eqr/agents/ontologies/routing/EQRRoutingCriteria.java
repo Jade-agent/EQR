@@ -1,5 +1,7 @@
 package org.nkigen.eqr.agents.ontologies.routing;
 
+import java.io.Serializable;
+
 import org.nkigen.maps.routing.EQRPoint;
 
 import jade.content.Concept;
@@ -9,7 +11,11 @@ import jade.content.Concept;
  * @author nkigen
  *
  */
-public class EQRRoutingCriteria implements Concept, GraphHopperRoutingVocabulary {
+public class EQRRoutingCriteria implements GraphHopperRoutingVocabulary, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -728833506851495535L;
 	protected String locale;
 	protected String vehicle;
 	protected EQRPoint routeFrom;

@@ -2,6 +2,7 @@ package org.nkigen.maps.routing.graphhopper;
 
 import java.util.List;
 
+import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
 import org.nkigen.maps.routing.graphhopper.GraphHopperServer;
 
 import com.graphhopper.util.GPXEntry;
@@ -14,8 +15,12 @@ import com.graphhopper.util.Translation;
  * @author nkigen
  *
  */
-public class EQRGraphHopperResult {
+public class EQRGraphHopperResult extends EQRRoutingResult {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7177713925733169887L;
 	/**
 	 * For now only the PointList, distance, duration gpx are used
 	 */

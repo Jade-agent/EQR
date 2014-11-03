@@ -4,7 +4,7 @@ public class EQRRoutingError extends EQRRoutingResult{
 	
 	
 	public EQRRoutingError(){
-		super();
+		super(EQRRoutingResult.RESULT_ERROR);
 	}
 
 }
