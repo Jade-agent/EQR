@@ -11,6 +11,7 @@ import com.graphhopper.routing.util.EncodingManager;
 import com.sun.istack.internal.Nullable;
 
 import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
+import org.nkigen.eqr.agents.ontologies.routing.GraphHopperRoutingVocabulary;
 /**
  * Interface to the instance of a graphhopper server
  * 
@@ -41,6 +42,7 @@ public class GraphHopperServer extends EQRRouter {
 		System.out.println("Graphhopper server called");
 		hopper = new GraphHopper().forServer();
 		initFromLocal();
+		initRoutingCriteria();
 		if (criteria != null) {
 			this.criteria = criteria;
 			initRoutingCriteria();
@@ -49,7 +51,7 @@ public class GraphHopperServer extends EQRRouter {
 	
 	public GraphHopperServer setCriteria(EQRRoutingCriteria criteria){
 		this.criteria = criteria;
-		initRoutingCriteria();
+		//initRoutingCriteria();
 		return this;
 	}
 
@@ -67,7 +69,7 @@ public class GraphHopperServer extends EQRRouter {
 	 */
 	private void initRoutingCriteria() {
 		System.out.println("Graphhopper Init Routing criteria");
-		hopper.setEncodingManager(new EncodingManager(criteria.getVehicle()));
+		hopper.setEncodingManager(new EncodingManager(GraphHopperRoutingVocabulary.VEHICLE_CAR));
 		hopper.importOrLoad();
 	}
 

@@ -24,6 +24,7 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 
 	Agent agent;
 	private AID routing_server;
+	private AID viewer;
 	int test = 0;
 	public EmergencyResponseBehaviour(Agent agent) {
 		super(agent);
@@ -117,6 +118,27 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 		}
 	}
 	
+	void locateViewer() {
+		// --------------------- Search in the DF to retrieve the server AID
+
+		System.out.println("Trying to locate the Viewer server");
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType(EQRAgentTypes.VIEWER_AGENT);
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.addServices(sd);
+		try {
+			DFAgentDescription[] dfds = DFService.search(agent, dfd);
+			if (dfds.length > 0) {
+				viewer = dfds[0].getName();
+				System.out.println("Viewer Server found "+ viewer.getLocalName() + " " + viewer.getName());
+			} else
+				System.out.println("Couldn't locate Viewer server!");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.out.println("Failed for viewer searching int the DF!");
+		}
+	}
+	
 	
 	private class WaitRouterResponse extends ParallelBehaviour {
 		public WaitRouterResponse(){
@@ -182,6 +204,26 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 				else if(result instanceof EQRGraphHopperResult){
 					System.out.println("Emergency Recv: Route ok");
 					System.out.println(((EQRGraphHopperResult)result).toString());
+					if (viewer == null){
+						locateViewer();
+						System.out.println("Viewer server located!!");
+					}
+					if (viewer == null) {
+						System.out
+								.println("Unable to localize the server! Operation aborted!");
+						return;
+					}
+					ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
+					try {
+						msg2.setContentObject((java.io.Serializable) result);
+						msg2.addReceiver(viewer);
+						System.out.println("Contacting Viewer server... Please wait!");
+						agent.send(msg2);
+						System.out.println("Message send to Viewer ... Please wait!");
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+					
 				}
 			} catch (UnreadableException e) {
 				// TODO Auto-generated catch block

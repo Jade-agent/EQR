@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="/development/development/aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
 	<classpathentry kind="lib" path="/development/development/aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
 	<classpathentry kind="lib" path="/development/development/aose/trove4j-3.0.2.jar"/>
+	<classpathentry kind="lib" path="/development/development/aose/jmapviewer/JMapViewer.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
