@@ -1,7 +1,11 @@
 package org.nkigen.eqr.agents.behaviours;
 
-import org.nkigen.eqr.agents.EQRAgentTypes;
+import org.nkigen.eqr.agents.EQRAgentTypes; 
 import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
+import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingError;
+import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
+import org.nkigen.maps.routing.EQRPoint;
+import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -14,11 +18,13 @@ import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 public class EmergencyResponseBehaviour extends CyclicBehaviour {
 
 	Agent agent;
 	private AID routing_server;
+	int test = 0;
 	public EmergencyResponseBehaviour(Agent agent) {
 		super(agent);
 		this.agent = agent;
@@ -28,8 +34,7 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 	@Override
 	public void action() {
 		// TODO Auto-generated method stub
-
-		if (isNewEEmergency()) {
+		if (isNewEmergency()) {
 			EQRRoutingCriteria loc = getLocation();
 			agent.addBehaviour(new NewRequestBehaviour(loc));
 		} else
@@ -37,12 +42,18 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 
 	}
 
-	private boolean isNewEEmergency() {
+	private boolean isNewEmergency() {
+		System.out.println("New emergency to be generated");
+		if(test == 0){
+			test++;
 		return true;
+		}
+		return false;
 	}
 
 	private EQRRoutingCriteria getLocation() {
-		return null;
+		EQRRoutingCriteria loc = new EQRRoutingCriteria(new EQRPoint(46.071944, 11.119444), new EQRPoint(46.056332,11.133385));
+		return loc;
 	}
 
 	private class NewRequestBehaviour extends OneShotBehaviour {
@@ -63,8 +74,10 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 	void sendMessage(int performative, Object content) {
 		// ----------------------------------------------------
 
-		if (routing_server == null)
+		if (routing_server == null){
 			locateRoutingServer();
+			System.out.println("Routing server located!!");
+		}
 		if (routing_server == null) {
 			System.out
 					.println("Unable to localize the server! Operation aborted!");
@@ -86,6 +99,7 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 	void locateRoutingServer() {
 		// --------------------- Search in the DF to retrieve the server AID
 
+		System.out.println("Trying to locate the routing server");
 		ServiceDescription sd = new ServiceDescription();
 		sd.setType(EQRAgentTypes.ROUTING_AGENT);
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -108,7 +122,7 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 		public WaitRouterResponse(){
 		     super(agent, 1);
 		     addSubBehaviour(new ReceiveResponse());
-		     addSubBehaviour(new WakerBehaviour(myAgent, 5000) {
+		     addSubBehaviour(new WakerBehaviour(agent, 5000) {
 
 			    protected void handleElapsedTimeout() {
 				   System.out.println("\n\tNo response from server. Please, try later!");
@@ -120,19 +134,64 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 	}
 	private class ReceiveResponse extends SimpleBehaviour{
 
+		boolean finished = false;
 		public ReceiveResponse() {
 			// TODO Auto-generated constructor stub
 		}
 		@Override
 		public void action() {
-			// TODO Auto-generated method stub
-			
+			System.out.println("Emergency Response: Result received");
+			ACLMessage msg = agent.receive();
+			if (msg == null) {
+				System.out.println("Emergency Receiver: New message received but its NULL");
+				block();
+				return;
+			}
+			try {
+				System.out.println("Emergency Receiver: New message received....Message ok Probing");
+				Object content = msg.getContentObject();
+				switch (msg.getPerformative()) {
+				case ACLMessage.INFORM:
+					if (content instanceof EQRRoutingResult){
+						System.out.println("Emergency Recv: New message received....Message understood");
+						handle(msg);
+						finished = true;
+						return;
+					}
+					else{
+						System.out.println("Emergency Recv: Reply from router not understood");
+						finished = true;
+					}
+				default:
+					System.out.println("Emergency Recv: Wrong msg from router");
+					finished = true;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+		
+		private void handle(ACLMessage msg){
+			System.out.println("Emergency Recv: Handling reply from server");
+			try {
+				EQRRoutingResult result = (EQRRoutingResult)msg.getContentObject();
+				if(result instanceof EQRRoutingError){
+					System.out.println("Emergency Recv: Requested Route has errors");
+				}
+				else if(result instanceof EQRGraphHopperResult){
+					System.out.println("Emergency Recv: Route ok");
+					System.out.println(((EQRGraphHopperResult)result).toString());
+				}
+			} catch (UnreadableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		public boolean done() {
-			// TODO Auto-generated method stub
-			return false;
+			return finished;
 		}
 		
 	}

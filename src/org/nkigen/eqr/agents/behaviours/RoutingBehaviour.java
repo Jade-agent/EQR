@@ -28,27 +28,37 @@ public class RoutingBehaviour extends CyclicBehaviour {
 	private Agent agent;
 	String local_file;
 	String storage_dir;
+	EQRRouter router;
 
 	public RoutingBehaviour(Agent agent, String local_file, String storage_dir) {
 		super(agent);
 		this.agent = agent;
 		this.local_file = local_file;
 		this.storage_dir = storage_dir;
+		System.out.println(local_file + " " + storage_dir);
+		router = new GraphHopperServer(null, local_file,
+				storage_dir);
+		
 	}
 
 	@Override
 	public void action() {
+		System.out.println("Router: New message received");
 		ACLMessage msg = agent.receive();
 		if (msg == null) {
+			System.out.println("Router: New message received but its NULL");
 			block();
 			return;
 		}
 		try {
+			System.out.println("Router: New message received....Message ok Probing");
 			Object content = msg.getContentObject();
 			switch (msg.getPerformative()) {
 			case ACLMessage.REQUEST:
-				if (content instanceof EQRRoutingCriteria)
+				if (content instanceof EQRRoutingCriteria){
+					System.out.println("Router: New message received....Message understood");
 					agent.addBehaviour(new HandleSearchRequest(agent, msg));
+				}
 				else
 					replyNotUnderstood(msg);
 				break;
@@ -90,24 +100,27 @@ public class RoutingBehaviour extends CyclicBehaviour {
 		@Override
 		public void action() {
 			try {
+				System.out.println("Routing Behaviour: Received Message");
 				EQRRoutingCriteria req = (EQRRoutingCriteria) message
 						.getContentObject();
-				EQRRouter router = new GraphHopperServer(req, local_file,
-						storage_dir);
 				EQRRoutingResult res = null;
 
 				ACLMessage reply = message.createReply();
 				try {
-					res = ((GraphHopperServer) router).requestRouting()
+					System.out.println("Routing Behaviour: Requesting route from server");
+					res = ((GraphHopperServer) router).setCriteria(req).requestRouting()
 							.getRoutingResult();
 					reply.setPerformative(ACLMessage.INFORM);
 				} catch (EQRException e) {
+					System.out.println("Routing Behaviour: Error when requesting route...");
+					e.getMessage();
 					res = new EQRRoutingError();
 					reply.setPerformative(ACLMessage.INFORM); /*
 															 * TODO: Change this
 															 * later
 															 */
 				} finally {
+					System.out.println("Routing Behaviour: Request completed....Sending reply");
 					reply.setContentObject(res);
 					agent.send(reply);
 				}
