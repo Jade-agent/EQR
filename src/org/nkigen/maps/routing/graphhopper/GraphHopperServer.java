@@ -9,7 +9,9 @@ import com.graphhopper.GHResponse;
 import com.graphhopper.GraphHopper;
 import com.graphhopper.routing.util.EncodingManager;
 import com.sun.istack.internal.Nullable;
+
 import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
+import org.nkigen.eqr.agents.ontologies.routing.GraphHopperRoutingVocabulary;
 /**
  * Interface to the instance of a graphhopper server
  * 
@@ -37,8 +39,10 @@ public class GraphHopperServer extends EQRRouter {
 		super(EQRRouter.ROUTER_GRAPHHOPPER);
 		osmFile = osm_file;
 		storageDir = storage_dir;
+		System.out.println("Graphhopper server called");
 		hopper = new GraphHopper().forServer();
 		initFromLocal();
+		initRoutingCriteria();
 		if (criteria != null) {
 			this.criteria = criteria;
 			initRoutingCriteria();
@@ -47,7 +51,7 @@ public class GraphHopperServer extends EQRRouter {
 	
 	public GraphHopperServer setCriteria(EQRRoutingCriteria criteria){
 		this.criteria = criteria;
-		initRoutingCriteria();
+		//initRoutingCriteria();
 		return this;
 	}
 
@@ -64,11 +68,13 @@ public class GraphHopperServer extends EQRRouter {
 	 * Finish initialization of the Routing Criteria
 	 */
 	private void initRoutingCriteria() {
-		hopper.setEncodingManager(new EncodingManager(criteria.getVehicle()));
+		System.out.println("Graphhopper Init Routing criteria");
+		hopper.setEncodingManager(new EncodingManager(GraphHopperRoutingVocabulary.VEHICLE_CAR));
 		hopper.importOrLoad();
 	}
 
 	public GraphHopperServer requestRouting() throws EQRException {
+System.out.println("Router: New route request received:");
 		req = new GHRequest(criteria.getFrom().getLatitude(), criteria
 				.getFrom().getLongitude(), criteria.getTo().getLatitude(),
 				criteria.getTo().getLongitude()).setWeighting(
@@ -76,10 +82,14 @@ public class GraphHopperServer extends EQRRouter {
 
 		res = hopper.route(req);
 
-		if (res.hasErrors())
+		if (res.hasErrors()){
+			System.out.println("Router: Route has errors");
 			throw new EQRException(EQRException.ROUTE_HAS_ERRORS);
-		if (!res.isFound())
+		}
+		if (!res.isFound()){
+			System.out.println("Router: Route not found");
 			throw new EQRException(EQRException.ROUTE_NOT_FOUND);
+		}
 
 		return this;
 	}
