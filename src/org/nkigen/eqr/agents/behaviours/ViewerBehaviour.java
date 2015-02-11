@@ -105,7 +105,7 @@ public class ViewerBehaviour extends CyclicBehaviour {
 			}
 		}
 
-		private void updateViewer(EQRGraphHopperResult result) {
+		private synchronized void updateViewer(EQRGraphHopperResult result) {
 			long _sleep_time =(long) result.getDistance()/result.getDuration();
 			
 			List<EQRPoint> points = result.getPoints();
@@ -113,7 +113,7 @@ public class ViewerBehaviour extends CyclicBehaviour {
 			for(int i=0; i<points.size();i++){
 				EQRViewerPoint p = new EQRViewerPoint(points.get(i), Color.RED);
 				viewer.addMarker(p);
-				block(_sleep_time);
+				block(_sleep_time+200);
 			}
 		}
 		

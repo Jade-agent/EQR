@@ -1,12 +1,18 @@
 package org.nkigen.eqr.agents.behaviours;
 
+import java.util.concurrent.TimeUnit;
+
 import org.nkigen.eqr.agents.EQRAgentTypes; 
 import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
 import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingError;
 import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
+import org.nkigen.eqr.models.EmergencyArrivalModel;
+import org.nkigen.eqr.models.EmergencyHandler;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
 
+import desmoj.core.simulator.Experiment;
+import desmoj.core.simulator.TimeInstant;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -26,9 +32,11 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 	private AID routing_server;
 	private AID viewer;
 	int test = 0;
+	EQRRoutingCriteria to_serve;
 	public EmergencyResponseBehaviour(Agent agent) {
 		super(agent);
 		this.agent = agent;
+		startSimulation();
 		// TODO Auto-generated constructor stub
 	}
 
@@ -44,16 +52,18 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 	}
 
 	private boolean isNewEmergency() {
+		
+		to_serve = EmergencyHandler.getInstance().getRoute();
+		if(to_serve == null)
+			return false;
 		System.out.println("New emergency to be generated");
-		if(test == 0){
-			test++;
+		block(1000);
 		return true;
-		}
-		return false;
 	}
 
 	private EQRRoutingCriteria getLocation() {
-		EQRRoutingCriteria loc = new EQRRoutingCriteria(new EQRPoint(46.071944, 11.119444), new EQRPoint(46.056332,11.133385));
+		EQRRoutingCriteria loc = to_serve;//new EQRRoutingCriteria(new EQRPoint(46.071944, 11.119444), new EQRPoint(46.056332,11.133385));
+		to_serve = null;
 		return loc;
 	}
 
@@ -237,4 +247,36 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 		}
 		
 	}
+	
+	private void startSimulation() {
+
+		Experiment experiment =
+			new Experiment("Vancarrier Model", TimeUnit.SECONDS, TimeUnit.MINUTES, null);
+
+		EmergencyArrivalModel vc_1st_p_Model =
+			new EmergencyArrivalModel(
+				null,
+				"Emergency Arrival Model",
+				true,
+				false);
+
+		
+		vc_1st_p_Model.connectToExperiment(experiment);
+
+		experiment.tracePeriod(new TimeInstant(0), new TimeInstant(100));
+
+		// now set the time this simulation should stop at 
+		// let him work 1500 Minutes
+		experiment.stop(new TimeInstant(1500));
+		experiment.setShowProgressBar(false);
+
+		// start the Experiment with start time 0.0
+		experiment.start();
+
+
+		//experiment.report();
+
+		experiment.finish();
+	}
+
 }
