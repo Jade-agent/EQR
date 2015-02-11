@@ -1,8 +1,12 @@
 package org.nkigen.maps.routing.graphhopper;
 
+
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
+import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.GraphHopperServer;
 
 import com.graphhopper.util.GPXEntry;
@@ -24,24 +28,28 @@ public class EQRGraphHopperResult extends EQRRoutingResult {
 	/**
 	 * For now only the PointList, distance, duration gpx are used
 	 */
-	private PointList points;
+	private ArrayList<EQRPoint> points;
 	private double distance;
 	private long duration;
-	private InstructionList turn_instructions;
-	private Translation translation;
+	private  InstructionList turn_instructions;
+	private  Translation translation;
 	private List<String> description;
-	private List<GPXEntry> gpx;
+	private List<EQRPoint> gpx;
 	
 	
 	
-	public PointList getPoints() {
+	public List<EQRPoint> getPoints() {
+		
 		return points;
 	}
 
-
-
 	public void setPoints(PointList points) {
-		this.points = points;
+		if(this.points == null)
+			this.points = new ArrayList<EQRPoint>();
+		for(int i=0; i<points.size();++i){
+			EQRPoint p = new EQRPoint(points.getLat(i), points.getLon(i));
+			this.points.add(p);
+		} 
 	}
 
 
@@ -106,14 +114,20 @@ public class EQRGraphHopperResult extends EQRRoutingResult {
 
 
 
-	public List<GPXEntry> getGpx() {
+	public List<EQRPoint> getGpx() {
 		return gpx;
 	}
 
 
 
 	public void setGpx(List<GPXEntry> gpx) {
-		this.gpx = gpx;
+		if(this.gpx == null)
+			this.gpx = new ArrayList<EQRPoint>();
+		for(int i=0; i<gpx.size();++i){
+			EQRPoint p = new EQRPoint(gpx.get(i).getLat(), gpx.get(i).getLon());
+			p.setMillis(gpx.get(i).getMillis());
+			this.gpx.add(p);
+		}
 	}
 
 

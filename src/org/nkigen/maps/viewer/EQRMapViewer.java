@@ -49,9 +49,15 @@ public class EQRMapViewer {
 	private File mapfile;
 	private MainFrame mainFrame;
 	
+	
+	/*
+	public static void main(String[] args){
+		new EQRMapViewer("/home/nkigen/development/aose/italy.map");
+	}
+	*/
 	private EQRMapViewer(String filename){
 		mapfile = getMapFile(filename);
-		viewer = new EQRMapViewer(filename);
+		//viewer = new EQRMapViewer(filename);
 		mapView = createMapView();
 		boundingBox = addLayers(mapView, mapfile);
 		model = mapView.getModel();
@@ -138,11 +144,11 @@ public class EQRMapViewer {
 	private static File getMapFile(String args) {
 		File mapFile = new File(args);
 		if (!mapFile.exists()) {
-			throw new IllegalArgumentException("file does not exist: " + mapFile);
+			throw new IllegalArgumentException("file does not exist: " + mapFile.getPath());
 		} else if (!mapFile.isFile()) {
-			throw new IllegalArgumentException("not a file: " + mapFile);
+			throw new IllegalArgumentException("not a file: " + mapFile.getPath());
 		} else if (!mapFile.canRead()) {
-			throw new IllegalArgumentException("cannot read file: " + mapFile);
+			throw new IllegalArgumentException("cannot read file: " + mapFile.getPath());
 		}
 
 		return mapFile;

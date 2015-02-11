@@ -1,5 +1,7 @@
 package org.nkigen.eqr.agents;
 
+import java.io.File;
+
 import org.nkigen.eqr.agents.behaviours.RoutingBehaviour;
 
 import jade.core.Agent;
@@ -18,12 +20,13 @@ public class RoutingAgent extends Agent {
 	
 	protected void setup() {
 		Object[] args = getArguments();
-		if(args != null)
-		if(args.length < NUM_ARGS)
-			return; /*TODO: to something better!!*/
+		//if(args != null)
+		//if(args.length < NUM_ARGS)
+		//	return; /*TODO: to something better!!*/
 		SequentialBehaviour sb = new SequentialBehaviour();
-		sb.addSubBehaviour(new RegisterInDF(this,getMyType()));			
-		sb.addSubBehaviour(new RoutingBehaviour(this,String.valueOf(args[0]),String.valueOf(args[0])));
+		sb.addSubBehaviour(new RegisterInDF(this,getMyType(), "RA"));
+		sb.addSubBehaviour(new RoutingBehaviour(this, "/home/nkigen/development/git/EQR/src/trentino.xml",
+				"/home/nkigen/development/git/EQR/src/data"));
 		addBehaviour(sb);
 	}
 	private String getMyType(){
