@@ -46,6 +46,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 * Demonstrates the usage of {@link JMapViewer}
 *
 * @author Jan Peter Stotz
+* @author Nelson Kigen(2015)
 *
 */
 public class EQRViewer extends JFrame implements JMapViewerEventListener  {
@@ -66,7 +67,7 @@ public class EQRViewer extends JFrame implements JMapViewerEventListener  {
   * Constructs the {@code Demo}.
   */
  public EQRViewer() {
-     super("JMapViewer Demo");
+     super("EQRViewer");
      setSize(400, 400);
 
      treeMap = new JMapViewerTree("Zones");
