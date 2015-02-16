@@ -24,7 +24,6 @@ public class EQRStatPanel extends JPanel{
 	}
 	
 	public JPanel getInnerPane(){
-		System.out.println(getSize());
 		return inner;
 	}
 	

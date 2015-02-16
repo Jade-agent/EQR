@@ -47,17 +47,19 @@ public class EQRPatientStatusItem extends EQRStatusPanelItem{
 		JLabel lbl = new JLabel();
 		lbl.setFont(new Font("Serif", Font.PLAIN, 12));
 		String text = "<html><b>id</b> "+ getItemId()+
-				", <b>location</b> ("+ location.getLatitude()+","+location.getLongitude()+")<b> Est Time</b> :"+
-				location.getMillis()+" <b> Deadline </b>"+deadline+"<br/></html>";
+				", <b>location</b> ("+ location.getLatitude()+","+location.getLongitude()+") "
+						+ "<b>Closest vehicle</b> ("+ closest_vehicle_loc.getLatitude()+
+						","+closest_vehicle_loc.getLongitude()+")<b> Est Time</b> :"+
+				closest_vehicle_loc.getMillis()+" <b> Deadline </b>"+deadline+"<br/></html>";
 		lbl.setText(text);
 		return lbl;
 	}
 	public String getDisplayText() {
-		
-		
 		String text = "<b>id</b> "+ getItemId()+
-				", <b>location</b> ("+ location.getLatitude()+","+location.getLongitude()+")<b> Est Time</b> :"+
-				location.getMillis()+" <b> Deadline </b>"+deadline+"<br/>";
+		", <b>location</b> ("+ location.getLatitude()+","+location.getLongitude()+") "
+		+ "<b>Closest vehicle</b> ("+ closest_vehicle_loc.getLatitude()+
+		","+closest_vehicle_loc.getLongitude()+")<b> Est Time</b> :"+
+		closest_vehicle_loc.getMillis()+" <b> Deadline </b>"+deadline+"<br/>";
 		return text;
 	}
 
