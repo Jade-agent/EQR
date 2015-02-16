@@ -9,6 +9,7 @@ public abstract class EQRStatusPanelItem {
 	public static final int STAT_PATIENT_ITEM = 2;
 	public static final int STAT_FIRE_ITEM = 3;
 	public static final int AMBULANCE_LOCATION_ITEM = 4;
+	public static final int FIRE_ENGINE_LOCATION_ITEM = 5;
 	
 	static long num_stats;
 	long item_id;

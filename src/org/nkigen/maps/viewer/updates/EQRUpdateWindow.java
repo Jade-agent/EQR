@@ -26,6 +26,7 @@ public class EQRUpdateWindow extends JFrame{
 	ArrayList<EQRPatientStatusItem> items_patients_panel;
 	ArrayList<EQRFiresUpdatesItem> items_fires_panel;
 	ArrayList<EQRAmbulanceLocations> items_ambulance_location;
+	ArrayList<EQRFireEngineLocation> items_fire_engine_location;
 	EQRStatsPatients stat_patient_item;
 	EQRStatsFire stat_fires_item;
 	
@@ -60,7 +61,7 @@ public class EQRUpdateWindow extends JFrame{
 		 main_panel.add(stat_patients);
 		 main_panel.add(stat_fires);
 		 main_panel.add(new JScrollPane(loc_ambulance));
-		 main_panel.add(loc_fire_engines);
+		 main_panel.add(new JScrollPane(loc_fire_engines));
 		 
 		 
 		 items_patients_panel = new ArrayList<EQRPatientStatusItem>();
@@ -68,6 +69,7 @@ public class EQRUpdateWindow extends JFrame{
 		 stat_patient_item = new EQRStatsPatients();
 		 stat_fires_item = new  EQRStatsFire();
 		 items_ambulance_location = new ArrayList<EQRAmbulanceLocations>();
+		 items_fire_engine_location = new ArrayList<EQRFireEngineLocation>();
 	 }
 	 
 	 public EQRUpdateWindow newItem(int type, EQRStatusPanelItem item){
@@ -86,6 +88,9 @@ public class EQRUpdateWindow extends JFrame{
 			 break;
 		 case EQRStatusPanelItem.AMBULANCE_LOCATION_ITEM:
 			 items_ambulance_location.add((EQRAmbulanceLocations)item);
+			 break;
+		 case EQRStatusPanelItem.FIRE_ENGINE_LOCATION_ITEM:
+			 items_fire_engine_location.add((EQRFireEngineLocation)item);
 			 break;
 		 default:
 				 System.out.println("Status Item not recognized");
@@ -129,6 +134,18 @@ public class EQRUpdateWindow extends JFrame{
 		 loc_ambulance.getInnerPane().add(lbl);
 		 loc_ambulance.refresh(); 
 	 }
+	 private void refreshLocationFireEngine(){
+		 loc_fire_engines.getInnerPane().removeAll();
+		 JLabel lbl = new JLabel();
+		 lbl.setFont(new Font("Serif", Font.PLAIN, 14));
+		 String txt = "<html>";
+		 for(int i=0; i< items_fire_engine_location.size(); i++)
+			txt += items_fire_engine_location.get(i).getDisplayText();
+		 txt+="</html>";
+		 lbl.setText(txt);
+		 loc_fire_engines.getInnerPane().add(lbl);
+		 loc_fire_engines.refresh(); 
+	 }
 	 private void refreshFiresPanel(){
 		 fire_panel.getInnerPane().removeAll();
 		 JLabel lbl = new JLabel();
@@ -145,6 +162,7 @@ public class EQRUpdateWindow extends JFrame{
 		refreshPatientsPanel();
 		refreshFiresPanel();
 		refreshLocationAmbulance();
+		refreshLocationFireEngine();
 		refreshStats();
 		 
 	 }
@@ -153,6 +171,7 @@ public class EQRUpdateWindow extends JFrame{
 		 //getInstance().repaint();
 	 }
 
+	 /*
 	 public static void main(String[] args){
 		 EQRUpdateWindow win =new EQRUpdateWindow().getInstance();
 		 win.setVisible(true);
@@ -180,14 +199,26 @@ public class EQRUpdateWindow extends JFrame{
 		 loc.setLocation(p);
 		 loc.isAtBase(false);
 		 EQRAmbulanceLocations loc1 = new EQRAmbulanceLocations();
+		 EQRFireEngineLocation loc2 = new EQRFireEngineLocation();
 		 loc1.setHeading(p);
 		 loc1.setLocation(p);
 		 loc1.isAtBase(true);
+		 
+		 loc2.setHeading(p);
+		 loc2.setLocation(p);
+		 loc2.isAtBase(false);
 		 win.newItem(EQRStatusPanelItem.AMBULANCE_LOCATION_ITEM, loc);
 		 win.newItem(EQRStatusPanelItem.AMBULANCE_LOCATION_ITEM, loc1);
 		 win.newItem(EQRStatusPanelItem.AMBULANCE_LOCATION_ITEM, loc);
 		 //loc.isAtBase(true);
 		 win.newItem(EQRStatusPanelItem.AMBULANCE_LOCATION_ITEM, loc1);
+		 
+		 win.newItem(EQRStatusPanelItem.FIRE_ENGINE_LOCATION_ITEM, loc2);
+		 win.newItem(EQRStatusPanelItem.FIRE_ENGINE_LOCATION_ITEM, loc2);
+		 win.newItem(EQRStatusPanelItem.FIRE_ENGINE_LOCATION_ITEM, loc2);
+		 //loc.isAtBase(true);
+		 win.newItem(EQRStatusPanelItem.FIRE_ENGINE_LOCATION_ITEM, loc2);
+		 
 		 win.newItem(EQRStatusPanelItem.PATIENT_STATUS_ITEM, item);
 		 win.newItem(EQRStatusPanelItem.PATIENT_STATUS_ITEM, item);
 		 win.newItem(EQRStatusPanelItem.PATIENT_STATUS_ITEM, item1);
@@ -198,4 +229,6 @@ public class EQRUpdateWindow extends JFrame{
 		 win.refreshWindow();
 		 
 	 }
+	 
+	 */
 }
