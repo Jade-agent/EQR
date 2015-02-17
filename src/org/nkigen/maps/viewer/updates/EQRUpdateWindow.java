@@ -14,7 +14,7 @@ import org.nkigen.maps.routing.EQRPoint;
 
 public class EQRUpdateWindow extends JFrame{
 	private final static String window_title = "EQR: Status Updates";
-	EQRUpdateWindow window;
+	static EQRUpdateWindow window;
 	JPanel main_panel;
 	EQRStatPanel patients_panel;
 	EQRStatPanel fire_panel;
@@ -39,7 +39,7 @@ public class EQRUpdateWindow extends JFrame{
 		 this.add(main_panel);
 	 }
 	 
-	 public EQRUpdateWindow getInstance(){
+	 public static EQRUpdateWindow getInstance(){
 		 if(window == null){
 			 window = new EQRUpdateWindow();
 		 }

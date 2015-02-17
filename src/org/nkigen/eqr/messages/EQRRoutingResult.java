@@ -1,4 +1,4 @@
-package org.nkigen.eqr.agents.ontologies.routing;
+package org.nkigen.eqr.messages;
 
 import java.io.Serializable;
 

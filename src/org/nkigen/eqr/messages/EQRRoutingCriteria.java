@@ -1,7 +1,8 @@
-package org.nkigen.eqr.agents.ontologies.routing;
+package org.nkigen.eqr.messages;
 
 import java.io.Serializable;
 
+import org.nkigen.eqr.agents.ontologies.routing.GraphHopperRoutingVocabulary;
 import org.nkigen.maps.routing.EQRPoint;
 
 import jade.content.Concept;

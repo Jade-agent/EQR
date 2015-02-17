@@ -1,7 +1,7 @@
 package org.nkigen.eqr.agents.behaviours;
 
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingError;
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
+import org.nkigen.eqr.messages.EQRRoutingError;
+import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
 import org.nkigen.maps.viewer.EQRViewer;

@@ -3,9 +3,9 @@ package org.nkigen.eqr.agents.behaviours;
 import java.util.concurrent.TimeUnit;
 
 import org.nkigen.eqr.agents.EQRAgentTypes; 
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingError;
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
+import org.nkigen.eqr.messages.EQRRoutingCriteria;
+import org.nkigen.eqr.messages.EQRRoutingError;
+import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.eqr.models.EmergencyArrivalModel;
 import org.nkigen.eqr.models.EmergencyHandler;
 import org.nkigen.maps.routing.EQRPoint;

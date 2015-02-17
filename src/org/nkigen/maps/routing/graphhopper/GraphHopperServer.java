@@ -10,8 +10,8 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.routing.util.EncodingManager;
 import com.sun.istack.internal.Nullable;
 
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
 import org.nkigen.eqr.agents.ontologies.routing.GraphHopperRoutingVocabulary;
+import org.nkigen.eqr.messages.EQRRoutingCriteria;
 /**
  * Interface to the instance of a graphhopper server
  * 

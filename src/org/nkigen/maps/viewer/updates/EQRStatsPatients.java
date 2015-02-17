@@ -17,7 +17,7 @@ public class EQRStatsPatients extends EQRStatusPanelItem {
 	public Component getDisplayItem() {
 		JLabel lbl = new JLabel();
 		lbl.setFont(new Font("Serif", Font.PLAIN, 12));
-		String text = "<html><b>id</b> "+ getItemId()+
+		String text = "<html><b>id</b> "+ getStatusId()+
 				"<br /> <b>Died</b> "+num_died +
 				"<br /><b>Rescued </b> " + num_saved +
 				"<br /><b> Total Patients </b> :"+ total_patients +"<br/></html>";

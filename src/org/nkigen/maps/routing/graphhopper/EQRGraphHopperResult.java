@@ -5,7 +5,7 @@ package org.nkigen.maps.routing.graphhopper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
+import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.GraphHopperServer;
 

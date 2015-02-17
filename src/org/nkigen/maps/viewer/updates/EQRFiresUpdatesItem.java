@@ -17,7 +17,7 @@ public class EQRFiresUpdatesItem extends EQRStatusPanelItem{
 
 	@Override
 	public String getDisplayText() {
-		String text = "<b>id</b> "+ getItemId()+
+		String text = "<b>id</b> "+ getStatusId()+
 				", <b>location</b> ("+ location.getLatitude()+","+location.getLongitude()+") "
 				+ "<b>Closest vehicle</b> ("+ closest_engine.getLatitude()+
 				","+closest_engine.getLongitude()+")<b> Est Time</b> :"+

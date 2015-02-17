@@ -18,7 +18,7 @@ public class EQRStatsFire extends EQRStatusPanelItem {
 	public Component getDisplayItem() {
 		JLabel lbl = new JLabel();
 		lbl.setFont(new Font("Serif", Font.PLAIN, 12));
-		String text = "<html><b>id</b> "+ getItemId()+
+		String text = "<html><b>id</b> "+ getStatusId()+
 				"<br /> <b>Incidences</b> "+num_incidents +
 				"<br /><b>Attended </b> " + num_cleared +"<br/></html>";
 		lbl.setText(text);

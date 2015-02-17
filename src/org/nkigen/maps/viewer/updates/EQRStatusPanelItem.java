@@ -12,18 +12,25 @@ public abstract class EQRStatusPanelItem {
 	public static final int FIRE_ENGINE_LOCATION_ITEM = 5;
 	
 	static long num_stats;
-	long item_id;
-	
+	long status_id;
+	int item_id; //Id of ambulance, fire engine, patient, fire etc
 	public EQRStatusPanelItem(){
 		synchronized (this) {
-			item_id = num_stats;
+			status_id = num_stats;
 			num_stats++;
 		}
 	}
-	public long getItemId(){
-		return item_id;
+	public long getStatusId(){
+		return status_id;
 	}
+	
 	public abstract Component getDisplayItem();
 	public abstract String getDisplayText();
+	public int getItem_id() {
+		return item_id;
+	}
+	public void setItem_id(int item_id) {
+		this.item_id = item_id;
+	}
 
 }

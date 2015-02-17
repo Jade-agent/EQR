@@ -3,7 +3,7 @@ package org.nkigen.eqr.models;
 import java.util.ArrayList;
 import java.util.Random;
 
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
+import org.nkigen.eqr.messages.EQRRoutingCriteria;
 import org.nkigen.maps.routing.EQRPoint;
 public class EmergencyHandler {
 

@@ -24,7 +24,7 @@ public class EQRFireEngineLocation extends EQRStatusPanelItem {
 
 	@Override
 	public String getDisplayText() {
-		 String text = "<b>id</b> "+ getItemId();
+		 String text = "<b>id</b> "+ getStatusId();
 				 if(is_at_base){
 					 text+=", <b>Location </b> AT BASE<br />";
 				 }

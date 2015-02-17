@@ -46,7 +46,7 @@ public class EQRPatientStatusItem extends EQRStatusPanelItem{
 	public Component getDisplayItem() {
 		JLabel lbl = new JLabel();
 		lbl.setFont(new Font("Serif", Font.PLAIN, 12));
-		String text = "<html><b>id</b> "+ getItemId()+
+		String text = "<html><b>id</b> "+ getStatusId()+
 				", <b>location</b> ("+ location.getLatitude()+","+location.getLongitude()+") "
 						+ "<b>Closest vehicle</b> ("+ closest_vehicle_loc.getLatitude()+
 						","+closest_vehicle_loc.getLongitude()+")<b> Est Time</b> :"+
@@ -55,7 +55,7 @@ public class EQRPatientStatusItem extends EQRStatusPanelItem{
 		return lbl;
 	}
 	public String getDisplayText() {
-		String text = "<b>id</b> "+ getItemId()+
+		String text = "<b>id</b> "+ getStatusId()+
 		", <b>location</b> ("+ location.getLatitude()+","+location.getLongitude()+") "
 		+ "<b>Closest vehicle</b> ("+ closest_vehicle_loc.getLatitude()+
 		","+closest_vehicle_loc.getLongitude()+")<b> Est Time</b> :"+
