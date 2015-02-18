@@ -251,6 +251,12 @@ public class EQRViewer extends JFrame implements JMapViewerEventListener  {
 	 mp.setColor(p.getColor());
 	 map().addMapMarker(mp);
  }
+ public void removeMarker(EQRViewerPoint p){
+	 MapMarkerDot mp = new MapMarkerDot(trentoLayer, p.getPoint().getLatitude(), p.getPoint().getLongitude());
+	 mp.setColor(p.getColor());
+	 map().removeMapMarker(mp);
+ }
+
  private JMapViewer map(){
      return treeMap.getViewer();
  }

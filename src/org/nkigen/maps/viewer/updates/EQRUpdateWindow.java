@@ -72,24 +72,39 @@ public class EQRUpdateWindow extends JFrame{
 		 items_fire_engine_location = new ArrayList<EQRFireEngineLocation>();
 	 }
 	 
+	 private void removeItemIfExists(EQRStatusPanelItem item, ArrayList list){
+		 
+		 for(int i=0;i < list.size();i++){
+			 if(((EQRStatusPanelItem)list.get(i)).getItem_id() == item.getItem_id()){
+				 list.remove(i);
+				 return;
+			 }
+		 }
+		 
+	 }
 	 public EQRUpdateWindow newItem(int type, EQRStatusPanelItem item){
 		 switch(type){
 		 case EQRStatusPanelItem.PATIENT_STATUS_ITEM:
+			 removeItemIfExists(item, items_patients_panel);
 			 items_patients_panel.add((EQRPatientStatusItem)item);
 			 break;
 		 case EQRStatusPanelItem.FIRE_STATUS_ITEM:
+			 removeItemIfExists(item, items_fires_panel);
 			items_fires_panel.add((EQRFiresUpdatesItem)item);
 			 break;
 		 case EQRStatusPanelItem.STAT_PATIENT_ITEM:
+			 
 			 	stat_patient_item = (EQRStatsPatients)item;
 			 	break;
 		 case EQRStatusPanelItem.STAT_FIRE_ITEM:
 			 stat_fires_item = (EQRStatsFire)item;
 			 break;
 		 case EQRStatusPanelItem.AMBULANCE_LOCATION_ITEM:
+			 removeItemIfExists(item, items_ambulance_location);
 			 items_ambulance_location.add((EQRAmbulanceLocations)item);
 			 break;
 		 case EQRStatusPanelItem.FIRE_ENGINE_LOCATION_ITEM:
+			 removeItemIfExists(item, items_fire_engine_location);
 			 items_fire_engine_location.add((EQRFireEngineLocation)item);
 			 break;
 		 default:

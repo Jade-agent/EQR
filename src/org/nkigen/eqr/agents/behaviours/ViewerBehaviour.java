@@ -6,6 +6,7 @@ import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
 import org.nkigen.maps.viewer.EQRViewer;
 import org.nkigen.maps.viewer.EQRViewerPoint;
+import org.nkigen.maps.viewer.updates.EQRStatusPanelItem;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -14,11 +15,17 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
+
 public class ViewerBehaviour extends CyclicBehaviour {
 
 	EQRViewer viewer;
 	private Agent agent;
+
+	HashMap<Integer,EQRViewerPoint> static_points;
+	HashMap<Integer,EQRViewerPoint> dynamic_points;
 
 	public ViewerBehaviour(Agent agent) {
 		// TODO Auto-generated constructor stub
@@ -26,6 +33,8 @@ public class ViewerBehaviour extends CyclicBehaviour {
 		this.agent = agent;
 		viewer = new EQRViewer();
 		viewer.setVisible(true);
+		static_points = new HashMap<Integer,EQRViewerPoint>();
+		dynamic_points = new HashMap<Integer,EQRViewerPoint>();
 		System.out.println("Viewer Up and running");
 	}
 
@@ -40,17 +49,7 @@ public class ViewerBehaviour extends CyclicBehaviour {
 		}
 		System.out
 				.println("EQRViewer: New message received....Message ok Probing");
-		try {
-			Object content = msg.getContentObject();
-			switch (msg.getPerformative()) {
-			case ACLMessage.REQUEST:
-				agent.addBehaviour(new HandlerBehaviour(msg));
-				break;
-			}
-		} catch (UnreadableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		agent.addBehaviour(new HandlerBehaviour(msg));
 
 	}
 
@@ -69,11 +68,11 @@ public class ViewerBehaviour extends CyclicBehaviour {
 						.println("EQRViewer: New message received....Message ok Probing");
 				Object content = msg.getContentObject();
 				switch (msg.getPerformative()) {
-				case ACLMessage.REQUEST:
-					if (content instanceof EQRRoutingResult) {
+				case ACLMessage.INFORM:
+					if (content instanceof EQRViewerPoint) {
 						System.out
 								.println("EQRViewer: New message received....Message understood");
-						handle(msg);
+						handle((EQRViewerPoint) content);
 						return;
 					} else {
 						System.out
@@ -88,34 +87,30 @@ public class ViewerBehaviour extends CyclicBehaviour {
 
 		}
 
-		private void handle(ACLMessage msg) {
-			System.out.println("EQRViewer: Handling reply from server");
-			try {
-				EQRRoutingResult result = (EQRRoutingResult) msg
-						.getContentObject();
-				if (result instanceof EQRGraphHopperResult) {
-					updateViewer((EQRGraphHopperResult) result);
-				} else {
-					System.out
-							.println("EQRViewer: Error...Not updating viewer");
+		private void handle(EQRViewerPoint point) {
+			int id = point.getItemId();
+			
+			if(couldBeStatic(point)){
+				if(!static_points.containsKey(id))
+					static_points.put(id, point);
+			}
+			else{
+				if(!dynamic_points.containsKey(id))
+					dynamic_points.put(id, point);
+				else{
+					EQRViewerPoint p = (EQRViewerPoint)dynamic_points.get(id);
+					viewer.removeMarker(p);
+					dynamic_points.remove(id);
+					dynamic_points.put(id, point);
 				}
-			} catch (UnreadableException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-		}
-
-		private synchronized void updateViewer(EQRGraphHopperResult result) {
-			long _sleep_time =(long) result.getDistance()/result.getDuration();
-			
-			List<EQRPoint> points = result.getPoints();
-			
-			for(int i=0; i<points.size();i++){
-				EQRViewerPoint p = new EQRViewerPoint(points.get(i), Color.RED);
-				viewer.addMarker(p);
-				block(_sleep_time+200);
-			}
+			viewer.addMarker(point);
 		}
 		
+		private boolean couldBeStatic(EQRViewerPoint point){
+			return  (point.getType() == EQRStatusPanelItem.PATIENT_STATUS_ITEM || 
+					point.getType() == EQRStatusPanelItem.PATIENT_STATUS_ITEM);
+		}
+
 	}
 }

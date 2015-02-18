@@ -3,7 +3,7 @@ package org.nkigen.eqr.agents;
 import jade.core.Agent;
 import jade.core.behaviours.SequentialBehaviour;
 
-import org.nkigen.eqr.agents.behaviours.EmergencyResponseBehaviour;
+import org.nkigen.eqr.agents.behaviours.AmbulanceBehaviour;
 import org.nkigen.eqr.agents.behaviours.ViewerBehaviour;
 
 /**

@@ -1,13 +1,20 @@
 package org.nkigen.eqr.agents.behaviours;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.io.Serializable;
+
+import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.EQRRoutingCriteria;
+import org.nkigen.maps.viewer.EQRViewerPoint;
 import org.nkigen.maps.viewer.updates.EQRAmbulanceLocations;
 import org.nkigen.maps.viewer.updates.EQRFireEngineLocation;
 import org.nkigen.maps.viewer.updates.EQRFiresUpdatesItem;
 import org.nkigen.maps.viewer.updates.EQRStatusPanelItem;
 import org.nkigen.maps.viewer.updates.EQRUpdateWindow;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -58,9 +65,37 @@ public class UpdateServerBehaviour extends CyclicBehaviour{
 		@Override
 		public void action() {
 			sendToUpdateWindow();
+			sendToViewer();
 			
 		}
 		
+		private void sendToViewer(){
+			/*Prepare a msg to send to the veiwer agent*/
+			int type = msg.getType();
+			EQRViewerPoint point = new EQRViewerPoint(msg.getItemId());
+			point.setIsMoving(msg.getIsMoving());
+			point.setIsDead(msg.getIsDead());
+			point.setPoint(msg.getCurrent());
+			point.setType(type);
+			point.setColor();
+			
+			//Send Message to viewer Agent 
+			AID viewer = EQRAgentsHelper.locateViewer(agent);
+			ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+
+				try {
+					msg2.setContentObject( point);
+				msg2.addReceiver(viewer);
+				System.out.println("Contacting Viewer server... Please wait!");
+				agent.send(msg2);
+				System.out.println("Message send to Viewer ... Please wait!");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			
+		}
 		private void sendToUpdateWindow(){
 			int type = msg.getType();
 			EQRStatusPanelItem update;

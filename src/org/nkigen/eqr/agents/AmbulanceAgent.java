@@ -1,6 +1,7 @@
 package org.nkigen.eqr.agents;
 
-import org.nkigen.eqr.agents.behaviours.EmergencyResponseBehaviour;
+import org.nkigen.eqr.agents.behaviours.AmbulanceBehaviour;
+import org.nkigen.eqr.agents.behaviours.FireEngineBehaviour;
 import org.nkigen.eqr.agents.behaviours.RoutingBehaviour;
 
 import jade.core.Agent;
@@ -11,7 +12,7 @@ import jade.core.behaviours.SequentialBehaviour;
  * @author nkigen
  *
  */
-public class EmergencyResponseAgent extends Agent{
+public class AmbulanceAgent extends Agent{
 
 	/**
 	 * 
@@ -20,13 +21,13 @@ public class EmergencyResponseAgent extends Agent{
 	
 	protected void setup() {
 		SequentialBehaviour sb = new SequentialBehaviour();
-		sb.addSubBehaviour(new RegisterInDF(this,getMyType(), "ERA"));			
-		sb.addSubBehaviour(new EmergencyResponseBehaviour(this));
+		sb.addSubBehaviour(new RegisterInDF(this,getMyType(), getMyType()));			
+		sb.addSubBehaviour(new AmbulanceBehaviour(this));
 		addBehaviour(sb);	
 	}
 
 	private String getMyType() {
-		return EQRAgentTypes.EMERGENCY_RESPONSE_AGENT;
+		return EQRAgentTypes.AMBULANCE_AGENT;
 	}
 
 }

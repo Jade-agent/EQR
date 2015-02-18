@@ -1,18 +1,5 @@
 package org.nkigen.eqr.agents.behaviours;
 
-import java.util.concurrent.TimeUnit;
-
-import org.nkigen.eqr.agents.EQRAgentTypes; 
-import org.nkigen.eqr.messages.EQRRoutingCriteria;
-import org.nkigen.eqr.messages.EQRRoutingError;
-import org.nkigen.eqr.messages.EQRRoutingResult;
-import org.nkigen.eqr.models.EmergencyArrivalModel;
-import org.nkigen.eqr.models.EmergencyHandler;
-import org.nkigen.maps.routing.EQRPoint;
-import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
-
-import desmoj.core.simulator.Experiment;
-import desmoj.core.simulator.TimeInstant;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -20,23 +7,27 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.ParallelBehaviour;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.core.behaviours.WakerBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
-public class EmergencyResponseBehaviour extends CyclicBehaviour {
+import org.nkigen.eqr.agents.EQRAgentsHelper;
+import org.nkigen.eqr.messages.EQRRoutingCriteria;
+import org.nkigen.eqr.messages.EQRRoutingError;
+import org.nkigen.eqr.messages.EQRRoutingResult;
+import org.nkigen.eqr.models.EmergencyHandler;
+import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
+
+public class FireEngineBehaviour extends CyclicBehaviour {
 
 	Agent agent;
 	private AID routing_server;
-	private AID viewer;
-	int test = 0;
+	private AID update_server;
+	
 	EQRRoutingCriteria to_serve;
-	public EmergencyResponseBehaviour(Agent agent) {
+	public FireEngineBehaviour(Agent agent) {
 		super(agent);
 		this.agent = agent;
-		startSimulation();
+	//	startSimulation();
 		// TODO Auto-generated constructor stub
 	}
 
@@ -86,7 +77,7 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 		// ----------------------------------------------------
 
 		if (routing_server == null){
-			locateRoutingServer();
+			routing_server = EQRAgentsHelper.locateRoutingServer(agent);
 			System.out.println("Routing server located!!");
 		}
 		if (routing_server == null) {
@@ -107,48 +98,7 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 	}
 
 
-	void locateRoutingServer() {
-		// --------------------- Search in the DF to retrieve the server AID
-
-		System.out.println("Trying to locate the routing server");
-		ServiceDescription sd = new ServiceDescription();
-		sd.setType(EQRAgentTypes.ROUTING_AGENT);
-		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.addServices(sd);
-		try {
-			DFAgentDescription[] dfds = DFService.search(agent, dfd);
-			if (dfds.length > 0) {
-				routing_server = dfds[0].getName();
-				System.out.println("Router found");
-			} else
-				System.out.println("Couldn't localize server!");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("Failed searching int the DF!");
-		}
-	}
-	
-	void locateViewer() {
-		// --------------------- Search in the DF to retrieve the server AID
-
-		System.out.println("Trying to locate the Viewer server");
-		ServiceDescription sd = new ServiceDescription();
-		sd.setType(EQRAgentTypes.VIEWER_AGENT);
-		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.addServices(sd);
-		try {
-			DFAgentDescription[] dfds = DFService.search(agent, dfd);
-			if (dfds.length > 0) {
-				viewer = dfds[0].getName();
-				System.out.println("Viewer Server found "+ viewer.getLocalName() + " " + viewer.getName());
-			} else
-				System.out.println("Couldn't locate Viewer server!");
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			System.out.println("Failed for viewer searching int the DF!");
-		}
-	}
-	
+		
 	
 	private class WaitRouterResponse extends ParallelBehaviour {
 		public WaitRouterResponse(){
@@ -158,7 +108,7 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 
 			    protected void handleElapsedTimeout() {
 				   System.out.println("\n\tNo response from server. Please, try later!");
-				   agent.addBehaviour(EmergencyResponseBehaviour.this);
+				   agent.addBehaviour(FireEngineBehaviour.this);
 				}
 			 });
 		}
@@ -210,29 +160,11 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 				EQRRoutingResult result = (EQRRoutingResult)msg.getContentObject();
 				if(result instanceof EQRRoutingError){
 					System.out.println("Emergency Recv: Requested Route has errors");
+					/*
+					 * No Route to Place
+					 */
 				}
 				else if(result instanceof EQRGraphHopperResult){
-					System.out.println("Emergency Recv: Route ok");
-					System.out.println(((EQRGraphHopperResult)result).toString());
-					if (viewer == null){
-						locateViewer();
-						System.out.println("Viewer server located!!");
-					}
-					if (viewer == null) {
-						System.out
-								.println("Unable to localize the server! Operation aborted!");
-						return;
-					}
-					ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
-					try {
-						msg2.setContentObject((java.io.Serializable) result);
-						msg2.addReceiver(viewer);
-						System.out.println("Contacting Viewer server... Please wait!");
-						agent.send(msg2);
-						System.out.println("Message send to Viewer ... Please wait!");
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
 					
 				}
 			} catch (UnreadableException e) {
@@ -248,35 +180,5 @@ public class EmergencyResponseBehaviour extends CyclicBehaviour {
 		
 	}
 	
-	private void startSimulation() {
-
-		Experiment experiment =
-			new Experiment("Vancarrier Model", TimeUnit.SECONDS, TimeUnit.MINUTES, null);
-
-		EmergencyArrivalModel vc_1st_p_Model =
-			new EmergencyArrivalModel(
-				null,
-				"Emergency Arrival Model",
-				true,
-				false);
-
-		
-		vc_1st_p_Model.connectToExperiment(experiment);
-
-		experiment.tracePeriod(new TimeInstant(0), new TimeInstant(100));
-
-		// now set the time this simulation should stop at 
-		// let him work 1500 Minutes
-		experiment.stop(new TimeInstant(1500));
-		experiment.setShowProgressBar(false);
-
-		// start the Experiment with start time 0.0
-		experiment.start();
-
-
-		//experiment.report();
-
-		experiment.finish();
-	}
-
+	
 }

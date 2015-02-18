@@ -11,6 +11,8 @@ public class EQRLocationUpdate extends EQRUpdateMessage{
 	
 	int type;
 	int item_id;
+	boolean is_moving;
+	boolean is_dead = false;
 	EQRPoint current;
 	EQRPoint heading;
 	
@@ -20,6 +22,20 @@ public class EQRLocationUpdate extends EQRUpdateMessage{
 		item_id = id;
 	}
 
+	public void setIsDead(boolean bool){
+		is_dead = bool;
+	}
+
+	public boolean getIsDead(){
+		return is_dead;
+	}
+	public void setIsMoving(boolean bool){
+		is_moving = bool;
+	}
+
+	public boolean getIsMoving(){
+		return is_moving;
+	}
 	public void setItemId(int item){
 		this.item_id = item;
 	}
