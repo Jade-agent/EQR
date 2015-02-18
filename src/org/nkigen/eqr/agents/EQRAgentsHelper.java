@@ -22,8 +22,13 @@ public class EQRAgentsHelper {
 	 */
 	// public static
 
-	public static long getCurrentTime() {
-		return experiment.getSimClock().getTime().getTimeInEpsilon();
+	public static String getCurrentTime() {
+		return " ";//experiment.getSimClock().getTime().toString();
+
+	}
+	public static long getCurrentTime(boolean t) {
+		
+		return 0;//experiment.getSimClock().getTime().getTimeRounded();
 
 	}
 
@@ -42,7 +47,7 @@ public class EQRAgentsHelper {
 		vc_1st_p_Model.connectToExperiment(experiment);
 
 		experiment.tracePeriod(new TimeInstant(0), new TimeInstant(100));
-		experiment.setExecutionSpeedRate(1);
+		experiment.setExecutionSpeedRate(0);
 		// now set the time this simulation should stop at
 		// let him work 1500 Minutes
 		experiment.stop(new TimeInstant(1500));
@@ -71,7 +76,7 @@ public class EQRAgentsHelper {
 				update_server = dfds[0].getName();
 				System.out.println("Update Server found");
 			} else
-				System.out.println("Couldn't localize server!");
+				System.out.println("Couldn't locate server!");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			System.out.println("Failed searching int the DF!");

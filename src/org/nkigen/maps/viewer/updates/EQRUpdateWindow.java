@@ -36,6 +36,7 @@ public class EQRUpdateWindow extends JFrame{
 		 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		 setResizable(false);
 		 createPanels();
+		 setVisible(true);
 		 this.add(main_panel);
 	 }
 	 
@@ -93,7 +94,6 @@ public class EQRUpdateWindow extends JFrame{
 			items_fires_panel.add((EQRFiresUpdatesItem)item);
 			 break;
 		 case EQRStatusPanelItem.STAT_PATIENT_ITEM:
-			 
 			 	stat_patient_item = (EQRStatsPatients)item;
 			 	break;
 		 case EQRStatusPanelItem.STAT_FIRE_ITEM:
@@ -111,6 +111,7 @@ public class EQRUpdateWindow extends JFrame{
 				 System.out.println("Status Item not recognized");
 				 break;
 		 }
+		 refreshPanels();
 		 return window;
 	 }
 	 

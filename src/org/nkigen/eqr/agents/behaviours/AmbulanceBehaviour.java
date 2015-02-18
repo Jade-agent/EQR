@@ -12,6 +12,7 @@ import org.nkigen.eqr.models.EmergencyArrivalModel;
 import org.nkigen.eqr.models.EmergencyHandler;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
+import org.nkigen.maps.viewer.updates.EQRUpdateWindow;
 
 import desmoj.core.simulator.Experiment;
 import desmoj.core.simulator.TimeInstant;
@@ -38,7 +39,8 @@ public class AmbulanceBehaviour extends CyclicBehaviour {
 	public AmbulanceBehaviour(Agent agent) {
 		super(agent);
 		this.agent = agent;
-		// startSimulation();
+		EQRUpdateWindow.getInstance();//.setVisible(true);
+		agent.addBehaviour(new StartSimulation());
 		// TODO Auto-generated constructor stub
 	}
 
@@ -56,7 +58,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour {
 		to_serve = EmergencyHandler.getInstance().getPatientPoint();
 		if (to_serve == null)
 			return false;
-		System.out.println("New Patient Found");
+		System.out.println(EQRAgentsHelper.getCurrentTime()+":New Patient Found at "+ to_serve.getLatitude() + ", " +to_serve.getLongitude());
 		return true;
 	}
 
@@ -207,6 +209,17 @@ public class AmbulanceBehaviour extends CyclicBehaviour {
 			return finished;
 		}
 
+	}
+	
+	class StartSimulation extends OneShotBehaviour{
+
+		@Override
+		public void action() {
+			 EQRAgentsHelper.startSimulation();
+			 
+		}
+		
+	
 	}
 
 }

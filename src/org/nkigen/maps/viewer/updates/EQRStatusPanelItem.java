@@ -1,8 +1,9 @@
 package org.nkigen.maps.viewer.updates;
 
 import java.awt.Component;
+import java.io.Serializable;
 
-public abstract class EQRStatusPanelItem {
+public abstract class EQRStatusPanelItem implements Serializable {
 	
 	public static final int PATIENT_STATUS_ITEM = 0;
 	public static final int FIRE_STATUS_ITEM = 1;

@@ -14,7 +14,7 @@ public class EQREmergencyPoint extends EQRPoint {
 	int current;
 	int type;
 	long deadline;
-	long id;
+	int id;
 	public EQREmergencyPoint(double lat, double lon) {
 		super(lat, lon);
 	}
@@ -31,7 +31,7 @@ public class EQREmergencyPoint extends EQRPoint {
 	public void setMax(int max) {
 		this.max = max;
 	}
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 

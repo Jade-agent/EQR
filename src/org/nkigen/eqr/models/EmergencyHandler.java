@@ -17,6 +17,10 @@ public class EmergencyHandler {
 	Random rn = new Random();
 	int emergencies_waiting = 0;
 	
+	private void printTime(String what){
+	//	System.out.println(EQRAgentsHelper.getCurrentTime()+": "+what);
+		System.out.println(": "+what);
+	}
 	protected EmergencyHandler(){
 		init_locations();
 	}
@@ -37,6 +41,7 @@ public class EmergencyHandler {
 	}
 	
 	private void init_locations(){
+		printTime("Locations initialized");
 		vehicles_locations = new  ArrayList<EQREmergencyPoint>();
 		emergency_locations = new  ArrayList<EQREmergencyPoint>();
 		
@@ -80,10 +85,11 @@ public class EmergencyHandler {
 			return null;
 		for(int i=0; i < emergency_locations.size(); i++){
 			if(emergency_locations.get(i).getType() == EQREmergencyPoint.PATIENT_EMERGENCY_POINT){
+				printTime("New Patient requested and found");
 				EQREmergencyPoint p = emergency_locations.get(i);
 				long deadline = getRandomIndex(EQREmergencyPoint.MIN_PATIENT_DEADLINE, EQREmergencyPoint.MAX_PATIENT_DEADLINE);
-				p.setDeadline(deadline + EQRAgentsHelper.getCurrentTime());
-				System.out.println("New Patient Point With Deadline: " + (deadline + EQRAgentsHelper.getCurrentTime()));
+				p.setDeadline(deadline);// + EQRAgentsHelper.getCurrentTime(true));
+				System.out.println("New Patient Point With Deadline: " );//+ (deadline + EQRAgentsHelper.getCurrentTime()));
 				emergency_locations.remove(i);
 				emergencies_waiting--;
 				return p;
@@ -97,6 +103,7 @@ public class EmergencyHandler {
 			return null;
 		for(int i=0; i < emergency_locations.size(); i++){
 			if(emergency_locations.get(i).getType() == EQREmergencyPoint.FIRE_EMERGENCY_POINT){
+				printTime("New Fire Point requested and found");
 				EQREmergencyPoint p = emergency_locations.get(i);
 				emergency_locations.remove(i);
 				emergencies_waiting--;
@@ -111,6 +118,7 @@ public class EmergencyHandler {
 			return null;
 		for(int i=0; i < vehicles_locations.size(); i++){
 			if(vehicles_locations.get(i).getType() == EQREmergencyPoint.AMBULANCE_BASE){
+				printTime("New Ambulance requested and found");
 				EQREmergencyPoint p = emergency_locations.get(i);
 				if(p.getCurrent() > 0 && remove){
 					p.decrementCurrent();
@@ -126,6 +134,7 @@ public class EmergencyHandler {
 			return null;
 		for(int i=0; i < vehicles_locations.size(); i++){
 			if(vehicles_locations.get(i).getType() == EQREmergencyPoint.FIRE_ENGINE_BASE){
+				printTime("New Fire Enengi requested and found");
 				EQREmergencyPoint p = emergency_locations.get(i);
 				if(p.getCurrent() > 0 && remove){
 					p.decrementCurrent();

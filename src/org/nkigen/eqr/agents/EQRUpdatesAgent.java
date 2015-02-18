@@ -11,7 +11,7 @@ public class EQRUpdatesAgent extends Agent {
 
 	protected void setup() {
 		SequentialBehaviour sb = new SequentialBehaviour();
-		sb.addSubBehaviour(new RegisterInDF(this,getMyType(), "UPDATES_AGENT"));			
+		sb.addSubBehaviour(new RegisterInDF(this,getMyType(), getMyType()));			
 		sb.addSubBehaviour(new UpdateServerBehaviour(this));
 		addBehaviour(sb);	
 	}

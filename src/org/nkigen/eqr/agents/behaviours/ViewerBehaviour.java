@@ -99,8 +99,9 @@ public class ViewerBehaviour extends CyclicBehaviour {
 					dynamic_points.put(id, point);
 				else{
 					EQRViewerPoint p = (EQRViewerPoint)dynamic_points.get(id);
-					viewer.removeMarker(p);
-					dynamic_points.remove(id);
+					//viewer.removeMarker(p);
+					//dynamic_points.remove(id);
+					System.out.println("MYCOLOR: " + point.getColor());
 					dynamic_points.put(id, point);
 				}
 			}
