@@ -2,6 +2,7 @@ package org.nkigen.eqr.agents;
 
 import java.util.concurrent.TimeUnit;
 
+import org.nkigen.eqr.common.EQRAgentTypes;
 import org.nkigen.eqr.models.EmergencyArrivalModel;
 
 import desmoj.core.simulator.Experiment;

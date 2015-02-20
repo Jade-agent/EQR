@@ -4,7 +4,9 @@ import jade.core.Agent;
 import jade.core.behaviours.SequentialBehaviour;
 
 import org.nkigen.eqr.agents.behaviours.AmbulanceBehaviour;
+import org.nkigen.eqr.agents.behaviours.RegisterInDF;
 import org.nkigen.eqr.agents.behaviours.ViewerBehaviour;
+import org.nkigen.eqr.common.EQRAgentTypes;
 
 /**
  * Agent for the Emergency Response Team

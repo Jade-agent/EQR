@@ -1,4 +1,4 @@
-package org.nkigen.eqr.agents;
+package org.nkigen.eqr.agents.behaviours;
 
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
@@ -11,7 +11,7 @@ public class RegisterInDF extends OneShotBehaviour {
 	Agent agent;
 	String type;
 	String ownership;
-	RegisterInDF(Agent a,String type, String ownership) {
+	public RegisterInDF(Agent a,String type, String ownership) {
         super(a);
         agent = a;
         this.type = type;
@@ -22,21 +22,18 @@ public class RegisterInDF extends OneShotBehaviour {
 
         ServiceDescription sd = new ServiceDescription();
         sd.setType(type);
-        sd.setName(agent.getName());
-        sd.setOwnership(ownership); /*TODO*/
+        sd.setName(agent.getLocalName()+"-"+type);
+        //sd.setOwnership(ownership); /*TODO*/
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(agent.getAID());
         dfd.addServices(sd);
         try {
-           DFAgentDescription[] dfds = DFService.search(agent, dfd);
-           if (dfds.length > 0 ) {
-              DFService.deregister(agent, dfd);
-           }
+        	
            DFService.register(agent, dfd);
-           System.out.println(agent.getLocalName() + " is ready.");
+           System.out.println("New Agent of type " + type + " is ready.");
         }
         catch (Exception ex) {
-           System.out.println("Failed registering with DF! Shutting down...");
+           System.out.println("Failed registering "+ type +" with DF! Shutting down...");
            ex.printStackTrace();
            agent.doDelete();
         }

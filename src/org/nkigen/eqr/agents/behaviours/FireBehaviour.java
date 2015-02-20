@@ -1,20 +1,23 @@
 package org.nkigen.eqr.agents.behaviours;
 
-import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 
-import org.nkigen.eqr.models.EQREmergencyPoint;
+import org.nkigen.eqr.fires.FireDetails;
 
-public class AmbulanceBehaviour extends CyclicBehaviour {
+public class FireBehaviour extends CyclicBehaviour {
 
-	public AmbulanceBehaviour(Agent agent) {
+	FireDetails fd;
+	
+
+	public FireBehaviour(Agent agent) {
 		super(agent);
-		
 	}
 
 	@Override
 	public void action() {
+		
+
 	}
 
 }
