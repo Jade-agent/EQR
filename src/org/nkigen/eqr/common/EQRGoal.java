@@ -11,5 +11,6 @@ public abstract class EQRGoal {
 
 	
 	public abstract Behaviour executePlan(int which, Object params[]);
+	public abstract void newGoal(int which, Class behaviour);
 	
 }

@@ -1,8 +1,11 @@
 package org.nkigen.eqr.patients;
 
+import java.io.Serializable;
+
 import jade.core.AID;
 
 import org.nkigen.eqr.common.EmergencyDetails;
+import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.maps.routing.EQRPoint;
 
 /**
@@ -26,5 +29,6 @@ public class PatientDetails extends EmergencyDetails{
 	}
 	public void setStatus(int status) {
 		this.status = status;
+		EmergencyStateChangeInitiator.getInstance().notifyStateChanged(this);
 	}
 }

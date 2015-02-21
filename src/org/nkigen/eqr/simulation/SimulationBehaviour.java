@@ -1,8 +1,12 @@
 package org.nkigen.eqr.simulation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.nkigen.eqr.common.EQRAgentTypes;
+import org.nkigen.eqr.messages.PatientInitMessage;
+import org.nkigen.eqr.patients.PatientDetails;
+import org.nkigen.maps.routing.EQRPoint;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -11,13 +15,16 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
 
 public class SimulationBehaviour extends CyclicBehaviour {
 
 	ArrayList<AID> patients;
 	ArrayList<AID> fires;
 
-	public SimulationBehaviour(Agent a) {
+	boolean patients_init = false;
+	boolean fires_init = false;
+	public SimulationBehaviour(Agent a, String config) {
 		super(a);
 		initPatients();
 		initFires();
@@ -26,6 +33,32 @@ public class SimulationBehaviour extends CyclicBehaviour {
 	@Override
 	public void action() {
 
+		if(patients_init == false){
+			patients_init = true;
+			setupPatients();
+		}
+	}
+	
+	private void setupPatients(){
+		if(patients != null){
+			for(int i=0; i< patients.size();i++){
+				PatientDetails pd = new PatientDetails();
+				pd.setAID(patients.get(i));
+				pd.setId(i);
+				pd.setLocation(new EQRPoint(0.0, 0.0));
+				PatientInitMessage m = new PatientInitMessage();
+				m.setPatient(pd);
+				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+				try {
+					msg.setContentObject(m);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				msg.addReceiver(pd.getAID());
+				myAgent.send(msg);
+			}
+		}
 	}
 
 	private void initPatients() {

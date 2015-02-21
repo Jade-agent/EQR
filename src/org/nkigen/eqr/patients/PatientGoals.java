@@ -1,24 +1,25 @@
 package org.nkigen.eqr.patients;
 
 import jade.core.behaviours.Behaviour;
+import org.nkigen.eqr.common.EQRGoal;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.nkigen.eqr.agents.EQRPatientAgent;
 
-public class PatientGoals {
+public class PatientGoals extends EQRGoal {
 
-	public static final int REQUEST_AMBULANCE_PICKUP = 0;
+	public static final int REQUEST_AMBULANCE_PICKUP = 1;
 	
 	
-	Map<Integer, Behaviour> goals;
+	Map<Integer, Class> goals;
 	
 	public PatientGoals(){
-		goals = new HashMap<Integer, Behaviour>();
+		goals = new HashMap<Integer, Class>();
 	}
 	
-	public void initPatientGoals(Map<Integer, Behaviour> goals){
+	public void initPatientGoals(Map<Integer, Class> goals){
 		this.goals = goals;
 	}
 	
@@ -39,5 +40,11 @@ public class PatientGoals {
 		}
 		System.out.println("Wrong Number of params ");
 		return null;
+	}
+
+	@Override
+	public void newGoal(int which, Class behaviour) {
+		goals.put(which, behaviour);
+		
 	}
 }

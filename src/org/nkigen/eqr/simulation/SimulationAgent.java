@@ -13,12 +13,12 @@ public class SimulationAgent extends EQRAgent{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+	String config_file; /*Make it an agent parameter*/
 	protected void setup() {
 		setType(EQRAgentTypes.SIMULATION_AGENT);
 		SequentialBehaviour sb = new SequentialBehaviour();
 		sb.addSubBehaviour(new RegisterInDF(this,getMyType(), getMyType()));			
-		sb.addSubBehaviour(new SimulationBehaviour(this));
+		sb.addSubBehaviour(new SimulationBehaviour(this,config_file));
 		addBehaviour(sb);	
 	}
 }

@@ -1,24 +1,37 @@
 package org.nkigen.eqr.agents.behaviours;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.nkigen.eqr.common.EQRAgentTypes;
+import org.nkigen.eqr.common.EmergencyDetails;
+import org.nkigen.eqr.common.EmergencyResponseBase;
+import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
+import org.nkigen.eqr.common.EmergencyStateChangeListener;
+import org.nkigen.eqr.emergencycontrol.AssignAmbulanceBehaviour;
+import org.nkigen.eqr.emergencycontrol.EmergencyControlCenterGoals;
+import org.nkigen.eqr.messages.AmbulanceRequestMessage;
 
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
-public class EmergencyControlBehaviour extends CyclicBehaviour {
+public class EmergencyControlBehaviour extends CyclicBehaviour implements EmergencyStateChangeListener{
 
 	ArrayList<AID> ambulances;
 	ArrayList<AID> fire_engines;
-
+	EmergencyControlCenterGoals goals;
 	public EmergencyControlBehaviour(Agent a) {
 		super(a);
+		EmergencyStateChangeInitiator.getInstance().addListener(this);
+		goals = new EmergencyControlCenterGoals();
 		initAmbulances();
 		initFireEngines();
 	}
@@ -26,8 +39,39 @@ public class EmergencyControlBehaviour extends CyclicBehaviour {
 	@Override
 	public void action() {
 
+		ACLMessage msg = myAgent.receive();
+		if(msg == null){
+			block();
+			return;
+		}
+		switch(msg.getPerformative()){
+		case ACLMessage.REQUEST:
+			handleRequestMessage(msg);
+			break;
+		}
 	}
 
+	private void handleRequestMessage(ACLMessage msg){
+		try {
+			Object content = msg.getContentObject();
+			if(content instanceof AmbulanceRequestMessage){
+				Object[] params = new Object[3];
+				params[0] = myAgent;
+				params[1] = ((AmbulanceRequestMessage) content).getPatient();
+				params[2] = getBases();
+				Behaviour b = goals.executePlan(EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT, params);
+				if(b!=null)
+					myAgent.addBehaviour(b);
+			}
+		} catch (UnreadableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private List<EmergencyResponseBase> getBases(){
+		return null; /*TODO*/
+	}
 	private void initAmbulances() {
 		ambulances = new ArrayList<AID>();
 
@@ -65,6 +109,12 @@ public class EmergencyControlBehaviour extends CyclicBehaviour {
 		} catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onEmergencyStateChange(EmergencyDetails ed) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

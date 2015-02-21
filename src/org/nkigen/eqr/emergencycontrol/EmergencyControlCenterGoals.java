@@ -3,10 +3,12 @@ package org.nkigen.eqr.emergencycontrol;
 import jade.core.behaviours.Behaviour;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.nkigen.eqr.agents.EmergencyControlCenterAgent;
 import org.nkigen.eqr.common.EQRGoal;
+import org.nkigen.eqr.common.EmergencyResponseBase;
 import org.nkigen.eqr.patients.PatientDetails;
 
 public class EmergencyControlCenterGoals extends EQRGoal {
@@ -38,12 +40,12 @@ public class EmergencyControlCenterGoals extends EQRGoal {
 	}
 
 	private Behaviour assignAmbulance(Object p[]) {
-		if (p.length == 2) {
+		if (p.length == 3) {
 			if (p[0] instanceof EmergencyControlCenterAgent
-					&& p[1] instanceof PatientDetails)
+					&& p[1] instanceof PatientDetails && p[3] instanceof List<?>) 
 				return new AssignAmbulanceBehaviour(
 						(EmergencyControlCenterAgent) p[0],
-						(PatientDetails) p[1]);
+						(PatientDetails) p[1], (List<EmergencyResponseBase>) p[3]);
 		}
 		System.out.println("Wrong Number of params ");
 		return null;
@@ -51,5 +53,11 @@ public class EmergencyControlCenterGoals extends EQRGoal {
 
 	private Behaviour assignFireEngine(Object p[]) {
 		return null;
+	}
+
+	@Override
+	public void newGoal(int which, Class behaviour) {
+		// TODO Auto-generated method stub
+		
 	}
 }

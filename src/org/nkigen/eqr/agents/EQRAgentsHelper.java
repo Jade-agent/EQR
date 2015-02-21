@@ -10,6 +10,7 @@ import desmoj.core.simulator.TimeInstant;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
+import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
@@ -18,6 +19,7 @@ public class EQRAgentsHelper {
 	static AID update_server;
 	static AID routing_server;
 	static AID viewer;
+	static AID command_center;
 	/*
 	 * Different types of objects in the experiment
 	 */
@@ -83,6 +85,26 @@ public class EQRAgentsHelper {
 			System.out.println("Failed searching int the DF!");
 		}
 		return update_server;
+	}
+	
+	public static AID locateControlCenter(Agent agent) {
+
+		if (command_center != null)
+			return command_center;
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType(EQRAgentTypes.EMERGENCY_CONTROL_CENTER_AGENT);
+		template.addServices(sd);
+		try {
+			DFAgentDescription[] result = DFService.search(agent, template);
+			
+			command_center = result[0].getName();
+		
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+
+		return command_center;
 	}
 
 	public static AID locateRoutingServer(Agent agent) {

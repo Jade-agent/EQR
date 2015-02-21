@@ -26,4 +26,10 @@ public class FireGoals extends EQRGoal {
 		System.out.println("Wrong Number of params ");
 		return null;
 	}
+
+	@Override
+	public void newGoal(int which, Class behaviour) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1,6 +1,7 @@
 package org.nkigen.eqr.fires;
 
 import org.nkigen.eqr.common.EmergencyDetails;
+import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 
 public class FireDetails  extends EmergencyDetails{
 
@@ -16,5 +17,6 @@ public class FireDetails  extends EmergencyDetails{
 
 	public void setStatus(int status) {
 		this.status = status;
+		EmergencyStateChangeInitiator.getInstance().notifyStateChanged(this);
 	}
 }

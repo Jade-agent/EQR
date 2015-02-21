@@ -1,10 +1,12 @@
 package org.nkigen.eqr.common;
 
+import java.io.Serializable;
+
 import jade.core.AID;
 
 import org.nkigen.maps.routing.EQRPoint;
 
-public class EmergencyDetails {
+public class EmergencyDetails implements Serializable{
 	AID aid;
 	int id;
 	EQRPoint location;
