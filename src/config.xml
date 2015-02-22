@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+
+              
+<eqr-config>
+				<patient-locations>
+								<location>
+												<lat>46.056332</lat>
+												<lon>11.133385</lon>
+								</location>
+								<location>
+												<lat>46.046269</lat>
+												<lon>11.134965</lon>
+								</location>
+				</patient-locations>
+				<ambulance-locations>
+								<location>
+												<num>5</num>
+												<lat>46.071944</lat>
+												<lon>11.119444</lon>
+								</location>
+				</ambulance-locations>
+				<fire-locations>
+								<location>
+												<lat>46.0443813625</lat>
+												<lon>11.1295622198</lon>
+								</location>
+								<location>
+												<lat>46.0846000</lat>
+												<lon>11.11145900</lon>
+								</location>
+				</fire-locations>
+				<fire-engine-location>
+								<location>
+												<num>5</num>
+												<lat>46.048079</lat>
+												<lon>11.127478</lon>
+								</location>
+				</fire-engine-location>
+				<hospital-locations>
+								<location>
+												<lat>46.0451711</lat>
+												<lon>11.1330579</lon>
+								</location>
+				</hospital-locations>
+</eqr-config>

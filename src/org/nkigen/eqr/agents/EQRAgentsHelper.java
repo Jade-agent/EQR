@@ -1,5 +1,6 @@
 package org.nkigen.eqr.agents;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.nkigen.eqr.common.EQRAgentTypes;
@@ -152,6 +153,28 @@ public class EQRAgentsHelper {
 			System.out.println("Failed for viewer searching int the DF!");
 		}
 		return viewer;
+	}
+
+	private ArrayList<AID> locateBases(String base, Agent agent) {
+		ArrayList<AID> bases = new ArrayList<AID>();
+
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType(base);
+		template.addServices(sd);
+		try {
+			DFAgentDescription[] result = DFService.search(agent, template);
+			bases.clear();
+			System.out.println(result.length);
+			for (int i = 0; i < result.length; ++i) {
+				bases.add(result[i].getName());
+				System.out.println(result[i].getName().getLocalName() +" Added to Bases of "+base);
+				return bases;
+			}
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+		return null;
 	}
 
 }

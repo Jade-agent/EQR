@@ -10,38 +10,83 @@ import org.nkigen.maps.routing.EQRPoint;
 
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 public class SimulationBehaviour extends CyclicBehaviour {
 
 	ArrayList<AID> patients;
 	ArrayList<AID> fires;
+	ArrayList<AID> ambulances;
+	ArrayList<AID> fire_engines;
+	ArrayList<AID> hospitals;
+	
+	boolean init_complete = false;
+	String config;
+	SimulationGoals goals;
 
-	boolean patients_init = false;
-	boolean fires_init = false;
 	public SimulationBehaviour(Agent a, String config) {
 		super(a);
+		this.config = config;
+		goals = new SimulationGoals();
 		initPatients();
 		initFires();
 	}
 
 	@Override
 	public void action() {
-
-		if(patients_init == false){
-			patients_init = true;
-			setupPatients();
+		/* Execute init plan */
+		if (!init_complete) {
+			Object[] params = new Object[2];
+			params[0] = myAgent;
+			params[1] = config;
+			Behaviour b = goals.executePlan(SimulationGoals.INIT_SIMULATION,
+					params);
+			if (b != null) {
+				myAgent.addBehaviour(b);
+			} else {
+				System.out.println(getBehaviourName() + "init failed!!");
+			}
+			return;
 		}
+		ACLMessage msg = myAgent.receive();
+		if(msg != null){
+			switch(msg.getPerformative()){
+			case ACLMessage.INFORM:
+				try {
+					Object content = msg.getContentObject();
+					if(content instanceof SimulationParamsMessage){
+						initSimulation((SimulationParamsMessage) content);
+					}
+				} catch (UnreadableException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			break;
+			}
+		}
+		else{
+			block();
+		}
+
+	}
+
+	private void initSimulation(SimulationParamsMessage params){
+		
+		
+		init_complete = true;
 	}
 	
-	private void setupPatients(){
-		if(patients != null){
-			for(int i=0; i< patients.size();i++){
+	private void setupPatients() {
+		if (patients != null) {
+			for (int i = 0; i < patients.size(); i++) {
 				PatientDetails pd = new PatientDetails();
 				pd.setAID(patients.get(i));
 				pd.setId(i);

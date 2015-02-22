@@ -25,8 +25,13 @@ import jade.lang.acl.UnreadableException;
 
 public class EmergencyControlBehaviour extends CyclicBehaviour implements EmergencyStateChangeListener{
 
+	/*TODO: Modify this*/
+	List<EmergencyResponseBase> ambulance_bases;
+	List<EmergencyResponseBase> hospital_bases;
+	List<EmergencyResponseBase> fire_engine_bases;
 	ArrayList<AID> ambulances;
 	ArrayList<AID> fire_engines;
+	
 	EmergencyControlCenterGoals goals;
 	public EmergencyControlBehaviour(Agent a) {
 		super(a);

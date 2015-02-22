@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
+import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EmergencyResponseBase;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
 import org.nkigen.eqr.messages.EQRRoutingError;
@@ -19,20 +20,20 @@ import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
-public class AssignAmbulanceBehaviour extends SimpleBehaviour {
+public class NearestHospitalBehaviour extends SimpleBehaviour {
 
 	boolean done = false;
 	boolean req_r = false; /* Not yet made a request to the router */
-	PatientDetails patient;
-	List<EmergencyResponseBase> bases;
+	AmbulanceDetails ambulance;
+	List<EmergencyResponseBase> hospitals;
 	AID router;
 
 	/* Assumbtion: This list of bases contain atleast an ambulance */
-	public AssignAmbulanceBehaviour(Agent a, PatientDetails p,
+	public NearestHospitalBehaviour(Agent a, AmbulanceDetails p,
 			List<EmergencyResponseBase> bases) {
 		super(a);
-		patient = p;
-		this.bases = bases;
+		ambulance = p;
+		this.hospitals = bases;
 	}
 
 	@Override
@@ -41,9 +42,9 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 
 		if (msg == null && !req_r) {
 			MultipleRoutingRequestMessage req = new MultipleRoutingRequestMessage();
-			req.setBases((ArrayList<EmergencyResponseBase>) bases);
+			req.setBases((ArrayList<EmergencyResponseBase>) hospitals);
 			req.setReply_to(myAgent.getAID());
-			req.setTo(patient.getLocation());
+			req.setTo(ambulance.getLocation());
 
 			if (router == null)
 				router = EQRAgentsHelper.locateRoutingServer(myAgent);
@@ -64,51 +65,41 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 
 				try {
 					content = msg.getContentObject();
+					if (content instanceof MultipleRoutingResponseMessage) {
+						System.out.println(getBehaviourName()
+								+ " route found for hospital-ambulance");
+						informAmbulance((MultipleRoutingResponseMessage) content);
+					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if (content instanceof MultipleRoutingResponseMessage) {
-					System.out.println(getBehaviourName()
-							+ " route found for patient-ambulance");
-					informPatientAndAmbulance((MultipleRoutingResponseMessage) content);
-				}
+
 				break;
 			}
 		}
 	}
 
-	private void informPatientAndAmbulance(MultipleRoutingResponseMessage msg) {
+	private void informAmbulance(MultipleRoutingResponseMessage msg) {
 		/* TODO */
 		EQRRoutingResult res = msg.getResult();
-		
-		ACLMessage to_patient = null;
+
 		ACLMessage to_ambulance = null;
 		if (res instanceof EQRRoutingError) {
-			to_patient = new ACLMessage(ACLMessage.FAILURE);
-			to_patient.addReceiver(patient.getAID());
-			try {
-				to_patient.setContentObject(res);
-				/* TODO: Put some useful message here */
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			myAgent.send(to_patient);
+			/*TODO: Inform Ambulance no route*/
+			System.out.println(getBehaviourName() + " error informAmbulance");
 			return;
 		}
 		to_ambulance = new ACLMessage(ACLMessage.INFORM);
-		to_patient = new ACLMessage(ACLMessage.INFORM);
-		AmbulanceNotifyMessage anm = new AmbulanceNotifyMessage(AmbulanceNotifyMessage.NOTIFY_PATIENT_ROUTE);
-		anm.setPatient(patient);
+		
+		AmbulanceNotifyMessage anm = new AmbulanceNotifyMessage(AmbulanceNotifyMessage.NOTIFY_HOSPITAL_ROUTE);
+		anm.setHospital(msg.getBase());
 		anm.setResult(res);
 		try {
 			to_ambulance.setContentObject(anm);
-			to_ambulance.addReceiver(msg.getBase().assignAmbulance());
+			to_ambulance.addReceiver(ambulance.getAID());
 			myAgent.send(to_ambulance);
-			to_patient.addReceiver(patient.getAID());
-			/*Add more useful info here for patient*/
-			myAgent.send(to_patient);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

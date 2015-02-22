@@ -12,5 +12,7 @@ public class EQRAgentTypes {
 	
 	public static String SIMULATION_AGENT = "simulation_agent";
 	
+	public static String HOSPITAL_AGENT = "hospital_agent";
+	
 	public static String EMERGENCY_CONTROL_CENTER_AGENT = "emergency_control_agent";
 }
