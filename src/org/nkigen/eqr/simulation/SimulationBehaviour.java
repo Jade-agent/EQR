@@ -44,26 +44,13 @@ public class SimulationBehaviour extends CyclicBehaviour {
 
 	public SimulationBehaviour(Agent a, String config) {
 		super(a);
+		System.out.println(config);
 		this.config = config;
 		goals = new SimulationGoals();
 	}
 
 	@Override
 	public void action() {
-		/* Execute init plan */
-		if (!init_complete) {
-			Object[] params = new Object[2];
-			params[0] = myAgent;
-			params[1] = config;
-			Behaviour b = goals.executePlan(SimulationGoals.INIT_SIMULATION,
-					params);
-			if (b != null) {
-				myAgent.addBehaviour(b);
-			} else {
-				System.out.println(getBehaviourName() + "init failed!!");
-			}
-			return;
-		}
 		ACLMessage msg = myAgent.receive();
 		if (msg != null) {
 			switch (msg.getPerformative()) {
@@ -84,6 +71,21 @@ public class SimulationBehaviour extends CyclicBehaviour {
 			block();
 		}
 
+		/* Execute init plan */
+		if (!init_complete) {
+			Object[] params = new Object[2];
+			params[0] = myAgent;
+			params[1] = config;
+			Behaviour b = goals.executePlan(SimulationGoals.INIT_SIMULATION,
+					params);
+			if (b != null) {
+				myAgent.addBehaviour(b);
+			} else {
+				System.out.println(getBehaviourName() + "init failed!!");
+			}
+			return;
+		}
+		
 	}
 
 	private void initSimulation(SimulationParamsMessage params) {

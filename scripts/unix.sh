@@ -11,9 +11,10 @@ set -x
 
 
 main(){
-#	java -classpath ${JADE_PATH}/lib/jade.jar jade.Boot -gui
-#	javac -classpath lib/jade.jar -d classes ${SRC_PATH}/*.java
-ant ${SRC_PATH}
+	ant -f ${SRC_PATH}/../../../build.xml
+#	java -classpath ${JADE_PATH}/lib/jade.jar jade.Boot -gui &
+	java -cp ${JADE_PATH}/lib/jade.jar; ${SRC_PATH}/../../../bin jade.Boot -gui -agents ping1:examples.PingAgent.PingAgent
+	#javac -classpath lib/jade.jar -d classes ${SRC_PATH}/*.java
 
 }
 

@@ -23,7 +23,6 @@ public class PatientBehaviour extends CyclicBehaviour implements EmergencyStateC
 
 	public PatientBehaviour(Agent agent) {
 		super(agent);
-		patient.setAID(myAgent.getAID());
 		 EmergencyStateChangeInitiator.getInstance().addListener(this);
 		goals = new PatientGoals();
 		goals.newGoal(PatientGoals.REQUEST_AMBULANCE_PICKUP, RequestAmbulanceBehaviour.class);

@@ -18,6 +18,13 @@ public class SimulationGoals extends EQRGoal {
 	}
 
     private Behaviour initSimulationGoal(Object[] p){
+    	if(p.length != 2)
+    		return null;
+    	else{
+    		if(p[0] instanceof SimulationAgent && p[1] instanceof String){
+    			return new InitSimulationBehaviour((SimulationAgent)p[0], (String)p[1]);
+    		}
+    	}
     	return null;
     }
 	@Override

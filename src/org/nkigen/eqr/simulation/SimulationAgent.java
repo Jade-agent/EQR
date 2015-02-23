@@ -13,7 +13,7 @@ public class SimulationAgent extends EQRAgent{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	String config_file; /*Make it an agent parameter*/
+	String config_file = "/home/nkigen/development/git/EQR/src/config.xml"; /*Make it an agent parameter*/
 	protected void setup() {
 		setType(EQRAgentTypes.SIMULATION_AGENT);
 		SequentialBehaviour sb = new SequentialBehaviour();
