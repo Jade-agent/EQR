@@ -128,6 +128,7 @@ public class ParseinitXMLFile {
 					EmergencyResponseBase base = new EmergencyResponseBase(
 							EmergencyResponseBase.HOSPITAL_BASE);
 					base.setLocation(getPoint(lat, lon));
+					base.setMax(1);
 					bases.add(base);
 				}
 
@@ -158,6 +159,7 @@ public class ParseinitXMLFile {
 					EmergencyResponseBase base = new EmergencyResponseBase(
 							EmergencyResponseBase.FIREENGINE_BASE);
 					base.setLocation(getPoint(lat, lon));
+					base.setMax(num);
 					bases.add(base);
 				}
 
@@ -187,7 +189,9 @@ public class ParseinitXMLFile {
 					EmergencyResponseBase base = new EmergencyResponseBase(
 							EmergencyResponseBase.AMBULANCE_BASE);
 					base.setLocation(getPoint(lat, lon));
+					base.setMax(num);
 					bases.add(base);
+					
 				}
 
 			}

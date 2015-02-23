@@ -12,6 +12,7 @@ import org.nkigen.eqr.ambulance.AmbulanceGoals;
 import org.nkigen.eqr.common.EmergencyDetails;
 import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
+import org.nkigen.eqr.messages.AmbulanceInitMessage;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
 import org.nkigen.eqr.models.EQREmergencyPoint;
 
@@ -46,6 +47,9 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 						if (b != null)
 							myAgent.addBehaviour(b);
 					}
+					else if(content instanceof AmbulanceInitMessage){
+						details = ((AmbulanceInitMessage)content).getAmbulance();
+					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -56,6 +60,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 		}
 	}
 
+	
 	@Override
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub

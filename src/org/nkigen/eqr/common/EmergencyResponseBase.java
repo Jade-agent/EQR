@@ -15,7 +15,18 @@ public class EmergencyResponseBase implements Serializable {
 	EQRPoint location;
 	ArrayList<AID> busy;
 	ArrayList<AID> available; /*For hospitals only one item here*/
+	int max;
     int type;
+    public void setMax(int max){
+    	this.max = max;
+    }
+    public int getMax(){
+    	return max;
+    }
+    public void addResponder(AID r){
+    	available.add(r);
+    }
+    
 	public EmergencyResponseBase(int type) {
 		busy = new ArrayList<AID>();
 		available = new ArrayList<AID>();

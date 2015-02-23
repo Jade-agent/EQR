@@ -10,7 +10,7 @@ public class HospitalDetails extends EmergencyDetails {
 	ArrayList<PatientDetails> patients;
 
 	public HospitalDetails() {
-
+		patients = new ArrayList<PatientDetails>();
 	}
 
 	public void newPatient(PatientDetails patient) {

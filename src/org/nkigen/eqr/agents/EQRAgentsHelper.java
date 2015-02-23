@@ -155,7 +155,7 @@ public class EQRAgentsHelper {
 		return viewer;
 	}
 
-	private ArrayList<AID> locateBases(String base, Agent agent) {
+	public static ArrayList<AID> locateBases(String base, Agent agent) {
 		ArrayList<AID> bases = new ArrayList<AID>();
 
 		DFAgentDescription template = new DFAgentDescription();
