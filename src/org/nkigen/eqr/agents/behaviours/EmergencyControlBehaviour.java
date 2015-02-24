@@ -3,6 +3,7 @@ package org.nkigen.eqr.agents.behaviours;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EQRAgentTypes;
 import org.nkigen.eqr.common.EmergencyDetails;
 import org.nkigen.eqr.common.EmergencyResponseBase;
@@ -12,6 +13,7 @@ import org.nkigen.eqr.emergencycontrol.AssignAmbulanceBehaviour;
 import org.nkigen.eqr.emergencycontrol.EmergencyControlCenterGoals;
 import org.nkigen.eqr.messages.AmbulanceRequestMessage;
 import org.nkigen.eqr.messages.ControlCenterInitMessage;
+import org.nkigen.eqr.messages.HospitalRequestMessage;
 import org.nkigen.eqr.messages.PatientInitMessage;
 
 import jade.core.AID;
@@ -104,6 +106,24 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 								params);
 				if (b != null)
 					myAgent.addBehaviour(b);
+			} else if (content instanceof HospitalRequestMessage) {
+				if (((HospitalRequestMessage) content).getType() == HospitalRequestMessage.HOSPITAL_REQUEST) {
+					System.out
+							.println(myAgent.getLocalName()
+									+ " Hospital request received from "
+									+ ((AmbulanceDetails) ((HospitalRequestMessage) content)
+											.getMessage()[0]).getAID());
+					Object[] params = new Object[3];
+					params[0] = myAgent;
+					params[1] = ((HospitalRequestMessage) content).getMessage()[0];
+					System.out.println(" Hospitals " + hospital_bases.size());
+					params[2] = hospital_bases;
+					Behaviour b = goals.executePlan(
+							EmergencyControlCenterGoals.GET_NEAREST_HOSPITAL,
+							params);
+					if (b != null)
+						myAgent.addBehaviour(b);
+				}
 			}
 		} catch (UnreadableException e) {
 			// TODO Auto-generated catch block

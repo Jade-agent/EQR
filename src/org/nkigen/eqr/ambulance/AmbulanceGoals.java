@@ -5,6 +5,7 @@ import jade.core.behaviours.Behaviour;
 import org.nkigen.eqr.agents.AmbulanceAgent;
 import org.nkigen.eqr.common.EQRGoal;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
+import org.nkigen.eqr.patients.PatientDetails;
 
 public class AmbulanceGoals extends EQRGoal {
 
@@ -23,18 +24,17 @@ public class AmbulanceGoals extends EQRGoal {
 		}
 		return null;
 	}
-	
+
 	private Behaviour toNearestHospitalPlan(Object[] p) {
-		if (p.length != 2)
+		if (p.length != 3)
 			return null;
-		if (p[0] instanceof AmbulanceAgent
-				&& p[1] instanceof AmbulanceDetails)
-			return new PickPatientBehaviour((AmbulanceAgent) p[0],
-					(AmbulanceNotifyMessage) p[1], (AmbulanceDetails) p[2]);
+		if (p[0] instanceof AmbulanceAgent && p[1] instanceof PatientDetails
+				&& p[2] instanceof AmbulanceDetails)
+			return new AmbulanceNearestHospitalBehaviour((AmbulanceAgent) p[0],
+					(PatientDetails) p[1], (AmbulanceDetails) p[2]);
 
 		return null;
 	}
-
 
 	private Behaviour pickPatientPlan(Object[] p) {
 		if (p.length != 3)

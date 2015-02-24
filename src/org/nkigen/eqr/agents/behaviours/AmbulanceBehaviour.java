@@ -14,6 +14,7 @@ import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.messages.AmbulanceInitMessage;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
+import org.nkigen.eqr.messages.PickPatientMessage;
 import org.nkigen.eqr.models.EQREmergencyPoint;
 
 public class AmbulanceBehaviour extends CyclicBehaviour implements
@@ -52,6 +53,17 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 					else if(content instanceof AmbulanceInitMessage){
 						details = ((AmbulanceInitMessage)content).getAmbulance();
 						details.setListener(listener);
+					}
+					else if(content instanceof PickPatientMessage){
+						System.out.println(myAgent.getLocalName()+" : Trying to find the neareset hospital for "+
+								((PickPatientMessage) content).getPatient().getAID());
+						Object[] params = new Object[3];
+						params[0] = myAgent;
+						params[1] = ((PickPatientMessage) content).getPatient();
+						params[2] = details;
+						Behaviour b = goals.executePlan(AmbulanceGoals.TO_NEAREST_HOSPITAL, params);
+						if (b != null)
+							myAgent.addBehaviour(b);
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block

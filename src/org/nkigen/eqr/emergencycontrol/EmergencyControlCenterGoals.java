@@ -47,7 +47,7 @@ public class EmergencyControlCenterGoals extends EQRGoal {
 	private Behaviour getNearestHospitalPlan(Object p[]) {
 		if (p.length == 3) {
 			if (p[0] instanceof EmergencyControlCenterAgent
-					&& p[1] instanceof PatientDetails && p[2] instanceof List<?>) 
+					&& p[1] instanceof AmbulanceDetails && p[2] instanceof List<?>) 
 				return new NearestHospitalBehaviour(
 						(EmergencyControlCenterAgent) p[0],
 						(AmbulanceDetails) p[1], (List<EmergencyResponseBase>) p[2]);
