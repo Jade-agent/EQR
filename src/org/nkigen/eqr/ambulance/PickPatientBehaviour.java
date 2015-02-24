@@ -38,12 +38,21 @@ public class PickPatientBehaviour extends SimpleBehaviour {
 	@Override
 	public void action() {
 		List<EQRPoint> points = route.getPoints();
+
 		long duration = route.getDuration();
 		double distance = route.getDistance();
+		System.out.println(getBehaviourName()+ " "+ myAgent.getLocalName()+ " duration "+ duration + " dist "+ distance+ " points "+ route.getPoints().size()+ " sleep "+ (long)duration/route.getPoints().size());
 	  for(EQRPoint p : points){
-		  ambulance.setCurrentLocation(p);
 		  
-		  block((long)distance/duration);
+		  ambulance.setCurrentLocation(p);
+		  //System.out.println(myAgent.getLocalName()+ " loc: "+ p);
+		  
+		 try {
+			Thread.sleep((long)duration/route.getPoints().size());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	  }
 	  ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 	  msg.addReceiver(patient.getAID());

@@ -28,6 +28,7 @@ public class FireBehaviour extends CyclicBehaviour {
 					Object content = msg.getContentObject();
 					 if(content instanceof FireInitMessage){
 						fd = ((FireInitMessage)content).getFire();
+						System.out.println(getBehaviourName()+" Fire init recieved "+ myAgent.getLocalName());
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block

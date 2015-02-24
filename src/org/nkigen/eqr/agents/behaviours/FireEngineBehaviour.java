@@ -20,7 +20,7 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 
 	public FireEngineBehaviour(Agent agent) {
 		super(agent);
-		EmergencyStateChangeInitiator.getInstance().addListener(this);
+	//	EmergencyStateChangeInitiator.getInstance().addListener(this);
 	}
 
 	@Override

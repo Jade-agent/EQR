@@ -57,31 +57,36 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 			}
 			myAgent.send(to_send);
 			req_r = true;
-		} else {
+		} else if (msg != null && req_r) {
 			Object content = null;
 			switch (msg.getPerformative()) {
 			case ACLMessage.INFORM:
 
 				try {
 					content = msg.getContentObject();
+					if (content instanceof MultipleRoutingResponseMessage) {
+						System.out.println(getBehaviourName()
+								+ " route found for patient-ambulance");
+						informPatientAndAmbulance((MultipleRoutingResponseMessage) content);
+					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if (content instanceof MultipleRoutingResponseMessage) {
-					System.out.println(getBehaviourName()
-							+ " route found for patient-ambulance");
-					informPatientAndAmbulance((MultipleRoutingResponseMessage) content);
-				}
+
 				break;
 			}
 		}
 	}
 
+	private boolean isSameBase(EmergencyResponseBase b1, EmergencyResponseBase b2){
+		return b1.getLocation().getLatitude() == b2.getLocation().getLatitude() &&
+				b1.getLocation().getLongitude() == b2.getLocation().getLongitude();
+	}
 	private void informPatientAndAmbulance(MultipleRoutingResponseMessage msg) {
 		/* TODO */
 		EQRRoutingResult res = msg.getResult();
-		
+
 		ACLMessage to_patient = null;
 		ACLMessage to_ambulance = null;
 		if (res instanceof EQRRoutingError) {
@@ -99,15 +104,21 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 		}
 		to_ambulance = new ACLMessage(ACLMessage.INFORM);
 		to_patient = new ACLMessage(ACLMessage.INFORM);
-		AmbulanceNotifyMessage anm = new AmbulanceNotifyMessage(AmbulanceNotifyMessage.NOTIFY_PATIENT_ROUTE);
+		AmbulanceNotifyMessage anm = new AmbulanceNotifyMessage(
+				AmbulanceNotifyMessage.NOTIFY_PATIENT_ROUTE);
 		anm.setPatient(patient);
 		anm.setResult(res);
 		try {
 			to_ambulance.setContentObject(anm);
-			to_ambulance.addReceiver(msg.getBase().assignAmbulance());
+			for(EmergencyResponseBase b : bases){
+				if(isSameBase(b, msg.getBase())){
+					System.out.println(getBehaviourName()+"BASES ARE EQUAL: ");
+					to_ambulance.addReceiver(b.assignAmbulance());
+				}
+			}
 			myAgent.send(to_ambulance);
 			to_patient.addReceiver(patient.getAID());
-			/*Add more useful info here for patient*/
+			/* Add more useful info here for patient */
 			myAgent.send(to_patient);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

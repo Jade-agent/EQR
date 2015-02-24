@@ -36,10 +36,11 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 	ArrayList<AID> fire_engines;
 
 	EmergencyControlCenterGoals goals;
+	boolean is_setup_complete = false;
 
 	public EmergencyControlBehaviour(Agent a) {
 		super(a);
-		EmergencyStateChangeInitiator.getInstance().addListener(this);
+		// EmergencyStateChangeInitiator.getInstance().addListener(this);
 		goals = new EmergencyControlCenterGoals();
 		initAmbulances();
 		initFireEngines();
@@ -55,7 +56,10 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		}
 		switch (msg.getPerformative()) {
 		case ACLMessage.REQUEST:
-			handleRequestMessage(msg);
+			if (is_setup_complete)
+				handleRequestMessage(msg);
+			else
+				myAgent.send(msg);
 			break;
 		case ACLMessage.INFORM:
 			try {
@@ -64,7 +68,7 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 					System.out.println(getBehaviourName()
 							+ " Init Message recvd");
 					initControlCenter((ControlCenterInitMessage) content);
-
+					is_setup_complete = true;
 				}
 			} catch (UnreadableException e) {
 				// TODO Auto-generated catch block
@@ -78,6 +82,11 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		ambulance_bases = msg.getAmbulance_bases();
 		fire_engine_bases = msg.getFire_engine_bases();
 		hospital_bases = msg.getHospital_bases();
+		// System.out.println(getBehaviourName()+" "+
+		// myAgent.getLocalName()+": amb_b "+ ambulance_bases.size()+
+		// " fireb "+fire_engine_bases.size()+" :nfb "
+		// +ambulance_bases.get(0).getAvailable().size()+" hb "+
+		// hospital_bases.size());
 	}
 
 	private void handleRequestMessage(ACLMessage msg) {
@@ -87,7 +96,8 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 				Object[] params = new Object[3];
 				params[0] = myAgent;
 				params[1] = ((AmbulanceRequestMessage) content).getPatient();
-				params[2] = getBases();
+				System.out.println(" Ambulance " + ambulance_bases.size());
+				params[2] = getAvailableAmbulanceBases();
 				Behaviour b = goals
 						.executePlan(
 								EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT,
@@ -101,8 +111,14 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		}
 	}
 
-	private List<EmergencyResponseBase> getBases() {
-		return null; /* TODO */
+	private List<EmergencyResponseBase> getAvailableAmbulanceBases() {
+		ArrayList<EmergencyResponseBase> avail = new ArrayList<EmergencyResponseBase>();
+		for (EmergencyResponseBase b : ambulance_bases)
+			if (b.getAvailable().size() > 0)
+				avail.add(b);
+		if (avail.size() > 0)
+			return avail;
+		return null;
 	}
 
 	private void initAmbulances() {

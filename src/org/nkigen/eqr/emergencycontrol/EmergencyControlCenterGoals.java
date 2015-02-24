@@ -2,6 +2,7 @@ package org.nkigen.eqr.emergencycontrol;
 
 import jade.core.behaviours.Behaviour;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,22 +47,23 @@ public class EmergencyControlCenterGoals extends EQRGoal {
 	private Behaviour getNearestHospitalPlan(Object p[]) {
 		if (p.length == 3) {
 			if (p[0] instanceof EmergencyControlCenterAgent
-					&& p[1] instanceof PatientDetails && p[3] instanceof List<?>) 
+					&& p[1] instanceof PatientDetails && p[2] instanceof List<?>) 
 				return new NearestHospitalBehaviour(
 						(EmergencyControlCenterAgent) p[0],
-						(AmbulanceDetails) p[1], (List<EmergencyResponseBase>) p[3]);
+						(AmbulanceDetails) p[1], (List<EmergencyResponseBase>) p[2]);
 		}
 		System.out.println("Wrong Number of params ");
 		return null;
 	}
 
 	private Behaviour assignAmbulance(Object p[]) {
+		
 		if (p.length == 3) {
 			if (p[0] instanceof EmergencyControlCenterAgent
-					&& p[1] instanceof PatientDetails && p[3] instanceof List<?>) 
+					&& p[1] instanceof PatientDetails && p[2] instanceof ArrayList<?>) 
 				return new AssignAmbulanceBehaviour(
 						(EmergencyControlCenterAgent) p[0],
-						(PatientDetails) p[1], (List<EmergencyResponseBase>) p[3]);
+						(PatientDetails) p[1], (List<EmergencyResponseBase>) p[2]);
 		}
 		System.out.println("Wrong Number of params ");
 		return null;

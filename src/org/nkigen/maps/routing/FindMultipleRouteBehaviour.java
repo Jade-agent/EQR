@@ -43,6 +43,7 @@ public class FindMultipleRouteBehaviour extends OneShotBehaviour {
 
 		ArrayList<EmergencyResponseBase> bases = request.getBases();
 		if (bases != null) {
+			System.out.println(getBehaviourName()+ " Finding shortest route from " +bases.size() +" possibilities");
 			for (EmergencyResponseBase b : request.getBases()) {
 				EQRPoint from = b.getLocation();
 				req = new EQRRoutingCriteria(from, request.getTo());
@@ -68,6 +69,7 @@ public class FindMultipleRouteBehaviour extends OneShotBehaviour {
 
 				}
 			}
+			System.out.println("Route found to "+ req.getTo()+" FROM "+ closest.getLocation() );
 		}
 
 		reply.setPerformative(ACLMessage.INFORM);

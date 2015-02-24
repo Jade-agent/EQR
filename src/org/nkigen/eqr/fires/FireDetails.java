@@ -17,6 +17,6 @@ public class FireDetails  extends EmergencyDetails{
 
 	public void setStatus(int status) {
 		this.status = status;
-		EmergencyStateChangeInitiator.getInstance().notifyStateChanged(this);
+	//	EmergencyStateChangeInitiator.getInstance().notifyStateChanged(this);
 	}
 }

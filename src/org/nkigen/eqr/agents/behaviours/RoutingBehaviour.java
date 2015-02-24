@@ -47,10 +47,8 @@ public class RoutingBehaviour extends CyclicBehaviour {
 
 	@Override
 	public void action() {
-		System.out.println("Router: New message received");
 		ACLMessage msg = agent.receive();
 		if (msg == null) {
-			System.out.println("Router: New message received but its NULL");
 			block();
 			return;
 		}
@@ -62,7 +60,7 @@ public class RoutingBehaviour extends CyclicBehaviour {
 			case ACLMessage.REQUEST:
 				if (content instanceof EQRRoutingCriteria) {
 					System.out.println(getBehaviourName()
-							+ " New message received....Message understood");
+							+ " New Single Request received");
 					Object[] params = new Object[3];
 					params[0] = myAgent;
 					params[1] = msg;
@@ -72,7 +70,7 @@ public class RoutingBehaviour extends CyclicBehaviour {
 					agent.addBehaviour(b);
 				} else if (content instanceof MultipleRoutingRequestMessage) {
 					System.out.println(getBehaviourName()
-							+ " New message received....Message understood");
+							+ " New Multiple Route Request received");
 					Object[] params = new Object[2];
 					params[0] = myAgent;
 					((MultipleRoutingRequestMessage) content).setReply_to(msg

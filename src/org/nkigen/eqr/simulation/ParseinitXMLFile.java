@@ -165,6 +165,7 @@ public class ParseinitXMLFile {
 
 			}
 		}
+		params.setFire_engines(bases);
 	}
 
 	private void parseAmbulanceLocations(NodeList nList) {
@@ -196,6 +197,7 @@ public class ParseinitXMLFile {
 
 			}
 		}
+		params.setAmbulances(bases);
 	}
 
 	public static void main(String[] a) {

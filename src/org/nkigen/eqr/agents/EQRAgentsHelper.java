@@ -169,8 +169,8 @@ public class EQRAgentsHelper {
 			for (int i = 0; i < result.length; ++i) {
 				bases.add(result[i].getName());
 				System.out.println(result[i].getName().getLocalName() +" Added to Bases of "+base);
-				return bases;
 			}
+			return bases;
 		} catch (FIPAException fe) {
 			fe.printStackTrace();
 		}

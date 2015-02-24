@@ -67,12 +67,14 @@ public class EmergencyResponseBase implements Serializable {
 		this.available = responders;
 	}
 
-	public AID assignAmbulance() {
+	public synchronized AID assignAmbulance() {
 		AID aid = null;
 		if (available.size() > 0) {
 			aid = available.get(0);
 			available.remove(0);
 			busy.add(aid);
+			System.out.println(getClass().getName()+": Ambulance assigned "+ aid + ": REMAINING ambulances "+ available.size());
+			
 		}
 		return aid;
 	}

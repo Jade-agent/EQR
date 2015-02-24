@@ -20,10 +20,11 @@ public class PatientBehaviour extends CyclicBehaviour implements EmergencyStateC
 
 	PatientDetails patient = null;
 	PatientGoals goals;
-
+	EmergencyStateChangeInitiator listener;
 	public PatientBehaviour(Agent agent) {
 		super(agent);
-		 EmergencyStateChangeInitiator.getInstance().addListener(this);
+		listener = new EmergencyStateChangeInitiator();
+		 listener.addListener(this);
 		goals = new PatientGoals();
 		goals.newGoal(PatientGoals.REQUEST_AMBULANCE_PICKUP, RequestAmbulanceBehaviour.class);
 		System.out.println(getClass().getName()+" Stated");
@@ -47,7 +48,9 @@ public class PatientBehaviour extends CyclicBehaviour implements EmergencyStateC
 				System.out.println(getClass().getName()+" Init Message recvd");
 				if(patient == null){
 					patient = ((PatientInitMessage) content).getPatient();
+					patient.setListener(listener);
 					System.out.println(getClass().getName()+" Patient Initialized");
+					patient.setStatus(EmergencyStatus.PATIENT_WAITING);
 				}
 			}
 		} catch (UnreadableException e) {
@@ -58,11 +61,11 @@ public class PatientBehaviour extends CyclicBehaviour implements EmergencyStateC
 	@Override
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub
-		System.out.println(getClass().getName()+" On State Change");
+		
 		Object[] params = new Object[2];
 		Behaviour behaviour = null;
-		if(ed instanceof PatientDetails && ed.getAID() == myAgent.getAID()){
-			
+		if(ed instanceof PatientDetails ){//&& ed.getAID() == myAgent.getAID()
+			System.out.println(getClass().getName()+" On State Change "+ ed.getAID() + " myAID " + myAgent.getAID());
 			switch(((PatientDetails) ed).getStatus()){
 			case EmergencyStatus.PATIENT_WAITING:
 				params[0] = myAgent;

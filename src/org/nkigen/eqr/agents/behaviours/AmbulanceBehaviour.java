@@ -21,10 +21,11 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 
 	AmbulanceGoals goals;
 	AmbulanceDetails details;
-
+	EmergencyStateChangeInitiator listener;
 	public AmbulanceBehaviour(Agent agent) {
 		super(agent);
-		EmergencyStateChangeInitiator.getInstance().addListener(this);
+		listener = new EmergencyStateChangeInitiator();
+		listener.addListener(this);
 		goals = new AmbulanceGoals();
 	}
 
@@ -37,6 +38,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 				try {
 					Object content = msg.getContentObject();
 					if (content instanceof AmbulanceNotifyMessage) {
+						System.out.println(getBehaviourName()+ " "+ myAgent.getLocalName()+ " recv notification msg");
 						Object[] params = new Object[3];
 						params[0] = myAgent;
 						params[1] = (AmbulanceNotifyMessage) content;
@@ -49,6 +51,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 					}
 					else if(content instanceof AmbulanceInitMessage){
 						details = ((AmbulanceInitMessage)content).getAmbulance();
+						details.setListener(listener);
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
@@ -64,7 +67,9 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 	@Override
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub
-
+		if(ed instanceof AmbulanceDetails){
+			System.out.println(getBehaviourName()+ " "+ myAgent.getLocalName()+ " Location changed to "+ ((AmbulanceDetails)ed).getCurrentLocation());
+		}
 	}
 
 }

@@ -120,11 +120,16 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		fire_engines = EQRAgentsHelper.locateBases(EQRAgentTypes.FIRE_ENGINE_AGENT,
 				myAgent);
 
+		//System.out.println(getBehaviourName()+" "+ myAgent.getLocalName()+" fire engines: "+ fire_engines.size()+ 
+			//	" loc size" + loc.size());
 		if (fire_engines != null) {
 			int k = 0;
 			for (int j = 0, i = 0; j < loc.size(); j++) {
-				for (; i < fire_engines.size() || i >= loc.get(j).getMax(); i++,k++) {
-					loc.get(i).addResponder(fire_engines.get(i));
+				//System.out.println(getBehaviourName()+" "+ myAgent.getLocalName()+ " MAX value :"+loc.get(j).getMax());
+				
+				for (; i < fire_engines.size() && i < loc.get(j).getMax(); i++,k++) {
+					loc.get(j).addResponder(fire_engines.get(i));
+					System.out.println(getBehaviourName()+" "+ myAgent.getLocalName()+ " fer added");
 					FireEngineDetails pd = new FireEngineDetails();
 					pd.setAID(fire_engines.get(i));
 					pd.setId(k);
@@ -155,8 +160,8 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		if (ambulances != null) {
 			int k = 0;
 			for (int j = 0, i = 0; j < loc.size(); j++) {
-				for (; i < ambulances.size() || i >= loc.get(j).getMax(); i++,k++) {
-					loc.get(i).addResponder(ambulances.get(i));
+				for (; i < ambulances.size() && i < loc.get(j).getMax(); i++,k++) {
+					loc.get(j).addResponder(ambulances.get(i));
 					AmbulanceDetails pd = new AmbulanceDetails();
 					pd.setAID(ambulances.get(i));
 
@@ -185,7 +190,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				myAgent);
 
 		if (hospitals != null) {
-			for (int i = 0, j = 0; i < hospitals.size() || j < loc.size(); i++, j++) {
+			for (int i = 0, j = 0; i < hospitals.size() && j < loc.size(); i++, j++) {
 				loc.get(i).addResponder(hospitals.get(i));
 				HospitalDetails pd = new HospitalDetails();
 				pd.setAID(hospitals.get(i));
@@ -209,7 +214,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 
 	private void setupFires(ArrayList<EQRPoint> loc) {
 		if (fires != null) {
-			for (int i = 0, j = 0; i < fires.size() || j < loc.size(); i++, j++) {
+			for (int i = 0, j = 0; i < fires.size() && j < loc.size(); i++, j++) {
 				FireDetails pd = new FireDetails();
 				pd.setAID(fires.get(i));
 				pd.setId(i);
@@ -232,7 +237,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 
 	private void setupPatients(ArrayList<EQRPoint> loc) {
 		if (patients != null) {
-			for (int i = 0, j = 0; i < patients.size() || j < loc.size(); i++, j++) {
+			for (int i = 0, j = 0; i < patients.size() && j < loc.size(); i++, j++) {
 				PatientDetails pd = new PatientDetails();
 				pd.setAID(patients.get(i));
 				pd.setId(i);

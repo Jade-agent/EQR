@@ -1,22 +1,18 @@
 package org.nkigen.eqr.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmergencyStateChangeInitiator {
+public class EmergencyStateChangeInitiator implements Serializable {
 
 	 List<EmergencyStateChangeListener> listeners;
-	private static EmergencyStateChangeInitiator initiator;
-	protected EmergencyStateChangeInitiator() {
+	public EmergencyStateChangeInitiator() {
 		listeners = new ArrayList<EmergencyStateChangeListener>();
-	}
-	public static EmergencyStateChangeInitiator getInstance(){
-		if(initiator == null)
-			initiator = new EmergencyStateChangeInitiator();
-		return initiator;
 	}
 
 	public void addListener(EmergencyStateChangeListener listener) {
+		
 		listeners.add(listener);
 	}
 	

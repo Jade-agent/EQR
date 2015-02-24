@@ -40,8 +40,9 @@ public class RequestAmbulanceBehaviour extends SimpleBehaviour {
 			msg.addReceiver(command_center);
 			myAgent.send(msg);
 			req_made = true;
+			System.out.println(getBehaviourName() + " "+ myAgent.getLocalName()+" Message sent to CC");
 		}
-		else{
+		else if(msg != null && req_made){
 			switch(msg.getPerformative()){
 			case ACLMessage.CONFIRM:
 				try {

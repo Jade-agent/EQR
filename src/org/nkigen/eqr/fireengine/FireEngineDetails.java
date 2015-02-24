@@ -17,6 +17,6 @@ public class FireEngineDetails extends EmergencyDetails{
 
 	public void setCurrentLocation(EQRPoint current_location) {
 		this.current_location = current_location;
-		EmergencyStateChangeInitiator.getInstance().notifyStateChanged(this);
+	//	EmergencyStateChangeInitiator.getInstance().notifyStateChanged(this);
 	}
 }
