@@ -12,6 +12,7 @@ import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.emergencycontrol.AssignAmbulanceBehaviour;
 import org.nkigen.eqr.emergencycontrol.EmergencyControlCenterGoals;
 import org.nkigen.eqr.messages.AmbulanceRequestMessage;
+import org.nkigen.eqr.messages.BaseRouteMessage;
 import org.nkigen.eqr.messages.ControlCenterInitMessage;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
 import org.nkigen.eqr.messages.PatientInitMessage;
@@ -84,11 +85,11 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		ambulance_bases = msg.getAmbulance_bases();
 		fire_engine_bases = msg.getFire_engine_bases();
 		hospital_bases = msg.getHospital_bases();
-		// System.out.println(getBehaviourName()+" "+
-		// myAgent.getLocalName()+": amb_b "+ ambulance_bases.size()+
-		// " fireb "+fire_engine_bases.size()+" :nfb "
-		// +ambulance_bases.get(0).getAvailable().size()+" hb "+
-		// hospital_bases.size());
+		System.out.println(getBehaviourName() + " " + myAgent.getLocalName()
+				+ ": amb_b " + ambulance_bases.size() + " fireb "
+				+ fire_engine_bases.size() + " :nfb "
+				+ ambulance_bases.get(0).getAvailable().size() + " hb "
+				+ hospital_bases.get(0).getAvailable().size());
 	}
 
 	private void handleRequestMessage(ACLMessage msg) {
@@ -123,6 +124,22 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 							params);
 					if (b != null)
 						myAgent.addBehaviour(b);
+				}
+			} else if (content instanceof BaseRouteMessage) {
+				BaseRouteMessage brm = (BaseRouteMessage) content;
+				if (brm.getType() == BaseRouteMessage.REQUEST) {
+					System.out.println(myAgent.getLocalName()
+							+ " Back to base msg received");
+					Object[] params = new Object[3];
+					params[0] = myAgent;
+					params[1] = msg.createReply();
+					params[2] = brm;
+					Behaviour b = goals.executePlan(
+							EmergencyControlCenterGoals.GET_RESPONDER_TO_BASE,
+							params);
+					if (b != null)
+						myAgent.addBehaviour(b);
+				
 				}
 			}
 		} catch (UnreadableException e) {

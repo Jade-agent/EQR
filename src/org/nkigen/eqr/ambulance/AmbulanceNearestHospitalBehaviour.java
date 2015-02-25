@@ -1,12 +1,18 @@
 package org.nkigen.eqr.ambulance;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.common.EmergencyResponseBase;
+import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
+import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
 import org.nkigen.eqr.patients.PatientDetails;
+import org.nkigen.maps.routing.EQRPoint;
+import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -69,6 +75,12 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 				break;
 			}
 		}
+		else{
+			if(msg != null){
+				myAgent.send(msg);
+				done = true;
+			}
+		}
 
 	}
 
@@ -77,8 +89,44 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 		if (data.length == 2) {
 			EmergencyResponseBase base = (EmergencyResponseBase) data[0];
 			EQRRoutingResult route = (EQRRoutingResult) data[1];
-			System.out.println(myAgent.getLocalName()
-					+ ": Response Base found to be: " + base.getLocation());
+			if (route instanceof EQRRoutingError) {
+				System.out.println(myAgent.getLocalName()
+						+ " ERROR: cant find route to hospital");
+			} else {
+				List<EQRPoint> points = ((EQRGraphHopperResult)route).getPoints();
+				System.out.println(myAgent.getLocalName()
+						+ ": Response Base found to be: " + base.getLocation()
+						+ " length "+ points.size());
+				for (EQRPoint p : points) {
+
+					ambulance.setCurrentLocation(p);
+					// System.out.println(myAgent.getLocalName()+ " loc: "+ p);
+
+				//	try {
+					//	Thread.sleep((long) duration / route.getPoints().size());
+					
+				//	} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+					//	e.printStackTrace();
+				//	}
+				}
+				System.out.println(myAgent.getLocalName()
+						+ " Patient arrived safely at hospital "+ patient.getAID()+ " BASE: "+ base.getLocation());
+				HospitalArrivalMessage ham = new HospitalArrivalMessage();
+				ham.setPatient(patient);
+				ACLMessage notify = new ACLMessage(ACLMessage.INFORM);
+				notify.addReceiver(patient.getAID());
+				notify.addReceiver(myAgent.getAID());
+				notify.addReceiver(base.getAvailable().get(0));
+				try {
+					notify.setContentObject(ham);
+					myAgent.send(notify);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
 		}
 		done = true;
 	}

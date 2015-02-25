@@ -2,6 +2,7 @@ package org.nkigen.eqr.agents.behaviours;
 
 import org.nkigen.eqr.hospital.HospitalDetails;
 import org.nkigen.eqr.messages.FireInitMessage;
+import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.HospitalInitMessage;
 
 import jade.core.Agent;
@@ -26,8 +27,13 @@ public class HospitalBehaviour extends CyclicBehaviour {
 			case ACLMessage.INFORM:
 				try {
 					Object content = msg.getContentObject();
-					 if(content instanceof HospitalInitMessage){
-						details = ((HospitalInitMessage)content).getHospital();
+					if (content instanceof HospitalInitMessage) {
+						details = ((HospitalInitMessage) content).getHospital();
+					} else if (content instanceof HospitalArrivalMessage) {
+						System.out.println(myAgent.getLocalName()
+								+ " Hospital has received patient: "
+								+ ((HospitalArrivalMessage) content)
+										.getPatient().getAID());
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
@@ -40,5 +46,4 @@ public class HospitalBehaviour extends CyclicBehaviour {
 		}
 
 	}
-
 }

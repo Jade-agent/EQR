@@ -73,10 +73,12 @@ public class PickPatientBehaviour extends SimpleBehaviour {
 		ppm.setAmbulance(ambulance);
 		ppm2.setPatient(patient);
 		try {
+			System.out.println(myAgent.getLocalName()+ " Sending msgs out to patient and ambulance "+ patient.getAID());
 			msg.setContentObject(ppm);
 			msg2.setContentObject(ppm2);
-			myAgent.send(msg);
+			
 			myAgent.send(msg2);
+			myAgent.send(msg);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

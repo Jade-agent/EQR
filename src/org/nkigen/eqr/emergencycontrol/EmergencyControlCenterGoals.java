@@ -1,6 +1,7 @@
 package org.nkigen.eqr.emergencycontrol;
 
 import jade.core.behaviours.Behaviour;
+import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import org.nkigen.eqr.agents.EmergencyControlCenterAgent;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EQRGoal;
 import org.nkigen.eqr.common.EmergencyResponseBase;
+import org.nkigen.eqr.messages.BaseRouteMessage;
 import org.nkigen.eqr.patients.PatientDetails;
 
 public class EmergencyControlCenterGoals extends EQRGoal {
@@ -18,6 +20,7 @@ public class EmergencyControlCenterGoals extends EQRGoal {
 	public static final int ASSIGN_AMBULANCE_TO_PATIENT = 1;
 	public static final int ASSIGN_FIREENGINE_TO_FIRE = 2;
 	public static final int GET_NEAREST_HOSPITAL = 3;
+	public static final int GET_RESPONDER_TO_BASE = 4;
 	/* More Goals to be added */
 
 	Map<Integer, Behaviour> goals;
@@ -38,12 +41,25 @@ public class EmergencyControlCenterGoals extends EQRGoal {
 			return assignFireEngine(params);
 		case GET_NEAREST_HOSPITAL:
 			return getNearestHospitalPlan(params);
+		case GET_RESPONDER_TO_BASE:
+			return getResponderToBasePlan(params);
 		default:
 			System.out.println("Plan not available to achieve goal " + which);
 			return null;
 		}
 	}
 
+	private Behaviour getResponderToBasePlan(Object p[]) {
+		if (p.length == 3) {
+			if (p[0] instanceof EmergencyControlCenterAgent
+					&& p[1] instanceof ACLMessage && p[2] instanceof BaseRouteMessage) 
+				return new ResponderToBaseBehaviour(
+						(EmergencyControlCenterAgent) p[0],
+						(ACLMessage) p[1], (BaseRouteMessage) p[2]);
+		}
+		System.out.println("Wrong Number of params ");
+		return null;
+	}
 	private Behaviour getNearestHospitalPlan(Object p[]) {
 		if (p.length == 3) {
 			if (p[0] instanceof EmergencyControlCenterAgent

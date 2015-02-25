@@ -61,6 +61,10 @@ public class RequestAmbulanceBehaviour extends SimpleBehaviour {
 				
 			}
 		}
+		if(msg!=null){
+			myAgent.send(msg);
+			done = true;
+		}
 	/*
 	 * Request for ambulance
 	 * Start timer and change patient status accordingly

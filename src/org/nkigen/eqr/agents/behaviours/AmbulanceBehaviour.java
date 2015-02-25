@@ -14,6 +14,7 @@ import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.messages.AmbulanceInitMessage;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
+import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.PickPatientMessage;
 import org.nkigen.eqr.models.EQREmergencyPoint;
 
@@ -23,6 +24,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 	AmbulanceGoals goals;
 	AmbulanceDetails details;
 	EmergencyStateChangeInitiator listener;
+
 	public AmbulanceBehaviour(Agent agent) {
 		super(agent);
 		listener = new EmergencyStateChangeInitiator();
@@ -39,7 +41,9 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 				try {
 					Object content = msg.getContentObject();
 					if (content instanceof AmbulanceNotifyMessage) {
-						System.out.println(getBehaviourName()+ " "+ myAgent.getLocalName()+ " recv notification msg");
+						System.out.println(getBehaviourName() + " "
+								+ myAgent.getLocalName()
+								+ " recv notification msg");
 						Object[] params = new Object[3];
 						params[0] = myAgent;
 						params[1] = (AmbulanceNotifyMessage) content;
@@ -49,21 +53,38 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 								AmbulanceGoals.PICK_PATIENT, params);
 						if (b != null)
 							myAgent.addBehaviour(b);
-					}
-					else if(content instanceof AmbulanceInitMessage){
-						details = ((AmbulanceInitMessage)content).getAmbulance();
+					} else if (content instanceof AmbulanceInitMessage) {
+						details = ((AmbulanceInitMessage) content)
+								.getAmbulance();
 						details.setListener(listener);
-					}
-					else if(content instanceof PickPatientMessage){
-						System.out.println(myAgent.getLocalName()+" : Trying to find the neareset hospital for "+
-								((PickPatientMessage) content).getPatient().getAID());
+					} else if (content instanceof PickPatientMessage) {
+						System.out
+								.println(myAgent.getLocalName()
+										+ " : Trying to find the neareset hospital for "
+										+ ((PickPatientMessage) content)
+												.getPatient().getAID());
 						Object[] params = new Object[3];
 						params[0] = myAgent;
 						params[1] = ((PickPatientMessage) content).getPatient();
 						params[2] = details;
-						Behaviour b = goals.executePlan(AmbulanceGoals.TO_NEAREST_HOSPITAL, params);
+						Behaviour b = goals.executePlan(
+								AmbulanceGoals.TO_NEAREST_HOSPITAL, params);
 						if (b != null)
 							myAgent.addBehaviour(b);
+					} else if (content instanceof HospitalArrivalMessage) {
+						System.out
+								.println(myAgent.getLocalName()
+										+ " : Dropped Patient successfully. Now going back to base "
+										+ ((HospitalArrivalMessage) content)
+												.getPatient().getAID());
+						Object[] params = new Object[2];
+						params[0] = myAgent;
+						params[1] = details;
+						Behaviour b = goals.executePlan(
+								AmbulanceGoals.BACK_TO_BASE, params);
+						if (b != null)
+							myAgent.addBehaviour(b);
+
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
@@ -75,12 +96,13 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 		}
 	}
 
-	
 	@Override
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub
-		if(ed instanceof AmbulanceDetails){
-			System.out.println(getBehaviourName()+ " "+ myAgent.getLocalName()+ " Location changed to "+ ((AmbulanceDetails)ed).getCurrentLocation());
+		if (ed instanceof AmbulanceDetails) {
+			System.out.println(getBehaviourName() + " "
+					+ myAgent.getLocalName() + " Location changed to "
+					+ ((AmbulanceDetails) ed).getCurrentLocation());
 		}
 	}
 

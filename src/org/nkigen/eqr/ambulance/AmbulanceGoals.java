@@ -21,7 +21,19 @@ public class AmbulanceGoals extends EQRGoal {
 			return pickPatientPlan(params);
 		case TO_NEAREST_HOSPITAL:
 			return toNearestHospitalPlan(params);
+		case BACK_TO_BASE:
+			return backToBase(params);
 		}
+		return null;
+	}
+
+	private Behaviour backToBase(Object[] p) {
+		if (p.length != 2)
+			return null;
+		if (p[0] instanceof AmbulanceAgent && p[1] instanceof AmbulanceDetails)
+			return new AmbulanceToBaseBehaviour((AmbulanceAgent) p[0],
+					 (AmbulanceDetails) p[1]);
+
 		return null;
 	}
 

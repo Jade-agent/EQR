@@ -55,12 +55,12 @@ public class NearestHospitalBehaviour extends SimpleBehaviour {
 			to_send.addReceiver(router);
 			try {
 				to_send.setContentObject(req);
+				myAgent.send(to_send);
+				req_r = true;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			myAgent.send(to_send);
-			req_r = true;
 		} else if(msg!= null && req_r){
 			Object content = null;
 			switch (msg.getPerformative()) {

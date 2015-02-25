@@ -5,6 +5,7 @@ import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.common.EmergencyStatus;
 import org.nkigen.eqr.fires.RequestFireBehaviour;
+import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.PatientInitMessage;
 import org.nkigen.eqr.messages.PickPatientMessage;
 import org.nkigen.eqr.patients.PatientDetails;
@@ -63,6 +64,14 @@ public class PatientBehaviour extends CyclicBehaviour implements
 						+ " About to be picked up. Yaaay!");
 				patient.setStatus(EmergencyStatus.PATIENT_PICKED);
 
+			}
+			else if(content instanceof HospitalArrivalMessage){
+				System.out.println(myAgent.getLocalName()
+						+ " Patient arrived at the hospital !!!");
+				patient.setStatus(EmergencyStatus.PATIENT_DELIVERED);
+			}
+			else{
+				System.out.println(myAgent.getLocalName()+" Message recv but not understood");
 			}
 		} catch (UnreadableException e) {
 			// TODO Auto-generated catch block
