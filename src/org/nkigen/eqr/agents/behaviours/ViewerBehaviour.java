@@ -1,5 +1,6 @@
 package org.nkigen.eqr.agents.behaviours;
 
+import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.maps.routing.EQRPoint;
@@ -92,10 +93,13 @@ public class ViewerBehaviour extends CyclicBehaviour {
 			MarkerViewerPoint mp = new MarkerViewerPoint();
 			if (couldBeStatic(point)) {
 				if (!static_points.containsKey(id)) {
+					System.out.println(getBehaviourName()+" "+myAgent.getLocalName()+" new static point added");
 					static_points.put(id, point);
+					//point.setColor(Color.RED);
 					viewer.addMarker(point);
 				}
 			} else {
+				//point.setColor(Color.YELLOW);
 				if (!dynamic_points.containsKey(id)) {
 					MapMarkerDot mark = viewer.addMarker(point);
 					mp.setMarker(mark);
@@ -112,9 +116,8 @@ public class ViewerBehaviour extends CyclicBehaviour {
 		}
 
 		private boolean couldBeStatic(EQRViewerPoint point) {
-			return (point.getType() == EQRStatusPanelItem.STATIC_FIRE
-					|| point.getType() == EQRStatusPanelItem.STATIC_PATIENT || point
-						.getType() == EQRStatusPanelItem.HOSPITAL_LOCATION_ITEM);
+			return (point.getType() == EQRLocationUpdate.HOSPITAL_LOCATION
+					|| point.getType() == EQRLocationUpdate.PATIENT_LOCATION);
 		}
 
 	}

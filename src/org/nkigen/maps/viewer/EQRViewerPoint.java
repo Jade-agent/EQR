@@ -95,6 +95,8 @@ public class EQRViewerPoint implements Serializable {
 			else
 				color = WAITING_PATIENT_COLOR;
 			break;
+		case EQRLocationUpdate.HOSPITAL_LOCATION:
+			color = HOSPITAL_COLOR;
 		}
 	
 	}

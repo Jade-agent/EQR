@@ -57,7 +57,7 @@ done
 ROUTER="router:"${AB}".RoutingAgent;"
 UPDATE="updates:"${AB}".EQRUpdatesAgent;"
 VIEWER="viewer:"${AB}".EQRViewerAgent;"
-export AGENTS="${UPDATE}${VIEWER}${ROUTER}${HOSPITALS}${PATIENTS}${FIRES}${FIRE_ENGINES}${AMBULANCES}simulatorAgent:org.nkigen.eqr.simulation.SimulationAgent;ECC:"${AB}".EmergencyControlCenterAgent"
+export AGENTS="${VIEWER}${UPDATE}${ROUTER}${HOSPITALS}${PATIENTS}${FIRES}${FIRE_ENGINES}${AMBULANCES}simulatorAgent:org.nkigen.eqr.simulation.SimulationAgent;ECC:"${AB}".EmergencyControlCenterAgent"
 }
 
 main(){

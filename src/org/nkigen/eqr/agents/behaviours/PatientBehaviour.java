@@ -64,6 +64,7 @@ public class PatientBehaviour extends CyclicBehaviour implements
 					System.out.println(getClass().getName()
 							+ " Patient Initialized");
 					patient.setStatus(EmergencyStatus.PATIENT_WAITING);
+					sendWaitPatientUpdate();
 				}
 			} else if (content instanceof PickPatientMessage) {
 				System.out.println(myAgent.getLocalName()
@@ -86,8 +87,9 @@ public class PatientBehaviour extends CyclicBehaviour implements
 	}
 
 	private void sendWaitPatientUpdate(){
+		System.out.println(getBehaviourName()+": "+myAgent.getLocalName()+" Patient sending init location");
 		AID update = EQRAgentsHelper.locateUpdateServer(myAgent);
-		EQRLocationUpdate loc = new EQRLocationUpdate(EQRStatusPanelItem.STATIC_PATIENT, myAgent.getAID());
+		EQRLocationUpdate loc = new EQRLocationUpdate(EQRLocationUpdate.PATIENT_LOCATION, myAgent.getAID());
 		loc.setIsMoving(false);
 		loc.setIsDead(false);
 		loc.setCurrent(patient.getLocation());

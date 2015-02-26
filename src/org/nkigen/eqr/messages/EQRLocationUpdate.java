@@ -10,6 +10,7 @@ public class EQRLocationUpdate extends EQRUpdateMessage {
 	public static final int FIRE_ENGINE_LOCATION = 1;
 	public static final int PATIENT_LOCATION = 2;
 	public static final int FIRE_LOCATION = 3;
+	public static final int HOSPITAL_LOCATION = 4;
 
 	int type;
 	AID item_id;

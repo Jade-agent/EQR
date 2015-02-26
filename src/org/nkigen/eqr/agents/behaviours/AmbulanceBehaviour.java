@@ -20,6 +20,7 @@ import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.PickPatientMessage;
+import org.nkigen.maps.viewer.EQRViewerPoint;
 import org.nkigen.maps.viewer.updates.EQRStatusPanelItem;
 
 public class AmbulanceBehaviour extends CyclicBehaviour implements
@@ -105,7 +106,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 		// TODO Auto-generated method stub
 		if (ed instanceof AmbulanceDetails) {
 			EQRLocationUpdate loc = new EQRLocationUpdate(
-					EQRStatusPanelItem.AMBULANCE_LOCATION_ITEM,
+					EQRLocationUpdate.AMBULANCE_LOCATION,
 					myAgent.getAID());
 			loc.setIsMoving(true);
 			loc.setIsDead(false);

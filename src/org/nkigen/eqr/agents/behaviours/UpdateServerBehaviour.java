@@ -20,16 +20,13 @@ import org.nkigen.maps.viewer.updates.EQRUpdateWindow;
 
 public class UpdateServerBehaviour extends CyclicBehaviour {
 
-	Agent agent;
-
 	public UpdateServerBehaviour(Agent agent) {
 		super(agent);
-		this.agent = agent;
 	}
 
 	@Override
 	public void action() {
-		ACLMessage msg = agent.receive();
+		ACLMessage msg = myAgent.receive();
 		if (msg == null) {
 			block();
 			return;
@@ -40,7 +37,7 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 			switch (msg.getPerformative()) {
 			case ACLMessage.PROPAGATE:
 				if (content instanceof EQRLocationUpdate) {
-					agent.addBehaviour(new HandleLocationUpdate(
+					myAgent.addBehaviour(new HandleLocationUpdate(
 							(EQRLocationUpdate) content));
 				}
 				break;
@@ -79,12 +76,15 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 			point.setColor();
 
 			// Send Message to viewer Agent
-			AID viewer = EQRAgentsHelper.locateViewer(agent);
+			AID viewer = EQRAgentsHelper.locateViewer(myAgent);
+			while(viewer == null)
+				viewer = EQRAgentsHelper.locateViewer(myAgent);
+			
 			ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
 			try {
 				msg2.setContentObject(point);
 				msg2.addReceiver(viewer);
-				agent.send(msg2);
+				myAgent.send(msg2);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
