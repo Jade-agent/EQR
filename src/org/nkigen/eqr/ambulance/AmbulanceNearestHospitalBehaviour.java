@@ -74,9 +74,8 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 				}
 				break;
 			}
-		}
-		else{
-			if(msg != null){
+		} else {
+			if (msg != null) {
 				myAgent.send(msg);
 				done = true;
 			}
@@ -93,25 +92,29 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 				System.out.println(myAgent.getLocalName()
 						+ " ERROR: cant find route to hospital");
 			} else {
-				List<EQRPoint> points = ((EQRGraphHopperResult)route).getPoints();
+				List<EQRPoint> points = ((EQRGraphHopperResult) route)
+						.getPoints();
 				System.out.println(myAgent.getLocalName()
 						+ ": Response Base found to be: " + base.getLocation()
-						+ " length "+ points.size());
+						+ " length " + points.size());
+				long duration = ((EQRGraphHopperResult) route).getDuration();
+
 				for (EQRPoint p : points) {
 
 					ambulance.setCurrentLocation(p);
 					// System.out.println(myAgent.getLocalName()+ " loc: "+ p);
 
-				//	try {
-					//	Thread.sleep((long) duration / route.getPoints().size());
-					
-				//	} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-					//	e.printStackTrace();
-				//	}
+					try {
+						Thread.sleep((long) duration / points.size());
+
+					} catch (InterruptedException e) {
+
+						e.printStackTrace();
+					}
 				}
 				System.out.println(myAgent.getLocalName()
-						+ " Patient arrived safely at hospital "+ patient.getAID()+ " BASE: "+ base.getLocation());
+						+ " Patient arrived safely at hospital "
+						+ patient.getAID() + " BASE: " + base.getLocation());
 				HospitalArrivalMessage ham = new HospitalArrivalMessage();
 				ham.setPatient(patient);
 				ACLMessage notify = new ACLMessage(ACLMessage.INFORM);
@@ -125,7 +128,7 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
 		}
 		done = true;

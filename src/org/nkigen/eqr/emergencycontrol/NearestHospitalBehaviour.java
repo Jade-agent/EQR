@@ -47,7 +47,7 @@ public class NearestHospitalBehaviour extends SimpleBehaviour {
 			MultipleRoutingRequestMessage req = new MultipleRoutingRequestMessage();
 			req.setBases((ArrayList<EmergencyResponseBase>) hospitals);
 			req.setReply_to(myAgent.getAID());
-			req.setTo(ambulance.getLocation());
+			req.setTo(ambulance.getCurrentLocation());
 
 			if (router == null)
 				router = EQRAgentsHelper.locateRoutingServer(myAgent);

@@ -1,5 +1,7 @@
 package org.nkigen.maps.viewer;
 
+import jade.core.AID;
+
 import java.awt.Color;
 
 import org.nkigen.eqr.messages.EQRLocationUpdate;
@@ -7,6 +9,7 @@ import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.viewer.updates.EQRAmbulanceLocations;
 import org.nkigen.maps.viewer.updates.EQRFireEngineLocation;
 import org.nkigen.maps.viewer.updates.EQRStatusPanelItem;
+
 import java.io.Serializable;
 
 public class EQRViewerPoint implements Serializable {
@@ -18,25 +21,26 @@ public class EQRViewerPoint implements Serializable {
 	public static final Color DEAD_PATIENT_COLOR = Color.BLACK;
 	public static final Color WAITING_FIRE_COLOR = Color.RED;
 	public static final Color ATTENDED_FIRE_COLOR = Color.WHITE;
-	public static final Color MOVING_AMBULANCE_COLOR = Color.ORANGE;
-	public static final Color WAITING_AMBULANCE_COLOR = Color.YELLOW;
+	public static final Color MOVING_AMBULANCE_COLOR = Color.RED;
+	public static final Color WAITING_AMBULANCE_COLOR = Color.RED;
 	public static final Color MOVING_FIRE_COLOR = Color.MAGENTA;
 	public static final Color LOCATION_FIRE_COLOR = Color.BLUE;
+	public static final Color HOSPITAL_COLOR = Color.PINK;
 	
 	EQRPoint point;
 	Color color;
 	boolean is_moving; /*For ambulances and fire engines*/
 	boolean is_dead; /*for patients */
-	int item_id;
+	AID item_id;
 	int type; /*For EQRStatusPanelitem types(Excluding stat ones)*/
-	public EQRViewerPoint(int item){
+	public EQRViewerPoint(AID item){
 		this.item_id = item;
 	}
 	public EQRPoint getPoint() {
 		return point;
 	}
 
-	public void setItemId(int item){
+	public void setItemId(AID item){
 		this.item_id = item;
 	}
 	public void setIsDead(boolean bool){
@@ -46,7 +50,7 @@ public class EQRViewerPoint implements Serializable {
 	public boolean getIsDead(){
 		return is_dead;
 	}
-	public int getItemId(){
+	public AID getItemId(){
 		return item_id;
 	}
 	public void setIsMoving(boolean bool){

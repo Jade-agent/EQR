@@ -1,17 +1,23 @@
 package org.nkigen.eqr.agents.behaviours;
 
+import java.io.IOException;
+
+import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.common.EmergencyDetails;
 import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.common.EmergencyStatus;
 import org.nkigen.eqr.fires.RequestFireBehaviour;
+import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.PatientInitMessage;
 import org.nkigen.eqr.messages.PickPatientMessage;
 import org.nkigen.eqr.patients.PatientDetails;
 import org.nkigen.eqr.patients.PatientGoals;
 import org.nkigen.eqr.patients.RequestAmbulanceBehaviour;
+import org.nkigen.maps.viewer.updates.EQRStatusPanelItem;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
@@ -79,6 +85,22 @@ public class PatientBehaviour extends CyclicBehaviour implements
 		}
 	}
 
+	private void sendWaitPatientUpdate(){
+		AID update = EQRAgentsHelper.locateUpdateServer(myAgent);
+		EQRLocationUpdate loc = new EQRLocationUpdate(EQRStatusPanelItem.STATIC_PATIENT, myAgent.getAID());
+		loc.setIsMoving(false);
+		loc.setIsDead(false);
+		loc.setCurrent(patient.getLocation());
+		ACLMessage msg = new ACLMessage(ACLMessage.PROPAGATE);
+		msg.addReceiver(update);
+		try {
+			msg.setContentObject(loc);
+			myAgent.send(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	@Override
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub

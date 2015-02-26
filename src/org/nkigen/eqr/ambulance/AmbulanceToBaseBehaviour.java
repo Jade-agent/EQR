@@ -43,7 +43,7 @@ public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
 			EQRRoutingCriteria criteria = new EQRRoutingCriteria(
 					ambulance.getCurrentLocation(), ambulance.getLocation());
 			brm.setCriteria(criteria);
-			
+
 			try {
 				msg.setContentObject(brm);
 				myAgent.send(msg);
@@ -92,18 +92,19 @@ public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
 		}
 
 		List<EQRPoint> points = ((EQRGraphHopperResult) route).getPoints();
+		long duration = ((EQRGraphHopperResult) route).getDuration();
 		for (EQRPoint p : points) {
 
 			ambulance.setCurrentLocation(p);
 			// System.out.println(myAgent.getLocalName()+ " loc: "+ p);
 
-			// try {
-			// Thread.sleep((long) duration / route.getPoints().size());
+			try {
+				Thread.sleep((long) duration / points.size());
 
-			// } catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
+			} catch (InterruptedException e) {
+
+				e.printStackTrace();
+			}
 
 		}
 	}

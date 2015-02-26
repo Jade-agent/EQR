@@ -56,13 +56,13 @@ public class PickPatientBehaviour extends SimpleBehaviour {
 			ambulance.setCurrentLocation(p);
 			// System.out.println(myAgent.getLocalName()+ " loc: "+ p);
 
-		//	try {
-			//	Thread.sleep((long) duration / route.getPoints().size());
-			
-		//	} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-			//	e.printStackTrace();
-		//	}
+			try {
+				Thread.sleep((long) duration / route.getPoints().size());
+
+			} catch (InterruptedException e) {
+
+				e.printStackTrace();
+			}
 		}
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
@@ -73,10 +73,12 @@ public class PickPatientBehaviour extends SimpleBehaviour {
 		ppm.setAmbulance(ambulance);
 		ppm2.setPatient(patient);
 		try {
-			System.out.println(myAgent.getLocalName()+ " Sending msgs out to patient and ambulance "+ patient.getAID());
+			System.out.println(myAgent.getLocalName()
+					+ " Sending msgs out to patient and ambulance "
+					+ patient.getAID());
 			msg.setContentObject(ppm);
 			msg2.setContentObject(ppm2);
-			
+
 			myAgent.send(msg2);
 			myAgent.send(msg);
 

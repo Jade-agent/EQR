@@ -1,5 +1,7 @@
 package org.nkigen.eqr.agents.behaviours;
 
+import java.io.IOException;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -7,6 +9,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
+import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.ambulance.AmbulanceGoals;
 import org.nkigen.eqr.common.EmergencyDetails;
@@ -14,9 +17,10 @@ import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.messages.AmbulanceInitMessage;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
+import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.PickPatientMessage;
-import org.nkigen.eqr.models.EQREmergencyPoint;
+import org.nkigen.maps.viewer.updates.EQRStatusPanelItem;
 
 public class AmbulanceBehaviour extends CyclicBehaviour implements
 		EmergencyStateChangeListener {
@@ -100,6 +104,24 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub
 		if (ed instanceof AmbulanceDetails) {
+			EQRLocationUpdate loc = new EQRLocationUpdate(
+					EQRStatusPanelItem.AMBULANCE_LOCATION_ITEM,
+					myAgent.getAID());
+			loc.setIsMoving(true);
+			loc.setIsDead(false);
+			loc.setCurrent(((AmbulanceDetails) ed).getCurrentLocation());
+			loc.setHeading(ed.getLocation());
+			ACLMessage msg = new ACLMessage(ACLMessage.PROPAGATE);
+			AID update = EQRAgentsHelper.locateUpdateServer(myAgent);
+			msg.addReceiver(update);
+			try {
+				msg.setContentObject(loc);
+				myAgent.send(msg);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			System.out.println(getBehaviourName() + " "
 					+ myAgent.getLocalName() + " Location changed to "
 					+ ((AmbulanceDetails) ed).getCurrentLocation());
