@@ -21,6 +21,10 @@ NUM_HOSPITALS=1
 NUM_AMBULANCES=2
 NUM_FIREENGINE_AGENTS=2
 
+#Agent Arguements
+OSM_FILE_PATH=${SRC_PATH}"/src/trentino.xml"
+ROUTER_DIR=${SRC_PATH}"/src/data"
+CONFIG_FILE=${SRC_PATH}"/src/config.xml"
 
 #Create all the agents as above including
 #ONE router agent

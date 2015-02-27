@@ -21,6 +21,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
@@ -64,7 +65,7 @@ public class PatientBehaviour extends CyclicBehaviour implements
 					System.out.println(getClass().getName()
 							+ " Patient Initialized");
 					patient.setStatus(EmergencyStatus.PATIENT_WAITING);
-					sendWaitPatientUpdate();
+					
 				}
 			} else if (content instanceof PickPatientMessage) {
 				System.out.println(myAgent.getLocalName()
@@ -86,10 +87,11 @@ public class PatientBehaviour extends CyclicBehaviour implements
 		}
 	}
 
-	private void sendWaitPatientUpdate(){
+	private void sendWaitPatientUpdate(int status){
 		System.out.println(getBehaviourName()+": "+myAgent.getLocalName()+" Patient sending init location");
 		AID update = EQRAgentsHelper.locateUpdateServer(myAgent);
 		EQRLocationUpdate loc = new EQRLocationUpdate(EQRLocationUpdate.PATIENT_LOCATION, myAgent.getAID());
+		loc.setStatus(status);
 		loc.setIsMoving(false);
 		loc.setIsDead(false);
 		loc.setCurrent(patient.getLocation());
@@ -118,13 +120,17 @@ public class PatientBehaviour extends CyclicBehaviour implements
 				params[1] = patient;
 				behaviour = goals.executePlan(
 						PatientGoals.REQUEST_AMBULANCE_PICKUP, params);
+				sendWaitPatientUpdate(EmergencyStatus.PATIENT_WAITING);
 				break;
 			case EmergencyStatus.PATIENT_PICKED:
+				sendWaitPatientUpdate(EmergencyStatus.PATIENT_PICKED);
 				/*TODO: Log this*/
 				break;
 			case EmergencyStatus.PATIENT_DELIVERED:
+				sendWaitPatientUpdate(EmergencyStatus.PATIENT_DELIVERED);
 				break;
 			case EmergencyStatus.PATIENT_DEAD:
+				sendWaitPatientUpdate(EmergencyStatus.PATIENT_DEAD);
 				break;
 			default:
 				System.out.println(getClass().getName()
@@ -142,4 +148,19 @@ public class PatientBehaviour extends CyclicBehaviour implements
 
 	}
 
+	private class PatientDyingTimer extends WakerBehaviour{
+
+		public PatientDyingTimer(Agent a, long timeout) {
+			super(a, timeout);
+			// TODO Auto-generated constructor stub
+		}
+		
+		@Override
+		public void onWake(){
+			System.out.println(getBehaviourName()+" Deadline Reached"+ myAgent.getLocalName()+ " is Dying Now");
+			PatientBehaviour.this.patient.setStatus(EmergencyStatus.PATIENT_DEAD);
+		}
+		
+		
+	}
 }

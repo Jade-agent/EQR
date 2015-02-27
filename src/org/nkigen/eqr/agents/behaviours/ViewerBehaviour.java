@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class ViewerBehaviour extends CyclicBehaviour {
 
 	EQRViewer viewer;
-	HashMap<AID, EQRViewerPoint> static_points;
+	HashMap<AID, MarkerViewerPoint> static_points;
 	HashMap<AID, MarkerViewerPoint> dynamic_points;
 
 	public ViewerBehaviour(Agent agent) {
@@ -33,7 +33,7 @@ public class ViewerBehaviour extends CyclicBehaviour {
 		super(agent);
 		viewer = new EQRViewer();
 		viewer.setVisible(true);
-		static_points = new HashMap<AID, EQRViewerPoint>();
+		static_points = new HashMap<AID, MarkerViewerPoint>();
 		dynamic_points = new HashMap<AID, MarkerViewerPoint>();
 		System.out.println("Viewer Up and running");
 	}
@@ -94,12 +94,20 @@ public class ViewerBehaviour extends CyclicBehaviour {
 			if (couldBeStatic(point)) {
 				if (!static_points.containsKey(id)) {
 					System.out.println(getBehaviourName()+" "+myAgent.getLocalName()+" new static point added");
-					static_points.put(id, point);
-					//point.setColor(Color.RED);
+					MapMarkerDot mark = viewer.addMarker(point);
+					mp.setMarker(mark);
+					mp.setPoint(point);
+					static_points.put(id, mp);
 					viewer.addMarker(point);
 				}
+				else{
+					viewer.removeMarker(static_points.get(id).getMarker());
+					EQRViewerPoint p = static_points.get(id).getPoint();
+					p.setColor(point.getColor());
+					MapMarkerDot mark = viewer.addMarker(p);
+					mp.setMarker(mark);
+				}
 			} else {
-				//point.setColor(Color.YELLOW);
 				if (!dynamic_points.containsKey(id)) {
 					MapMarkerDot mark = viewer.addMarker(point);
 					mp.setMarker(mark);

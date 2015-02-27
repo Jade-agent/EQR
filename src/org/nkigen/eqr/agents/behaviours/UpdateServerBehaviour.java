@@ -70,6 +70,7 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 			int type = msg.getType();
 			EQRViewerPoint point = new EQRViewerPoint(msg.getItemId());
 			point.setIsMoving(msg.getIsMoving());
+			point.setStatus(msg.getStatus());
 			point.setIsDead(msg.getIsDead());
 			point.setPoint(msg.getCurrent());
 			point.setType(type);
