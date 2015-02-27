@@ -86,6 +86,14 @@ public class EmergencyControlCenterGoals extends EQRGoal {
 	}
 
 	private Behaviour assignFireEngine(Object p[]) {
+		if (p.length == 3) {
+			if (p[0] instanceof EmergencyControlCenterAgent
+					&& p[1] instanceof PatientDetails && p[2] instanceof ArrayList<?>) 
+				return new AssignAmbulanceBehaviour(
+						(EmergencyControlCenterAgent) p[0],
+						(PatientDetails) p[1], (List<EmergencyResponseBase>) p[2]);
+		}
+		System.out.println("Wrong Number of params ");
 		return null;
 	}
 

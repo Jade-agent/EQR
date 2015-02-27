@@ -14,6 +14,7 @@ import org.nkigen.eqr.emergencycontrol.EmergencyControlCenterGoals;
 import org.nkigen.eqr.messages.AmbulanceRequestMessage;
 import org.nkigen.eqr.messages.BaseRouteMessage;
 import org.nkigen.eqr.messages.ControlCenterInitMessage;
+import org.nkigen.eqr.messages.FireEngineRequestMessage;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
 import org.nkigen.eqr.messages.PatientInitMessage;
 
@@ -142,12 +143,37 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 				
 				}
 			}
+			else if(content instanceof FireEngineRequestMessage){
+				FireEngineRequestMessage fer = (FireEngineRequestMessage) content;
+				if(fer.getType() == FireEngineRequestMessage.REQUEST){
+					System.out.println(myAgent.getLocalName()
+							+ " Fire Engine request Message received");
+					Object[] params = new Object[3];
+					params[0] = myAgent;
+					params[1] = fer.getFire();
+					params[2] = getAvailableFireEngineBases();
+					Behaviour b = goals.executePlan(
+							EmergencyControlCenterGoals.ASSIGN_FIREENGINE_TO_FIRE,
+							params);
+					if (b != null)
+						myAgent.addBehaviour(b);
+				}
+			}
 		} catch (UnreadableException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	private List<EmergencyResponseBase> getAvailableFireEngineBases() {
+		ArrayList<EmergencyResponseBase> avail = new ArrayList<EmergencyResponseBase>();
+		for (EmergencyResponseBase b : fire_engine_bases)
+			if (b.getAvailable().size() > 0)
+				avail.add(b);
+		if (avail.size() > 0)
+			return avail;
+		return null;
+	}
 	private List<EmergencyResponseBase> getAvailableAmbulanceBases() {
 		ArrayList<EmergencyResponseBase> avail = new ArrayList<EmergencyResponseBase>();
 		for (EmergencyResponseBase b : ambulance_bases)

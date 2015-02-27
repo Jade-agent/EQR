@@ -21,13 +21,13 @@ public class EQRViewerPoint implements Serializable {
 	public static final Color DELIVERED_PATIENT_COLOR = Color.GREEN;
 
 	public static final Color WAITING_FIRE_COLOR = Color.RED;
-	public static final Color ATTENDED_FIRE_COLOR = Color.WHITE;
+	public static final Color ATTENDED_FIRE_COLOR = Color.CYAN;
 
-	public static final Color MOVING_AMBULANCE_COLOR = Color.RED;
+	public static final Color MOVING_AMBULANCE_COLOR = Color.DARK_GRAY;
 	public static final Color WAITING_AMBULANCE_COLOR = Color.WHITE;
 
 	public static final Color MOVING_FIRE_COLOR = Color.MAGENTA;
-	public static final Color LOCATION_FIRE_COLOR = Color.BLUE;
+	public static final Color LOCATION_FIRE_COLOR = Color.ORANGE;
 
 	public static final Color HOSPITAL_COLOR = Color.BLUE;
 
@@ -99,7 +99,14 @@ public class EQRViewerPoint implements Serializable {
 				color = WAITING_FIRE_COLOR;
 			break;
 		case EQRLocationUpdate.FIRE_LOCATION:
-			color = LOCATION_FIRE_COLOR;
+			switch (status) {
+			case EmergencyStatus.FIRE_STATUS_ACTIVE:
+				color = WAITING_AMBULANCE_COLOR;
+				break;
+			case EmergencyStatus.FIRE_STATUS_OFF:
+				color = ATTENDED_FIRE_COLOR;
+				break;
+			}
 			break;
 		case EQRLocationUpdate.PATIENT_LOCATION:
 			switch (status) {

@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.common.EmergencyResponseBase;
+import org.nkigen.eqr.fires.FireDetails;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
 import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
+import org.nkigen.eqr.messages.FireEngineRequestMessage;
 import org.nkigen.eqr.messages.MultipleRoutingRequestMessage;
 import org.nkigen.eqr.messages.MultipleRoutingResponseMessage;
 import org.nkigen.eqr.patients.PatientDetails;
@@ -19,19 +21,19 @@ import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
-public class AssignAmbulanceBehaviour extends SimpleBehaviour {
+public class AssignFireEngineBehaviour extends SimpleBehaviour {
 
 	boolean done = false;
 	boolean req_r = false; /* Not yet made a request to the router */
-	PatientDetails patient;
+	FireDetails fire;
 	List<EmergencyResponseBase> bases;
 	AID router;
 
 	/* Assumption: This list of bases contain atleast an ambulance */
-	public AssignAmbulanceBehaviour(Agent a, PatientDetails p,
+	public AssignFireEngineBehaviour(Agent a, FireDetails fd,
 			List<EmergencyResponseBase> bases) {
 		super(a);
-		patient = p;
+		fire = fd;
 		this.bases = bases;
 	}
 
@@ -43,7 +45,7 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 			MultipleRoutingRequestMessage req = new MultipleRoutingRequestMessage();
 			req.setBases((ArrayList<EmergencyResponseBase>) bases);
 			req.setReply_to(myAgent.getAID());
-			req.setTo(patient.getLocation());
+			req.setTo(fire.getLocation());
 
 			if (router == null)
 				router = EQRAgentsHelper.locateRoutingServer(myAgent);
@@ -66,8 +68,8 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 					content = msg.getContentObject();
 					if (content instanceof MultipleRoutingResponseMessage) {
 						System.out.println(getBehaviourName()
-								+ " route found for patient-ambulance");
-						informPatientAndAmbulance((MultipleRoutingResponseMessage) content);
+								+ " route found for fire_engine-fire");
+						informParties((MultipleRoutingResponseMessage) content);
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
@@ -79,47 +81,57 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 		}
 	}
 
-	private boolean isSameBase(EmergencyResponseBase b1, EmergencyResponseBase b2){
-		return b1.getLocation().getLatitude() == b2.getLocation().getLatitude() &&
-				b1.getLocation().getLongitude() == b2.getLocation().getLongitude();
+	private boolean isSameBase(EmergencyResponseBase b1,
+			EmergencyResponseBase b2) {
+		return b1.getLocation().getLatitude() == b2.getLocation().getLatitude()
+				&& b1.getLocation().getLongitude() == b2.getLocation()
+						.getLongitude();
 	}
-	private void informPatientAndAmbulance(MultipleRoutingResponseMessage msg) {
+
+	private void informParties(MultipleRoutingResponseMessage msg) {
 		/* TODO */
 		EQRRoutingResult res = msg.getResult();
 
-		ACLMessage to_patient = null;
-		ACLMessage to_ambulance = null;
+		ACLMessage to_fire = null;
+		ACLMessage to_engine = null;
 		if (res instanceof EQRRoutingError) {
-			to_patient = new ACLMessage(ACLMessage.FAILURE);
-			to_patient.addReceiver(patient.getAID());
+			to_fire = new ACLMessage(ACLMessage.FAILURE);
+			to_fire.addReceiver(fire.getAID());
 			try {
-				to_patient.setContentObject(res);
+				to_fire.setContentObject(res);
+				myAgent.send(to_fire);
+				return;
 				/* TODO: Put some useful message here */
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			myAgent.send(to_patient);
-			return;
+
 		}
-		to_ambulance = new ACLMessage(ACLMessage.INFORM);
-		to_patient = new ACLMessage(ACLMessage.INFORM);
-		AmbulanceNotifyMessage anm = new AmbulanceNotifyMessage(
-				AmbulanceNotifyMessage.NOTIFY_PATIENT_ROUTE);
-		anm.setPatient(patient);
-		anm.setResult(res);
+		to_engine = new ACLMessage(ACLMessage.INFORM);
+		to_fire = new ACLMessage(ACLMessage.INFORM);
+		FireEngineRequestMessage fer = new FireEngineRequestMessage(
+				FireEngineRequestMessage.NOTIFY_ENGINE);
+
+		fer.setFire(fire);
+		fer.setRoute(res);
 		try {
-			to_ambulance.setContentObject(anm);
-			for(EmergencyResponseBase b : bases){
-				if(isSameBase(b, msg.getBase())){
-					System.out.println(getBehaviourName()+"BASES ARE EQUAL: ");
-					to_ambulance.addReceiver(b.assignAmbulance());
+			to_engine.setContentObject(fer);
+			for (EmergencyResponseBase b : bases) {
+				if (isSameBase(b, msg.getBase())) {
+					System.out
+							.println(getBehaviourName() + "BASES ARE EQUAL: ");
+					to_engine.addReceiver(b.assignFireEngine());
+					myAgent.send(to_engine);
+					/* TODO: fix this */
 				}
 			}
-			myAgent.send(to_ambulance);
-			to_patient.addReceiver(patient.getAID());
+
+			to_fire.setContentObject(new FireEngineRequestMessage(
+					FireEngineRequestMessage.REPLY));
+			to_fire.addReceiver(fire.getAID());
 			/* Add more useful info here for patient */
-			myAgent.send(to_patient);
+			myAgent.send(to_fire);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -17,38 +17,41 @@ public class RequestAmbulanceBehaviour extends SimpleBehaviour {
 	boolean done = false;
 	boolean req_made = false;
 	AID command_center = null;
-	public RequestAmbulanceBehaviour(Agent a, PatientDetails p){
+
+	public RequestAmbulanceBehaviour(Agent a, PatientDetails p) {
 		super(a);
 		patient = p;
 	}
-	
+
 	@Override
 	public void action() {
-		if(command_center == null)
+		if (command_center == null)
 			command_center = EQRAgentsHelper.locateControlCenter(myAgent);
 		ACLMessage msg = myAgent.receive();
-		if(msg == null && !req_made){
+		if (msg == null && !req_made) {
 			msg = new ACLMessage(ACLMessage.REQUEST);
 			AmbulanceRequestMessage arm = new AmbulanceRequestMessage();
 			arm.setPatient(patient);
 			try {
 				msg.setContentObject(arm);
+				msg.addReceiver(command_center);
+				myAgent.send(msg);
+				req_made = true;
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			msg.addReceiver(command_center);
-			myAgent.send(msg);
-			req_made = true;
-			System.out.println(getBehaviourName() + " "+ myAgent.getLocalName()+" Message sent to CC");
-		}
-		else if(msg != null && req_made){
-			switch(msg.getPerformative()){
+
+			System.out.println(getBehaviourName() + " "
+					+ myAgent.getLocalName() + " Message sent to CC");
+		} else if (msg != null && req_made) {
+			switch (msg.getPerformative()) {
 			case ACLMessage.CONFIRM:
 				try {
 					Object content = msg.getContentObject();
-					if(content instanceof AmbulanceRequestMessage){
-						System.out.println(getBehaviourName() + " response received from CC");
+					if (content instanceof AmbulanceRequestMessage) {
+						System.out.println(getBehaviourName()
+								+ " response received from CC");
 						done = true;
 						return;
 					}
@@ -56,20 +59,20 @@ public class RequestAmbulanceBehaviour extends SimpleBehaviour {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				break;
-				
+
+			}
+		} else {
+			if (msg != null) {
+				myAgent.send(msg);
+				done = true;
 			}
 		}
-		if(msg!=null){
-			myAgent.send(msg);
-			done = true;
-		}
-	/*
-	 * Request for ambulance
-	 * Start timer and change patient status accordingly
-	 * Transfer patient to ambulance	
-	 */
+		/*
+		 * Request for ambulance Start timer and change patient status
+		 * accordingly Transfer patient to ambulance
+		 */
 	}
 
 	@Override

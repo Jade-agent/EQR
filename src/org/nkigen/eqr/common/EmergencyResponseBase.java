@@ -78,4 +78,15 @@ public class EmergencyResponseBase implements Serializable {
 		}
 		return aid;
 	}
+	public synchronized AID assignFireEngine() {
+		AID aid = null;
+		if (available.size() > 0) {
+			aid = available.get(0);
+			available.remove(0);
+			busy.add(aid);
+			System.out.println(getClass().getName()+": Fire Engine Assigned assigned "+ aid + ": REMAINING Engines "+ available.size());
+			
+		}
+		return aid;
+	}
 }

@@ -6,9 +6,12 @@ import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 public class FireDetails  extends EmergencyDetails{
 
 	int status;
-	
+	EmergencyStateChangeInitiator listener;
 	public FireDetails() {
 	
+	}
+	public FireDetails(EmergencyStateChangeInitiator listener) {
+		this.listener = listener;
 	}
 
 	public int getStatus() {
@@ -17,6 +20,14 @@ public class FireDetails  extends EmergencyDetails{
 
 	public void setStatus(int status) {
 		this.status = status;
-	//	EmergencyStateChangeInitiator.getInstance().notifyStateChanged(this);
+		if(listener!=null)
+			listener.notifyStateChanged(this);
+	}
+	public EmergencyStateChangeInitiator getListener() {
+		return listener;
+	}
+
+	public void setListener(EmergencyStateChangeInitiator listener) {
+		this.listener = listener;
 	}
 }
