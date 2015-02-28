@@ -245,6 +245,7 @@ public class EQRViewer extends JFrame implements JMapViewerEventListener  {
              if(showToolTip.isSelected()) map().setToolTipText(map().getPosition(p).toString());
          }
      });
+     new ColorWindow();
  }
  
  public MapMarkerDot addMarker(EQRViewerPoint p){

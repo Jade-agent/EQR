@@ -701,6 +701,11 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
+    <target name="ColorWindow">
+        <java classname="org.nkigen.maps.viewer.ColorWindow" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
     <target name="Deploy JADE4 Agent EQRPatientAgent2">
         <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
             <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
