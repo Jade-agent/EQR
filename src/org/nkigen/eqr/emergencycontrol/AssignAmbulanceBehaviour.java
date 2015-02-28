@@ -17,7 +17,9 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import jade.lang.acl.MessageTemplate.MatchExpression;
 
 public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 
@@ -33,11 +35,16 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 		super(a);
 		patient = p;
 		this.bases = bases;
+		router = EQRAgentsHelper.locateRoutingServer(myAgent);
 	}
 
 	@Override
 	public void action() {
-		ACLMessage msg = myAgent.receive();
+		if (router == null)
+			router = EQRAgentsHelper.locateRoutingServer(myAgent);
+		MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+						MessageTemplate.MatchSender(router));
+		ACLMessage msg = myAgent.receive(template);
 
 		if (msg == null && !req_r) {
 			MultipleRoutingRequestMessage req = new MultipleRoutingRequestMessage();
@@ -45,18 +52,20 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 			req.setReply_to(myAgent.getAID());
 			req.setTo(patient.getLocation());
 
-			if (router == null)
-				router = EQRAgentsHelper.locateRoutingServer(myAgent);
+			
 			ACLMessage to_send = new ACLMessage(ACLMessage.REQUEST);
 			to_send.addReceiver(router);
 			try {
 				to_send.setContentObject(req);
+				myAgent.send(to_send);
+				req_r = true;
+				System.out.println(getBehaviourName()
+						+ " ASSIGN AMBULANCE REQUEST SENT TO ROUTER "+ patient.getAID());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			myAgent.send(to_send);
-			req_r = true;
+			
 		} else if (msg != null && req_r) {
 			Object content = null;
 			switch (msg.getPerformative()) {
@@ -68,6 +77,7 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 						System.out.println(getBehaviourName()
 								+ " route found for patient-ambulance");
 						informPatientAndAmbulance((MultipleRoutingResponseMessage) content);
+						done = true;
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
@@ -75,6 +85,12 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 				}
 
 				break;
+			}
+		}
+		else {
+			if (msg != null) {
+				myAgent.send(msg);
+				done = true;
 			}
 		}
 	}

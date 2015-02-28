@@ -135,7 +135,7 @@ public class EQRAgentsHelper {
 	public static AID locateViewer(Agent agent) {
 		if(viewer != null)
 			return viewer;
-		System.out.println("Trying to locate the Viewer server");
+		//System.out.println("Trying to locate the Viewer server");
 		ServiceDescription sd = new ServiceDescription();
 		sd.setType(EQRAgentTypes.VIEWER_AGENT);
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -146,8 +146,9 @@ public class EQRAgentsHelper {
 				viewer = dfds[0].getName();
 				System.out.println("Viewer Server found "
 						+ viewer.getLocalName() + " " + viewer.getName());
-			} else
-				System.out.println("Couldn't locate Viewer server!");
+			}
+			//else
+				//System.out.println("Couldn't locate Viewer server!");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			System.out.println("Failed for viewer searching int the DF!");

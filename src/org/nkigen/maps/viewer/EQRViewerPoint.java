@@ -27,7 +27,7 @@ public class EQRViewerPoint implements Serializable {
 	public static final Color WAITING_AMBULANCE_COLOR = Color.WHITE;
 
 	public static final Color MOVING_FIRE_COLOR = Color.MAGENTA;
-	public static final Color LOCATION_FIRE_COLOR = Color.ORANGE;
+	public static final Color LOCATION_FIRE_COLOR = Color.gray;
 
 	public static final Color HOSPITAL_COLOR = Color.BLUE;
 

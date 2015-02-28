@@ -49,12 +49,13 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 						details = ((FireEngineInitMessage) content)
 								.getFireEngine();
 						details.setListener(listener);
-					} else if (content instanceof FireEngineRequestMessage) {
+						initLocation();
+					} /*else if (content instanceof FireEngineRequestMessage) {
 						FireEngineRequestMessage req = (FireEngineRequestMessage) content;
 						if (req.getType() == FireEngineRequestMessage.NOTIFY_ENGINE) {
 
 						}
-					} else if (content instanceof FireEngineRequestMessage) {
+					} */else if (content instanceof FireEngineRequestMessage) {
 						/* Attend to fire */
 						FireEngineRequestMessage req = (FireEngineRequestMessage) content;
 						if (req.getType() == FireEngineRequestMessage.NOTIFY_ENGINE) {
@@ -83,7 +84,7 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 							}
 						}
 					} else {
-						//myAgent.send(msg); // Requeue the message
+						// myAgent.send(msg); // Requeue the message
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
@@ -95,13 +96,35 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 		}
 	}
 
+	private void initLocation() {
+		EQRLocationUpdate loc = new EQRLocationUpdate(
+				EQRLocationUpdate.FIRE_ENGINE_LOCATION, myAgent.getAID());
+		loc.setIsMoving(false);
+		loc.setIsDead(false);
+		loc.setCurrent(details.getLocation());
+		loc.setHeading(details.getLocation());
+		ACLMessage msg = new ACLMessage(ACLMessage.PROPAGATE);
+		AID update = EQRAgentsHelper.locateUpdateServer(myAgent);
+		msg.addReceiver(update);
+		try {
+			msg.setContentObject(loc);
+			myAgent.send(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println(getBehaviourName() + " " + myAgent.getLocalName()
+				+ " INIT LOCATION SENT ");
+
+	}
+
 	@Override
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub
 		if (ed instanceof FireEngineDetails) {
 			EQRLocationUpdate loc = new EQRLocationUpdate(
-					EQRLocationUpdate.FIRE_ENGINE_LOCATION,
-					myAgent.getAID());
+					EQRLocationUpdate.FIRE_ENGINE_LOCATION, myAgent.getAID());
 			loc.setIsMoving(true);
 			loc.setIsDead(false);
 			loc.setCurrent(((FireEngineDetails) ed).getCurrentLocation());
@@ -121,7 +144,6 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 					+ myAgent.getLocalName() + " Location changed to "
 					+ ((FireEngineDetails) ed).getCurrentLocation());
 		}
-
 
 	}
 

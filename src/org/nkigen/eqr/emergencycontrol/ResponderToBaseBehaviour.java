@@ -72,6 +72,7 @@ public class ResponderToBaseBehaviour extends SimpleBehaviour {
 							reply.setPerformative(ACLMessage.INFORM);
 							System.out.println(myAgent.getLocalName()+" message sent to "+ (AID)reply.getAllReceiver().next());
 							myAgent.send(reply);
+							done = true;
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

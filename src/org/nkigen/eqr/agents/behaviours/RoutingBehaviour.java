@@ -53,8 +53,6 @@ public class RoutingBehaviour extends CyclicBehaviour {
 			return;
 		}
 		try {
-			System.out
-					.println("Router: New message received....Message ok Probing");
 			Object content = msg.getContentObject();
 			switch (msg.getPerformative()) {
 			case ACLMessage.REQUEST:

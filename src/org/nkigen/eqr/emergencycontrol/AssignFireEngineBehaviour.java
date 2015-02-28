@@ -19,6 +19,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 public class AssignFireEngineBehaviour extends SimpleBehaviour {
@@ -35,30 +36,36 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 		super(a);
 		fire = fd;
 		this.bases = bases;
+		router = EQRAgentsHelper.locateRoutingServer(myAgent);
 	}
 
 	@Override
 	public void action() {
-		ACLMessage msg = myAgent.receive();
 
-		if (msg == null && !req_r) {
+		if (router == null)
+			router = EQRAgentsHelper.locateRoutingServer(myAgent);
+		MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+						MessageTemplate.MatchSender(router));
+		ACLMessage msg = myAgent.receive(template);
+
+		if (!req_r) {
 			MultipleRoutingRequestMessage req = new MultipleRoutingRequestMessage();
 			req.setBases((ArrayList<EmergencyResponseBase>) bases);
 			req.setReply_to(myAgent.getAID());
 			req.setTo(fire.getLocation());
-
-			if (router == null)
-				router = EQRAgentsHelper.locateRoutingServer(myAgent);
 			ACLMessage to_send = new ACLMessage(ACLMessage.REQUEST);
 			to_send.addReceiver(router);
 			try {
 				to_send.setContentObject(req);
+
+				myAgent.send(to_send);
+				req_r = true;
+				System.out.println(getBehaviourName()
+						+ " FIRE ENGINE ROUTE REQ SENt to ROUTER "+ fire.getAID());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			myAgent.send(to_send);
-			req_r = true;
 		} else if (msg != null && req_r) {
 			Object content = null;
 			switch (msg.getPerformative()) {
@@ -70,6 +77,8 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 						System.out.println(getBehaviourName()
 								+ " route found for fire_engine-fire");
 						informParties((MultipleRoutingResponseMessage) content);
+						done = true;
+						return;
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
@@ -77,6 +86,11 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 				}
 
 				break;
+			}
+		} else {
+			if (msg != null) {
+				myAgent.send(msg);
+				done = true;
 			}
 		}
 	}
@@ -100,6 +114,7 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 			try {
 				to_fire.setContentObject(res);
 				myAgent.send(to_fire);
+				done = true;
 				return;
 				/* TODO: Put some useful message here */
 			} catch (IOException e) {

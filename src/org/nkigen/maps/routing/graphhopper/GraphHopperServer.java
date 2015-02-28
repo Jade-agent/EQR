@@ -73,7 +73,7 @@ public class GraphHopperServer extends EQRRouter {
 		hopper.importOrLoad();
 	}
 
-	public GraphHopperServer requestRouting() throws EQRException {
+	public synchronized GraphHopperServer requestRouting() throws EQRException {
 System.out.println("Router: New route request received:");
 		req = new GHRequest(criteria.getFrom().getLatitude(), criteria
 				.getFrom().getLongitude(), criteria.getTo().getLatitude(),

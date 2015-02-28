@@ -39,6 +39,7 @@ public class RequestFireBehaviour extends SimpleBehaviour {
 				msg.setContentObject(req);
 				myAgent.send(msg);
 				req_made = true;
+				System.out.println(getBehaviourName()+ " "+ myAgent.getLocalName()+" ENGINE REQUEST SENT");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
