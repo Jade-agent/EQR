@@ -1,12 +1,16 @@
 package org.nkigen.eqr.agents.behaviours;
 
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingError;
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
+import org.nkigen.eqr.messages.EQRLocationUpdate;
+import org.nkigen.eqr.messages.EQRRoutingError;
+import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
 import org.nkigen.maps.viewer.EQRViewer;
 import org.nkigen.maps.viewer.EQRViewerPoint;
+import org.nkigen.maps.viewer.updates.EQRStatusPanelItem;
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -14,43 +18,39 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
+
 public class ViewerBehaviour extends CyclicBehaviour {
 
 	EQRViewer viewer;
-	private Agent agent;
+	HashMap<AID, MarkerViewerPoint> static_points;
+	HashMap<AID, MarkerViewerPoint> dynamic_points;
 
 	public ViewerBehaviour(Agent agent) {
 		// TODO Auto-generated constructor stub
 		super(agent);
-		this.agent = agent;
 		viewer = new EQRViewer();
 		viewer.setVisible(true);
+		static_points = new HashMap<AID, MarkerViewerPoint>();
+		dynamic_points = new HashMap<AID, MarkerViewerPoint>();
 		System.out.println("Viewer Up and running");
 	}
 
 	@Override
 	public void action() {
-		System.out.println("EQRViewer: New message received");
-		ACLMessage msg = agent.receive();
+		ACLMessage msg = myAgent.receive();
 		if (msg == null) {
-			System.out.println("EQRViewer: New message received but its NULL");
+			System.out.println(getBehaviourName() + " : "
+					+ myAgent.getLocalName()
+					+ ": New message received but its NULL");
 			block();
 			return;
 		}
 		System.out
 				.println("EQRViewer: New message received....Message ok Probing");
-		try {
-			Object content = msg.getContentObject();
-			switch (msg.getPerformative()) {
-			case ACLMessage.REQUEST:
-				agent.addBehaviour(new HandlerBehaviour(msg));
-				break;
-			}
-		} catch (UnreadableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		myAgent.addBehaviour(new HandlerBehaviour(msg));
 
 	}
 
@@ -59,21 +59,21 @@ public class ViewerBehaviour extends CyclicBehaviour {
 		ACLMessage msg;
 
 		public HandlerBehaviour(ACLMessage msg) {
-			super(agent);
+			super(ViewerBehaviour.this.myAgent);
 			this.msg = msg;
 		}
 
 		public void action() {
 			try {
-				System.out
-						.println("EQRViewer: New message received....Message ok Probing");
+				System.out.println(getBehaviourName()
+						+ ": New message received....Message ok Probing");
 				Object content = msg.getContentObject();
 				switch (msg.getPerformative()) {
-				case ACLMessage.REQUEST:
-					if (content instanceof EQRRoutingResult) {
+				case ACLMessage.INFORM:
+					if (content instanceof EQRViewerPoint) {
 						System.out
 								.println("EQRViewer: New message received....Message understood");
-						handle(msg);
+						handle((EQRViewerPoint) content);
 						return;
 					} else {
 						System.out
@@ -88,34 +88,75 @@ public class ViewerBehaviour extends CyclicBehaviour {
 
 		}
 
-		private void handle(ACLMessage msg) {
-			System.out.println("EQRViewer: Handling reply from server");
-			try {
-				EQRRoutingResult result = (EQRRoutingResult) msg
-						.getContentObject();
-				if (result instanceof EQRGraphHopperResult) {
-					updateViewer((EQRGraphHopperResult) result);
-				} else {
-					System.out
-							.println("EQRViewer: Error...Not updating viewer");
+		private void handle(EQRViewerPoint point) {
+			AID id = point.getItemId();
+			MarkerViewerPoint mp = new MarkerViewerPoint();
+			if (couldBeStatic(point)) {
+				if (!static_points.containsKey(id)) {
+					System.out.println(getBehaviourName()+" "+myAgent.getLocalName()+" new static point added");
+					MapMarkerDot mark = viewer.addMarker(point);
+					mp.setMarker(mark);
+					mp.setPoint(point);
+					static_points.put(id, mp);
+					viewer.addMarker(point);
 				}
-			} catch (UnreadableException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				else{
+					viewer.removeMarker(static_points.get(id).getMarker());
+					EQRViewerPoint p = static_points.get(id).getPoint();
+					p.setColor(point.getColor());
+					MapMarkerDot mark = viewer.addMarker(p);
+					mp.setMarker(mark);
+				}
+			} else {
+				if (!dynamic_points.containsKey(id)) {
+					MapMarkerDot mark = viewer.addMarker(point);
+					mp.setMarker(mark);
+					mp.setPoint(point);
+					dynamic_points.put(id, mp);
+				} else {
+					viewer.removeMarker(dynamic_points.get(id).getMarker());
+					MapMarkerDot mark = viewer.addMarker(point);
+					mp.setMarker(mark);
+					mp.setPoint(point);
+					dynamic_points.put(id, mp);
+				}
 			}
 		}
 
-		private synchronized void updateViewer(EQRGraphHopperResult result) {
-			long _sleep_time =(long) result.getDistance()/result.getDuration();
-			
-			List<EQRPoint> points = result.getPoints();
-			
-			for(int i=0; i<points.size();i++){
-				EQRViewerPoint p = new EQRViewerPoint(points.get(i), Color.RED);
-				viewer.addMarker(p);
-				block(_sleep_time+200);
-			}
+		private boolean couldBeStatic(EQRViewerPoint point) {
+			return (point.getType() == EQRLocationUpdate.HOSPITAL_LOCATION
+					|| point.getType() == EQRLocationUpdate.PATIENT_LOCATION);
 		}
-		
+
+	}
+
+	private class MarkerViewerPoint {
+		EQRViewerPoint point;
+		MapMarkerDot mp;
+
+		public MarkerViewerPoint() {
+
+		}
+
+		public MarkerViewerPoint(EQRViewerPoint p, MapMarkerDot m) {
+			this.mp = m;
+			this.point = p;
+		}
+
+		public EQRViewerPoint getPoint() {
+			return point;
+		}
+
+		public void setPoint(EQRViewerPoint point) {
+			this.point = point;
+		}
+
+		public MapMarkerDot getMarker() {
+			return mp;
+		}
+
+		public void setMarker(MapMarkerDot mp) {
+			this.mp = mp;
+		}
 	}
 }

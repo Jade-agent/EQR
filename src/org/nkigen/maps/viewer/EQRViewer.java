@@ -34,6 +34,7 @@ import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
+import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -46,6 +47,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 * Demonstrates the usage of {@link JMapViewer}
 *
 * @author Jan Peter Stotz
+* @author Nelson Kigen(2015)
 *
 */
 public class EQRViewer extends JFrame implements JMapViewerEventListener  {
@@ -66,7 +68,7 @@ public class EQRViewer extends JFrame implements JMapViewerEventListener  {
   * Constructs the {@code Demo}.
   */
  public EQRViewer() {
-     super("JMapViewer Demo");
+     super("EQRViewer");
      setSize(400, 400);
 
      treeMap = new JMapViewerTree("Zones");
@@ -243,13 +245,22 @@ public class EQRViewer extends JFrame implements JMapViewerEventListener  {
              if(showToolTip.isSelected()) map().setToolTipText(map().getPosition(p).toString());
          }
      });
+     new ColorWindow();
  }
  
- public void addMarker(EQRViewerPoint p){
-	 MapMarkerDot mp = new MapMarkerDot(trentoLayer, p.getPoint().getLatitude(), p.getPoint().getLongitude());
+ public MapMarkerDot addMarker(EQRViewerPoint p){
+	// MapMarkerDot mp = new MapMarkerDot(trentoLayer, p.getPoint().getLatitude(), p.getPoint().getLongitude());
+	 MapMarkerDot mp = new MapMarkerDot( p.getPoint().getLatitude(), p.getPoint().getLongitude());
+	// MapMarkerCircle mp = new MapMarkerCircle(p.getPoint().getLatitude(), p.getPoint().getLongitude(), 5);
 	 mp.setColor(p.getColor());
+	 mp.setBackColor(p.getColor());
 	 map().addMapMarker(mp);
+	 return mp;
  }
+ public void removeMarker(MapMarkerDot mp){
+	 map().removeMapMarker(mp);
+ }
+
  private JMapViewer map(){
      return treeMap.getViewer();
  }
@@ -261,15 +272,20 @@ public class EQRViewer extends JFrame implements JMapViewerEventListener  {
   * @param args
   */
  /*
+ 
  public static void main(String[] args) {
-     // java.util.Properties systemProperties = System.getProperties();
-     // systemProperties.setProperty("http.proxyHost", "localhost");
-     // systemProperties.setProperty("http.proxyPort", "8008");
-     new EQRViewer().setVisible(true);
+      //java.util.Properties systemProperties = System.getProperties();
+      //systemProperties.setProperty("http.proxyHost", "localhost");
+      //systemProperties.setProperty("http.proxyPort", "8008");
+    EQRViewer viewer =  new EQRViewer();
+    EQRViewerPoint point = new EQRViewerPoint(new EQRPoint(0.0, 0.0), Color.ORANGE);
+    MapMarkerDot dot =  viewer.addMarker(point);
+    viewer.setVisible(true);
+    viewer.removeMarker(dot);
  }
  
- */
-
+ 
+*/
  private void updateZoomParameters() {
      if (mperpLabelValue!=null)
          mperpLabelValue.setText(String.format("%s",map().getMeterPerPixel()));

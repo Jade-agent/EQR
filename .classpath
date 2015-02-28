@@ -4,13 +4,13 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/home/nkigen/development/jade/jade/lib/jade.jar"/>
 	<classpathentry kind="lib" path="/development/development/jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="/home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
-	<classpathentry kind="lib" path="/development/development/graphhopper/graphhopper-0.3.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JADE4"/>
-	<classpathentry kind="lib" path="/development/development/aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
-	<classpathentry kind="lib" path="/development/development/aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
-	<classpathentry kind="lib" path="/development/development/aose/trove4j-3.0.2.jar"/>
-	<classpathentry kind="lib" path="/development/development/aose/jmapviewer/JMapViewer.jar"/>
-	<classpathentry kind="lib" path="/development/development/aose/desmoj-2.4.2-complete-bin.jar"/>
+	<classpathentry kind="lib" path="/development/development/git/EQR/lib/desmoj-2.4.2-complete-bin.jar"/>
+	<classpathentry kind="lib" path="/development/development/git/EQR/lib/graphhopper-0.3.jar"/>
+	<classpathentry kind="lib" path="/development/development/git/EQR/lib/JMapViewer.jar"/>
+	<classpathentry kind="lib" path="/development/development/git/EQR/lib/slf4j-api-1.7.10.jar"/>
+	<classpathentry kind="lib" path="/development/development/git/EQR/lib/slf4j-simple-1.7.10.jar"/>
+	<classpathentry kind="lib" path="/development/development/git/EQR/lib/SwingMapViewer-0.4.0.jar"/>
+	<classpathentry kind="lib" path="/development/development/git/EQR/lib/trove4j-3.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,0 +1,902 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="ERQ">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    <path id="JADE4.userclasspath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+    </path>
+    <path id="ERQ.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <path refid="JADE4.userclasspath"/>
+        <pathelement location="lib/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="lib/graphhopper-0.3.jar"/>
+        <pathelement location="lib/JMapViewer.jar"/>
+        <pathelement location="lib/slf4j-api-1.7.10.jar"/>
+        <pathelement location="lib/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="lib/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="lib/trove4j-3.0.2.jar"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EQRPatientAgent2.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EQRPatientAgent3.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent AmbulanceAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent AmbulanceBehaviour.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent AmbulanceBehaviour1.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EQRPatientAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EQRFireAgent1.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Debug JADE4 Agent RoutingAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/desmo-j/desmoj-2.4.1-core-bin.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EQRViewerAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent SimulationAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EQRFireAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EmergencyControlCenterAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EmergencyResponseAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent FireEngineAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent FireEngineAgent1.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EQRPatientAgent4.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent RoutingAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EQRUpdatesAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent EQRPatientAgent1.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Debug JADE4 Agent EmergencyResponseAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/desmo-j/desmoj-2.4.1-core-bin.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent HospitalAgent.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent AmbulanceAgent2.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent SimulationAgent1.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <path id="run.Deploy JADE4 Agent AmbulanceAgent3.classpath">
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
+        <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar"/>
+        <pathelement location="../../../../usr/share/java/java-atk-wrapper.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunpkcs11.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/sunjce_provider.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/dnsns.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/zipfs.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/pulse-java.jar"/>
+        <pathelement location="../../../../usr/lib/jvm/java-7-openjdk-common/jre/lib/ext/localedata.jar"/>
+        <pathelement location="../../../../home/nkigen/development/jade/jade/lib/jade.jar"/>
+        <pathelement location="../../jade/jade/lib/commons-codec/commons-codec-1.3.jar"/>
+        <pathelement location="../../../../home/nkigen/development/aose/mapsforge/SwingMapViewer-0.4.0.jar"/>
+        <pathelement location="../../graphhopper/graphhopper-0.3.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-api-1.7.10.jar"/>
+        <pathelement location="../../aose/slf4j-1.7.10/slf4j-simple-1.7.10.jar"/>
+        <pathelement location="../../aose/trove4j-3.0.2.jar"/>
+        <pathelement location="../../aose/jmapviewer/JMapViewer.jar"/>
+        <pathelement location="../../aose/desmoj-2.4.2-complete-bin.jar"/>
+        <pathelement location="bin"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="ERQ.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="ColorWindow">
+        <java classname="org.nkigen.maps.viewer.ColorWindow" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EQRPatientAgent2">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EQRPatientAgent2:org.nkigen.eqr.agents.EQRPatientAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EQRPatientAgent2.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EQRPatientAgent3">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EQRPatientAgent3:org.nkigen.eqr.agents.EQRPatientAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EQRPatientAgent3.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent AmbulanceAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost AmbulanceAgent:org.nkigen.eqr.agents.AmbulanceAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent AmbulanceAgent.classpath"/>
+        </java>
+    </target>
+    <target name="EQRViewer">
+        <java classname="org.nkigen.maps.viewer.EQRViewer" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent AmbulanceBehaviour">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost AmbulanceBehaviour:org.nkigen.eqr.agents.behaviours.AmbulanceBehaviour "/>
+            <classpath refid="run.Deploy JADE4 Agent AmbulanceBehaviour.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent AmbulanceBehaviour1">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost AmbulanceBehaviour1:org.nkigen.eqr.agents.behaviours.AmbulanceBehaviour "/>
+            <classpath refid="run.Deploy JADE4 Agent AmbulanceBehaviour1.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EQRPatientAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EQRPatientAgent:org.nkigen.eqr.agents.EQRPatientAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EQRPatientAgent.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EQRFireAgent1">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EQRFireAgent1:org.nkigen.eqr.agents.EQRFireAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EQRFireAgent1.classpath"/>
+        </java>
+    </target>
+    <target name="Debug JADE4 Agent RoutingAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost RoutingAgent:org.nkigen.eqr.agents.RoutingAgent(&quot;/home/nkigen/development/git/EQR/src/trentino /home/nkigen/development/git/EQR/src/data&quot;);"/>
+            <classpath refid="run.Debug JADE4 Agent RoutingAgent.classpath"/>
+        </java>
+    </target>
+    <target name="EQRUpdateWindow">
+        <java classname="org.nkigen.maps.viewer.updates.EQRUpdateWindow" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EQRViewerAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EQRViewerAgent:org.nkigen.eqr.agents.EQRViewerAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EQRViewerAgent.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent SimulationAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost SimulationAgent:org.nkigen.eqr.simulation.SimulationAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent SimulationAgent.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EQRFireAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EQRFireAgent:org.nkigen.eqr.agents.EQRFireAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EQRFireAgent.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EmergencyControlCenterAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EmergencyControlCenterAgent:org.nkigen.eqr.agents.EmergencyControlCenterAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EmergencyControlCenterAgent.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EmergencyResponseAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EmergencyResponseAgent:org.nkigen.eqr.agents.EmergencyResponseAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EmergencyResponseAgent.classpath"/>
+        </java>
+    </target>
+    <target name="EmergencyArrivalModel">
+        <java classname="org.nkigen.eqr.models.EmergencyArrivalModel" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent FireEngineAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost FireEngineAgent:org.nkigen.eqr.agents.FireEngineAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent FireEngineAgent.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent FireEngineAgent1">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost FireEngineAgent1:org.nkigen.eqr.agents.FireEngineAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent FireEngineAgent1.classpath"/>
+        </java>
+    </target>
+    <target name="ParseinitXMLFile">
+        <java classname="org.nkigen.eqr.simulation.ParseinitXMLFile" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EQRPatientAgent4">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EQRPatientAgent4:org.nkigen.eqr.agents.EQRPatientAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EQRPatientAgent4.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent RoutingAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost RoutingAgent:org.nkigen.eqr.agents.RoutingAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent RoutingAgent.classpath"/>
+        </java>
+    </target>
+    <target name="EQRMapViewer">
+        <java classname="org.nkigen.maps.viewer.EQRMapViewer" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EQRUpdatesAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EQRUpdatesAgent:org.nkigen.eqr.agents.EQRUpdatesAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EQRUpdatesAgent.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent EQRPatientAgent1">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EQRPatientAgent1:org.nkigen.eqr.agents.EQRPatientAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent EQRPatientAgent1.classpath"/>
+        </java>
+    </target>
+    <target name="Debug JADE4 Agent EmergencyResponseAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost EmergencyResponseAgent:org.nkigen.eqr.agents.EmergencyResponseAgent;"/>
+            <classpath refid="run.Debug JADE4 Agent EmergencyResponseAgent.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent HospitalAgent">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost HospitalAgent:org.nkigen.eqr.agents.HospitalAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent HospitalAgent.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent AmbulanceAgent2">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost AmbulanceAgent2:org.nkigen.eqr.agents.AmbulanceAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent AmbulanceAgent2.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent SimulationAgent1">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost SimulationAgent1:org.nkigen.eqr.simulation.SimulationAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent SimulationAgent1.classpath"/>
+        </java>
+    </target>
+    <target name="Deploy JADE4 Agent AmbulanceAgent3">
+        <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
+            <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
+            <arg line=" -container -port 1099 -host localhost AmbulanceAgent3:org.nkigen.eqr.agents.AmbulanceAgent "/>
+            <classpath refid="run.Deploy JADE4 Agent AmbulanceAgent3.classpath"/>
+        </java>
+    </target>
+</project>

@@ -1,13 +1,16 @@
 package org.nkigen.eqr.agents.behaviours;
 
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingError;
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
+import org.nkigen.eqr.messages.EQRRoutingCriteria;
+import org.nkigen.eqr.messages.EQRRoutingError;
+import org.nkigen.eqr.messages.EQRRoutingResult;
+import org.nkigen.eqr.messages.MultipleRoutingRequestMessage;
 import org.nkigen.maps.routing.EQRException;
 import org.nkigen.maps.routing.EQRRouter;
+import org.nkigen.maps.routing.RoutingGoals;
 import org.nkigen.maps.routing.graphhopper.GraphHopperServer;
 
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -29,6 +32,7 @@ public class RoutingBehaviour extends CyclicBehaviour {
 	String local_file;
 	String storage_dir;
 	EQRRouter router;
+	RoutingGoals goals;
 
 	public RoutingBehaviour(Agent agent, String local_file, String storage_dir) {
 		super(agent);
@@ -36,30 +40,46 @@ public class RoutingBehaviour extends CyclicBehaviour {
 		this.local_file = local_file;
 		this.storage_dir = storage_dir;
 		System.out.println(local_file + " " + storage_dir);
-		router = new GraphHopperServer(null, local_file,
-				storage_dir);
-		
+		router = new GraphHopperServer(null, local_file, storage_dir);
+		goals = new RoutingGoals();
+
 	}
 
 	@Override
 	public void action() {
-		System.out.println("Router: New message received");
 		ACLMessage msg = agent.receive();
 		if (msg == null) {
-			System.out.println("Router: New message received but its NULL");
 			block();
 			return;
 		}
 		try {
-			System.out.println("Router: New message received....Message ok Probing");
 			Object content = msg.getContentObject();
 			switch (msg.getPerformative()) {
 			case ACLMessage.REQUEST:
-				if (content instanceof EQRRoutingCriteria){
-					System.out.println("Router: New message received....Message understood");
-					agent.addBehaviour(new HandleSearchRequest(agent, msg));
-				}
-				else
+				if (content instanceof EQRRoutingCriteria) {
+					System.out.println(getBehaviourName()
+							+ " New Single Request received");
+					Object[] params = new Object[3];
+					params[0] = myAgent;
+					params[1] = msg;
+					params[2] = router;
+					Behaviour b = goals.executePlan(
+							RoutingGoals.FIND_ROUTE_FROM_SINGLE, params);
+					agent.addBehaviour(b);
+				} else if (content instanceof MultipleRoutingRequestMessage) {
+					System.out.println(getBehaviourName()
+							+ " New Multiple Route Request received");
+					Object[] params = new Object[2];
+					params[0] = myAgent;
+					((MultipleRoutingRequestMessage) content).setReply_to(msg
+							.getSender());
+					((MultipleRoutingRequestMessage) content)
+							.setRouter((GraphHopperServer) router);
+					params[1] = (MultipleRoutingRequestMessage) content;
+					Behaviour b = goals.executePlan(
+							RoutingGoals.FIND_ROUTE_FROM_MULTIPLE, params);
+					agent.addBehaviour(b);
+				} else
 					replyNotUnderstood(msg);
 				break;
 			default:
@@ -84,51 +104,4 @@ public class RoutingBehaviour extends CyclicBehaviour {
 		}
 	}
 
-	private class HandleSearchRequest extends OneShotBehaviour {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private Agent agent;
-		private ACLMessage message;
-
-		public HandleSearchRequest(Agent agent, ACLMessage msg) {
-			this.agent = agent;
-			this.message = msg;
-		}
-
-		@Override
-		public void action() {
-			try {
-				System.out.println("Routing Behaviour: Received Message");
-				EQRRoutingCriteria req = (EQRRoutingCriteria) message
-						.getContentObject();
-				EQRRoutingResult res = null;
-
-				ACLMessage reply = message.createReply();
-				try {
-					System.out.println("Routing Behaviour: Requesting route from server");
-					res = ((GraphHopperServer) router).setCriteria(req).requestRouting()
-							.getRoutingResult();
-					reply.setPerformative(ACLMessage.INFORM);
-				} catch (EQRException e) {
-					System.out.println("Routing Behaviour: Error when requesting route...");
-					e.getMessage();
-					res = new EQRRoutingError();
-					reply.setPerformative(ACLMessage.INFORM); /*
-															 * TODO: Change this
-															 * later
-															 */
-				} finally {
-					System.out.println("Routing Behaviour: Request completed....Sending reply");
-					reply.setContentObject(res);
-					agent.send(reply);
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-	}
 }

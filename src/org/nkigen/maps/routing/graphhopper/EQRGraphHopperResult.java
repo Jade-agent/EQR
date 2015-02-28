@@ -3,9 +3,10 @@ package org.nkigen.maps.routing.graphhopper;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingResult;
+import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.GraphHopperServer;
 
@@ -43,6 +44,16 @@ public class EQRGraphHopperResult extends EQRRoutingResult {
 		return points;
 	}
 
+	/**
+	 * TODO: Make more meaningful
+	 * @return 
+	 */
+	public EQRGraphHopperResult reverse(){
+	//	Collections.reverse(description);
+	//	Collections.reverse(gpx);
+		Collections.reverse(points);
+		return this;
+	}
 	public void setPoints(PointList points) {
 		if(this.points == null)
 			this.points = new ArrayList<EQRPoint>();

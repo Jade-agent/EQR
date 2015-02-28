@@ -10,8 +10,8 @@ import com.graphhopper.GraphHopper;
 import com.graphhopper.routing.util.EncodingManager;
 import com.sun.istack.internal.Nullable;
 
-import org.nkigen.eqr.agents.ontologies.routing.EQRRoutingCriteria;
 import org.nkigen.eqr.agents.ontologies.routing.GraphHopperRoutingVocabulary;
+import org.nkigen.eqr.messages.EQRRoutingCriteria;
 /**
  * Interface to the instance of a graphhopper server
  * 
@@ -73,7 +73,7 @@ public class GraphHopperServer extends EQRRouter {
 		hopper.importOrLoad();
 	}
 
-	public GraphHopperServer requestRouting() throws EQRException {
+	public synchronized GraphHopperServer requestRouting() throws EQRException {
 System.out.println("Router: New route request received:");
 		req = new GHRequest(criteria.getFrom().getLatitude(), criteria
 				.getFrom().getLongitude(), criteria.getTo().getLatitude(),
