@@ -3,10 +3,12 @@ package org.nkigen.eqr.emergencycontrol;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.common.EmergencyResponseBase;
 import org.nkigen.eqr.fires.FireDetails;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
 import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
@@ -29,7 +31,7 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 	FireDetails fire;
 	List<EmergencyResponseBase> bases;
 	AID router;
-
+ Logger logger;
 	/* Assumption: This list of bases contain atleast an ambulance */
 	public AssignFireEngineBehaviour(Agent a, FireDetails fd,
 			List<EmergencyResponseBase> bases) {
@@ -37,11 +39,12 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 		fire = fd;
 		this.bases = bases;
 		router = EQRAgentsHelper.locateRoutingServer(myAgent);
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
+		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()+ " init");
 	}
 
 	@Override
 	public void action() {
-
 		while (router == null)
 			router = EQRAgentsHelper.locateRoutingServer(myAgent);
 		MessageTemplate template = MessageTemplate.MatchSender(router);
@@ -59,6 +62,7 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 
 				myAgent.send(to_send);
 				req_r = true;
+				EQRLogger.log(logger, to_send, myAgent.getLocalName(), "Message sent to the Router:"+ router.getLocalName());
 				System.out.println(getBehaviourName()
 						+ " FIRE ENGINE ROUTE REQ SENt to ROUTER "
 						+ fire.getAID());
@@ -76,6 +80,7 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 					if (content instanceof MultipleRoutingResponseMessage) {
 						System.out.println(getBehaviourName()
 								+ " route found for fire_engine-fire");
+						EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message received from router "+ router.getLocalName());
 						informParties((MultipleRoutingResponseMessage) content);
 						done = true;
 						return;
@@ -113,6 +118,7 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 			to_fire.addReceiver(fire.getAID());
 			try {
 				to_fire.setContentObject(res);
+				EQRLogger.log(logger, to_fire, myAgent.getLocalName(), " Routing error encountered");
 				myAgent.send(to_fire);
 				done = true;
 				return;
@@ -145,6 +151,8 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 			to_fire.setContentObject(new FireEngineRequestMessage(
 					FireEngineRequestMessage.REPLY));
 			to_fire.addReceiver(fire.getAID());
+			EQRLogger.log(logger, to_engine, myAgent.getLocalName(), "Message sent to Fire Engine");
+			EQRLogger.log(logger, to_fire, myAgent.getLocalName(), "Message sent to Fire");
 			/* Add more useful info here for patient */
 			myAgent.send(to_fire);
 		} catch (IOException e) {

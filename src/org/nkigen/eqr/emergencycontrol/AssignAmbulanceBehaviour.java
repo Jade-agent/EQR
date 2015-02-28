@@ -3,9 +3,11 @@ package org.nkigen.eqr.emergencycontrol;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.common.EmergencyResponseBase;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
 import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
@@ -28,7 +30,7 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 	PatientDetails patient;
 	List<EmergencyResponseBase> bases;
 	AID router;
-
+	Logger logger; 
 	/* Assumption: This list of bases contain atleast an ambulance */
 	public AssignAmbulanceBehaviour(Agent a, PatientDetails p,
 			List<EmergencyResponseBase> bases) {
@@ -36,6 +38,7 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 		patient = p;
 		this.bases = bases;
 		router = EQRAgentsHelper.locateRoutingServer(myAgent);
+		logger = EQRLogger.prep(logger,myAgent.getLocalName());
 	}
 
 	@Override
@@ -56,6 +59,7 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 			to_send.addReceiver(router);
 			try {
 				to_send.setContentObject(req);
+				EQRLogger.log(logger, to_send, myAgent.getLocalName(), "Message sent to the Router:"+ router.getLocalName());
 				myAgent.send(to_send);
 				req_r = true;
 				System.out.println(getBehaviourName()
@@ -74,6 +78,7 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 				try {
 					content = msg.getContentObject();
 					if (content instanceof MultipleRoutingResponseMessage) {
+						EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message received from router "+ router.getLocalName());
 						System.out.println(getBehaviourName()
 								+ " route found for patient-ambulance");
 						informPatientAndAmbulance((MultipleRoutingResponseMessage) content);
@@ -112,6 +117,7 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 			to_patient.addReceiver(patient.getAID());
 			try {
 				to_patient.setContentObject(res);
+				EQRLogger.log(logger, to_patient, myAgent.getLocalName(), " Routing error encountered");
 				/* TODO: Put some useful message here */
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -136,7 +142,10 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 				}
 			}
 			myAgent.send(to_ambulance);
+			
 			to_patient.addReceiver(patient.getAID());
+			EQRLogger.log(logger, to_ambulance, myAgent.getLocalName(), "Message sent to ambulance");
+			EQRLogger.log(logger, to_patient, myAgent.getLocalName(), "Message sent to Patient");
 			/* Add more useful info here for patient */
 			myAgent.send(to_patient);
 		} catch (IOException e) {
