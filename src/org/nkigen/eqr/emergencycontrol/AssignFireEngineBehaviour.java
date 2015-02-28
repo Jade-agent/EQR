@@ -42,10 +42,9 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 	@Override
 	public void action() {
 
-		if (router == null)
+		while (router == null)
 			router = EQRAgentsHelper.locateRoutingServer(myAgent);
-		MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-						MessageTemplate.MatchSender(router));
+		MessageTemplate template = MessageTemplate.MatchSender(router);
 		ACLMessage msg = myAgent.receive(template);
 
 		if (!req_r) {
@@ -61,7 +60,8 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 				myAgent.send(to_send);
 				req_r = true;
 				System.out.println(getBehaviourName()
-						+ " FIRE ENGINE ROUTE REQ SENt to ROUTER "+ fire.getAID());
+						+ " FIRE ENGINE ROUTE REQ SENt to ROUTER "
+						+ fire.getAID());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

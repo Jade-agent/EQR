@@ -40,10 +40,10 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 
 	@Override
 	public void action() {
-		if (router == null)
+		while (router == null)
 			router = EQRAgentsHelper.locateRoutingServer(myAgent);
-		MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-						MessageTemplate.MatchSender(router));
+		
+		MessageTemplate template = MessageTemplate.MatchSender(router);
 		ACLMessage msg = myAgent.receive(template);
 
 		if (msg == null && !req_r) {
@@ -52,7 +52,6 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 			req.setReply_to(myAgent.getAID());
 			req.setTo(patient.getLocation());
 
-			
 			ACLMessage to_send = new ACLMessage(ACLMessage.REQUEST);
 			to_send.addReceiver(router);
 			try {
@@ -60,12 +59,13 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 				myAgent.send(to_send);
 				req_r = true;
 				System.out.println(getBehaviourName()
-						+ " ASSIGN AMBULANCE REQUEST SENT TO ROUTER "+ patient.getAID());
+						+ " ASSIGN AMBULANCE REQUEST SENT TO ROUTER "
+						+ patient.getAID());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		} else if (msg != null && req_r) {
 			Object content = null;
 			switch (msg.getPerformative()) {
@@ -86,8 +86,7 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 
 				break;
 			}
-		}
-		else {
+		} else {
 			if (msg != null) {
 				myAgent.send(msg);
 				done = true;
@@ -95,10 +94,13 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 		}
 	}
 
-	private boolean isSameBase(EmergencyResponseBase b1, EmergencyResponseBase b2){
-		return b1.getLocation().getLatitude() == b2.getLocation().getLatitude() &&
-				b1.getLocation().getLongitude() == b2.getLocation().getLongitude();
+	private boolean isSameBase(EmergencyResponseBase b1,
+			EmergencyResponseBase b2) {
+		return b1.getLocation().getLatitude() == b2.getLocation().getLatitude()
+				&& b1.getLocation().getLongitude() == b2.getLocation()
+						.getLongitude();
 	}
+
 	private void informPatientAndAmbulance(MultipleRoutingResponseMessage msg) {
 		/* TODO */
 		EQRRoutingResult res = msg.getResult();
@@ -126,9 +128,10 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 		anm.setResult(res);
 		try {
 			to_ambulance.setContentObject(anm);
-			for(EmergencyResponseBase b : bases){
-				if(isSameBase(b, msg.getBase())){
-					System.out.println(getBehaviourName()+"BASES ARE EQUAL: ");
+			for (EmergencyResponseBase b : bases) {
+				if (isSameBase(b, msg.getBase())) {
+					System.out
+							.println(getBehaviourName() + "BASES ARE EQUAL: ");
 					to_ambulance.addReceiver(b.assignAmbulance());
 				}
 			}

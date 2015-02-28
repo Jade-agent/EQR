@@ -1,23 +1,5 @@
 package org.nkigen.eqr.agents.behaviours;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.nkigen.eqr.ambulance.AmbulanceDetails;
-import org.nkigen.eqr.common.EQRAgentTypes;
-import org.nkigen.eqr.common.EmergencyDetails;
-import org.nkigen.eqr.common.EmergencyResponseBase;
-import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
-import org.nkigen.eqr.common.EmergencyStateChangeListener;
-import org.nkigen.eqr.emergencycontrol.AssignAmbulanceBehaviour;
-import org.nkigen.eqr.emergencycontrol.EmergencyControlCenterGoals;
-import org.nkigen.eqr.messages.AmbulanceRequestMessage;
-import org.nkigen.eqr.messages.BaseRouteMessage;
-import org.nkigen.eqr.messages.ControlCenterInitMessage;
-import org.nkigen.eqr.messages.FireEngineRequestMessage;
-import org.nkigen.eqr.messages.HospitalRequestMessage;
-import org.nkigen.eqr.messages.PatientInitMessage;
-
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -29,6 +11,23 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import org.nkigen.eqr.ambulance.AmbulanceDetails;
+import org.nkigen.eqr.common.EQRAgentTypes;
+import org.nkigen.eqr.common.EmergencyDetails;
+import org.nkigen.eqr.common.EmergencyResponseBase;
+import org.nkigen.eqr.common.EmergencyStateChangeListener;
+import org.nkigen.eqr.emergencycontrol.EmergencyControlCenterGoals;
+import org.nkigen.eqr.logs.EQRLogger;
+import org.nkigen.eqr.messages.AmbulanceRequestMessage;
+import org.nkigen.eqr.messages.BaseRouteMessage;
+import org.nkigen.eqr.messages.ControlCenterInitMessage;
+import org.nkigen.eqr.messages.FireEngineRequestMessage;
+import org.nkigen.eqr.messages.HospitalRequestMessage;
+
 public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		EmergencyStateChangeListener {
 
@@ -38,13 +37,14 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 	List<EmergencyResponseBase> fire_engine_bases;
 	ArrayList<AID> ambulances;
 	ArrayList<AID> fire_engines;
-
+	Logger logger;
 	EmergencyControlCenterGoals goals;
 	boolean is_setup_complete = false;
 
 	public EmergencyControlBehaviour(Agent a) {
 		super(a);
 		// EmergencyStateChangeInitiator.getInstance().addListener(this);
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		goals = new EmergencyControlCenterGoals();
 		initAmbulances();
 		initFireEngines();
@@ -58,6 +58,8 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 			block();
 			return;
 		}
+		EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message received");
+		//logger.info("message received: "+ msg.getSender());
 		switch (msg.getPerformative()) {
 		case ACLMessage.REQUEST:
 			if (is_setup_complete)
