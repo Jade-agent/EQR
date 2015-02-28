@@ -96,12 +96,12 @@ public class EQRViewerPoint implements Serializable {
 			if (is_moving)
 				color = MOVING_FIRE_COLOR;
 			else
-				color = WAITING_FIRE_COLOR;
+				color = LOCATION_FIRE_COLOR;
 			break;
 		case EQRLocationUpdate.FIRE_LOCATION:
 			switch (status) {
 			case EmergencyStatus.FIRE_STATUS_ACTIVE:
-				color = WAITING_AMBULANCE_COLOR;
+				color = WAITING_FIRE_COLOR;
 				break;
 			case EmergencyStatus.FIRE_STATUS_OFF:
 				color = ATTENDED_FIRE_COLOR;
