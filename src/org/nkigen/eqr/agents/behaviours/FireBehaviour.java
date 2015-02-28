@@ -48,6 +48,7 @@ public class FireBehaviour extends CyclicBehaviour implements
 						System.out.println(getBehaviourName()
 								+ " Fire init recieved "
 								+ myAgent.getLocalName());
+						fire.setStatus(EmergencyStatus.FIRE_STATUS_ACTIVE);
 					}
 				} catch (UnreadableException e) {
 					e.printStackTrace();
