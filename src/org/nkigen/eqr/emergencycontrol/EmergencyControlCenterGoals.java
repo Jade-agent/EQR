@@ -12,6 +12,7 @@ import org.nkigen.eqr.agents.EmergencyControlCenterAgent;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EQRGoal;
 import org.nkigen.eqr.common.EmergencyResponseBase;
+import org.nkigen.eqr.fires.FireDetails;
 import org.nkigen.eqr.messages.BaseRouteMessage;
 import org.nkigen.eqr.patients.PatientDetails;
 
@@ -88,10 +89,10 @@ public class EmergencyControlCenterGoals extends EQRGoal {
 	private Behaviour assignFireEngine(Object p[]) {
 		if (p.length == 3) {
 			if (p[0] instanceof EmergencyControlCenterAgent
-					&& p[1] instanceof PatientDetails && p[2] instanceof ArrayList<?>) 
-				return new AssignAmbulanceBehaviour(
+					&& p[1] instanceof FireDetails && p[2] instanceof ArrayList<?>) 
+				return new AssignFireEngineBehaviour(
 						(EmergencyControlCenterAgent) p[0],
-						(PatientDetails) p[1], (List<EmergencyResponseBase>) p[2]);
+						(FireDetails) p[1], (List<EmergencyResponseBase>) p[2]);
 		}
 		System.out.println("Wrong Number of params ");
 		return null;
