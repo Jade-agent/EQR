@@ -1,6 +1,7 @@
 package org.nkigen.eqr.agents.behaviours;
 
 import java.io.IOException;
+import jade.util.Logger;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -16,6 +17,7 @@ import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.common.EmergencyStatus;
 import org.nkigen.eqr.fires.FireDetails;
 import org.nkigen.eqr.fires.FireGoals;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceInitMessage;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.FireInitMessage;
@@ -25,11 +27,13 @@ public class FireBehaviour extends CyclicBehaviour implements
 
 	FireDetails fire;
 	FireGoals goals;
+	Logger logger;
 	EmergencyStateChangeInitiator listener;
 
 	public FireBehaviour(Agent agent) {
 		super(agent);
 		listener = new EmergencyStateChangeInitiator();
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		listener.addListener(this);
 		goals = new FireGoals();
 	}
@@ -38,6 +42,7 @@ public class FireBehaviour extends CyclicBehaviour implements
 	public void action() {
 		ACLMessage msg = myAgent.receive();
 		if (msg != null) {
+			EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message received ");
 			switch (msg.getPerformative()) {
 			case ACLMessage.INFORM:
 				try {
@@ -62,6 +67,7 @@ public class FireBehaviour extends CyclicBehaviour implements
 	}
 
 	private void sendFireUpdate(int status) {
+		EQRLogger.log(logger, null, myAgent.getLocalName(), " Fire Status Update ");
 		System.out.println(getBehaviourName() + ": " + myAgent.getLocalName()
 				+ " Fire sending init location");
 		AID update = EQRAgentsHelper.locateUpdateServer(myAgent);

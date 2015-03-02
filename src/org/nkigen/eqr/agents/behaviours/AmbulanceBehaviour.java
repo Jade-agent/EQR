@@ -1,6 +1,7 @@
 package org.nkigen.eqr.agents.behaviours;
 
 import java.io.IOException;
+import jade.util.Logger;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -15,6 +16,8 @@ import org.nkigen.eqr.ambulance.AmbulanceGoals;
 import org.nkigen.eqr.common.EmergencyDetails;
 import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
+import org.nkigen.eqr.common.EmergencyStatus;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceInitMessage;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
@@ -29,11 +32,13 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 	AmbulanceGoals goals;
 	AmbulanceDetails details;
 	EmergencyStateChangeInitiator listener;
+	Logger logger;
 
 	public AmbulanceBehaviour(Agent agent) {
 		super(agent);
 		listener = new EmergencyStateChangeInitiator();
 		listener.addListener(this);
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		goals = new AmbulanceGoals();
 	}
 
@@ -41,6 +46,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 	public void action() {
 		ACLMessage msg = myAgent.receive();
 		if (msg != null) {
+			EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message received");
 			switch (msg.getPerformative()) {
 			case ACLMessage.INFORM:
 				try {
@@ -53,7 +59,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 						params[0] = myAgent;
 						params[1] = (AmbulanceNotifyMessage) content;
 						params[2] = details;
-
+						sendAmbulanceInitLoc();
 						Behaviour b = goals.executePlan(
 								AmbulanceGoals.PICK_PATIENT, params);
 						if (b != null)
@@ -101,10 +107,32 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 		}
 	}
 
+	private void sendAmbulanceInitLoc() {
+		EQRLogger.log(logger, null, myAgent.getLocalName(), "Sending initial location");
+		System.out.println(getBehaviourName() + ": " + myAgent.getLocalName()
+				+ " Ambulance Sending");
+		AID update = EQRAgentsHelper.locateUpdateServer(myAgent);
+		EQRLocationUpdate loc = new EQRLocationUpdate(
+				EQRLocationUpdate.AMBULANCE_LOCATION, myAgent.getAID());
+		loc.setIsMoving(false);
+		loc.setIsDead(false);
+		loc.setCurrent(details.getLocation());
+		ACLMessage msg = new ACLMessage(ACLMessage.PROPAGATE);
+		msg.addReceiver(update);
+		try {
+			msg.setContentObject(loc);
+			myAgent.send(msg);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub
 		if (ed instanceof AmbulanceDetails) {
+			EQRLogger.log(logger, null, myAgent.getLocalName(), "Location changed to "+ ((AmbulanceDetails) ed).getCurrentLocation());
 			EQRLocationUpdate loc = new EQRLocationUpdate(
 					EQRLocationUpdate.AMBULANCE_LOCATION,
 					myAgent.getAID());

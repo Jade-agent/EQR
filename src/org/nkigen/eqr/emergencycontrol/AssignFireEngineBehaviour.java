@@ -3,7 +3,7 @@ package org.nkigen.eqr.emergencycontrol;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.common.EmergencyResponseBase;
@@ -94,7 +94,15 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 			}
 		} else {
 			if (msg != null) {
+				EQRLogger
+				.log(EQRLogger.LOG_EERROR,
+						logger,
+						msg,
+						myAgent.getLocalName(),
+						getBehaviourName()
+								+ ": Should not happen, wrong message received ");
 				myAgent.send(msg);
+				
 				done = true;
 			}
 		}

@@ -8,6 +8,7 @@ import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.common.EmergencyStatus;
 import org.nkigen.eqr.fires.RequestFireBehaviour;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.PatientInitMessage;
@@ -24,6 +25,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.util.Logger;
 
 public class PatientBehaviour extends CyclicBehaviour implements
 		EmergencyStateChangeListener {
@@ -31,7 +33,7 @@ public class PatientBehaviour extends CyclicBehaviour implements
 	PatientDetails patient = null;
 	PatientGoals goals;
 	EmergencyStateChangeInitiator listener;
-
+	Logger logger;
 	public PatientBehaviour(Agent agent) {
 		super(agent);
 		listener = new EmergencyStateChangeInitiator();
@@ -39,6 +41,7 @@ public class PatientBehaviour extends CyclicBehaviour implements
 		goals = new PatientGoals();
 		goals.newGoal(PatientGoals.REQUEST_AMBULANCE_PICKUP,
 				RequestAmbulanceBehaviour.class);
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		System.out.println(getClass().getName() + " Stated");
 	}
 
@@ -49,6 +52,7 @@ public class PatientBehaviour extends CyclicBehaviour implements
 			block();
 			return;
 		}
+		EQRLogger.log(logger, msg, myAgent.getLocalName(),"Message recevied");
 		handle(msg);
 
 	}
@@ -88,7 +92,8 @@ public class PatientBehaviour extends CyclicBehaviour implements
 	}
 
 	private void sendWaitPatientUpdate(int status){
-		System.out.println(getBehaviourName()+": "+myAgent.getLocalName()+" Patient sending init location");
+		System.out.println(getBehaviourName()+": "+myAgent.getLocalName()+" Patient sending location Update");
+		EQRLogger.log(logger, null, myAgent.getLocalName(), "Patient Status Update");
 		AID update = EQRAgentsHelper.locateUpdateServer(myAgent);
 		EQRLocationUpdate loc = new EQRLocationUpdate(EQRLocationUpdate.PATIENT_LOCATION, myAgent.getAID());
 		loc.setStatus(status);
@@ -99,6 +104,7 @@ public class PatientBehaviour extends CyclicBehaviour implements
 		msg.addReceiver(update);
 		try {
 			msg.setContentObject(loc);
+			EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message sent");
 			myAgent.send(msg);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -133,6 +139,7 @@ public class PatientBehaviour extends CyclicBehaviour implements
 				sendWaitPatientUpdate(EmergencyStatus.PATIENT_DEAD);
 				break;
 			default:
+				EQRLogger.log(EQRLogger.LOG_EERROR,logger, null, myAgent.getLocalName(), "Wrong Patient Status set");
 				System.out.println(getClass().getName()
 						+ " Status not understood");
 

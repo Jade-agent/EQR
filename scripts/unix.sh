@@ -67,7 +67,7 @@ export AGENTS="${VIEWER}${UPDATE}${ROUTER}${HOSPITALS}${PATIENTS}${FIRES}${FIRE_
 main(){
 	create_agents
 	ant -f ${SRC_PATH}/build.xml
-	java -cp ${CP} jade.Boot -gui -agents ${AGENTS} 
+	java -cp ${CP} jade.Boot -gui -agents sniffer:jade.tools.sniffer.Sniffer ${AGENTS} 
 }
 
 main

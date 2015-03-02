@@ -3,13 +3,16 @@ package org.nkigen.eqr.patients;
 import java.io.IOException;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceRequestMessage;
 
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import jade.util.Logger;
 
 public class RequestAmbulanceBehaviour extends SimpleBehaviour {
 
@@ -17,17 +20,20 @@ public class RequestAmbulanceBehaviour extends SimpleBehaviour {
 	boolean done = false;
 	boolean req_made = false;
 	AID command_center = null;
+	Logger logger;
 
 	public RequestAmbulanceBehaviour(Agent a, PatientDetails p) {
 		super(a);
 		patient = p;
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 	}
 
 	@Override
 	public void action() {
-		if (command_center == null)
+		while (command_center == null)
 			command_center = EQRAgentsHelper.locateControlCenter(myAgent);
-		ACLMessage msg = myAgent.receive();
+		MessageTemplate temp = MessageTemplate.MatchSender(command_center);
+		ACLMessage msg = myAgent.receive(temp);
 		if (msg == null && !req_made) {
 			msg = new ACLMessage(ACLMessage.REQUEST);
 			AmbulanceRequestMessage arm = new AmbulanceRequestMessage();
@@ -37,6 +43,8 @@ public class RequestAmbulanceBehaviour extends SimpleBehaviour {
 				msg.addReceiver(command_center);
 				myAgent.send(msg);
 				req_made = true;
+				EQRLogger.log(logger, msg, myAgent.getLocalName(),
+						getBehaviourName() + ": Message sent");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -45,6 +53,8 @@ public class RequestAmbulanceBehaviour extends SimpleBehaviour {
 			System.out.println(getBehaviourName() + " "
 					+ myAgent.getLocalName() + " Message sent to CC");
 		} else if (msg != null && req_made) {
+			EQRLogger.log(logger, msg, myAgent.getLocalName(),
+					getBehaviourName() + ": Message recevied");
 			switch (msg.getPerformative()) {
 			case ACLMessage.CONFIRM:
 				try {
@@ -65,6 +75,13 @@ public class RequestAmbulanceBehaviour extends SimpleBehaviour {
 			}
 		} else {
 			if (msg != null) {
+				EQRLogger
+						.log(EQRLogger.LOG_EERROR,
+								logger,
+								msg,
+								myAgent.getLocalName(),
+								getBehaviourName()
+										+ ": Should not happen, wrong message received ");
 				myAgent.send(msg);
 				done = true;
 			}

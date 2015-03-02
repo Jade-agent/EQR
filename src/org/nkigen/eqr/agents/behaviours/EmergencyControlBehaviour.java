@@ -13,7 +13,7 @@ import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import jade.util.Logger;
 
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EQRAgentTypes;
@@ -58,7 +58,7 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 			block();
 			return;
 		}
-		EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message received");
+		EQRLogger.log(logger, msg, myAgent.getLocalName(), getBehaviourName()+": Message received");
 		//logger.info("message received: "+ msg.getSender());
 		switch (msg.getPerformative()) {
 		case ACLMessage.REQUEST:

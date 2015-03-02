@@ -1,6 +1,7 @@
 package org.nkigen.eqr.agents.behaviours;
 
 import java.io.IOException;
+import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
@@ -9,6 +10,7 @@ import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.fireengine.FireEngineDetails;
 import org.nkigen.eqr.fireengine.FireEngineGoals;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceInitMessage;
 import org.nkigen.eqr.messages.AttendToFireMessage;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
@@ -29,18 +31,23 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 	FireEngineDetails details;
 	EmergencyStateChangeInitiator listener;
 	FireEngineGoals goals;
+	Logger logger;
 
 	public FireEngineBehaviour(Agent agent) {
 		super(agent);
 		listener = new EmergencyStateChangeInitiator();
 		listener.addListener(this);
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		goals = new FireEngineGoals();
 	}
 
 	@Override
 	public void action() {
+		/* TODO: Add msg templates */
 		ACLMessage msg = myAgent.receive();
 		if (msg != null) {
+			EQRLogger.log(logger, msg, myAgent.getLocalName(),
+					"Message received");
 			switch (msg.getPerformative()) {
 			case ACLMessage.INFORM:
 				try {
@@ -50,12 +57,14 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 								.getFireEngine();
 						details.setListener(listener);
 						initLocation();
-					} /*else if (content instanceof FireEngineRequestMessage) {
-						FireEngineRequestMessage req = (FireEngineRequestMessage) content;
-						if (req.getType() == FireEngineRequestMessage.NOTIFY_ENGINE) {
-
-						}
-					} */else if (content instanceof FireEngineRequestMessage) {
+					} /*
+					 * else if (content instanceof FireEngineRequestMessage) {
+					 * FireEngineRequestMessage req = (FireEngineRequestMessage)
+					 * content; if (req.getType() ==
+					 * FireEngineRequestMessage.NOTIFY_ENGINE) {
+					 * 
+					 * } }
+					 */else if (content instanceof FireEngineRequestMessage) {
 						/* Attend to fire */
 						FireEngineRequestMessage req = (FireEngineRequestMessage) content;
 						if (req.getType() == FireEngineRequestMessage.NOTIFY_ENGINE) {
@@ -97,6 +106,8 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 	}
 
 	private void initLocation() {
+		EQRLogger.log(logger, null, myAgent.getLocalName(),
+				" Initial location at " + details.getLocation());
 		EQRLocationUpdate loc = new EQRLocationUpdate(
 				EQRLocationUpdate.FIRE_ENGINE_LOCATION, myAgent.getAID());
 		loc.setIsMoving(false);
@@ -109,6 +120,7 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 		try {
 			msg.setContentObject(loc);
 			myAgent.send(msg);
+			EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message sent");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -122,6 +134,12 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 	@Override
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub
+		EQRLogger.log(
+				logger,
+				null,
+				myAgent.getLocalName(),
+				"Location changed to "
+						+ ((FireEngineDetails) ed).getCurrentLocation());
 		if (ed instanceof FireEngineDetails) {
 			EQRLocationUpdate loc = new EQRLocationUpdate(
 					EQRLocationUpdate.FIRE_ENGINE_LOCATION, myAgent.getAID());
@@ -135,6 +153,8 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 			try {
 				msg.setContentObject(loc);
 				myAgent.send(msg);
+				//EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message sent");
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

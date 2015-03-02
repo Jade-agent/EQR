@@ -1,9 +1,11 @@
 package org.nkigen.eqr.agents.behaviours;
 
 import java.io.IOException;
+import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.hospital.HospitalDetails;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.FireInitMessage;
 import org.nkigen.eqr.messages.HospitalArrivalMessage;
@@ -21,9 +23,11 @@ public class HospitalBehaviour extends CyclicBehaviour {
 	HospitalDetails details;
 	AID update;
 	boolean is_location_shown = false;
+	Logger logger;
 	public HospitalBehaviour(Agent agent) {
 		super(agent);
 		AID update = EQRAgentsHelper.locateUpdateServer(myAgent);
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 	}
 
 	@Override
@@ -31,6 +35,8 @@ public class HospitalBehaviour extends CyclicBehaviour {
 		ACLMessage msg = myAgent.receive();
 
 		if (msg != null) {
+			EQRLogger.log(logger, msg, myAgent.getLocalName(),
+					getBehaviourName() + ": Message Received");
 			switch (msg.getPerformative()) {
 			case ACLMessage.INFORM:
 				try {
@@ -50,10 +56,6 @@ public class HospitalBehaviour extends CyclicBehaviour {
 				}
 				break;
 			}
-		} 
-		else if(!is_location_shown && details != null){
-			sendPostionUpdate();
-			return;
 		}
 		else {
 			block();
@@ -61,14 +63,10 @@ public class HospitalBehaviour extends CyclicBehaviour {
 
 	}
 	private void sendPostionUpdate(){
-		
-		update  = EQRAgentsHelper.locateUpdateServer(myAgent);
-		if(update != null)
-			is_location_shown = true;
-		else{
-			System.out.println(getBehaviourName()+": "+myAgent.getLocalName()+" Hospital init location NOT SEND!!!" );
-			return;
-		}
+		while(update == null)
+			update  = EQRAgentsHelper.locateUpdateServer(myAgent);
+		EQRLogger.log(logger, null, myAgent.getLocalName(),
+				" Initial location at " + details.getLocation());
 		System.out.println(getBehaviourName()+": "+myAgent.getLocalName()+" Hospital sending init location");
 		EQRLocationUpdate loc = new EQRLocationUpdate(EQRLocationUpdate.HOSPITAL_LOCATION, myAgent.getAID());
 		loc.setIsMoving(false);
@@ -79,6 +77,7 @@ public class HospitalBehaviour extends CyclicBehaviour {
 		try {
 			msg.setContentObject(loc);
 			myAgent.send(msg);
+			EQRLogger.log(logger, null, myAgent.getLocalName()," message sent");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

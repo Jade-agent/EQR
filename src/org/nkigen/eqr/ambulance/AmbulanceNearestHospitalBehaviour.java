@@ -3,9 +3,11 @@ package org.nkigen.eqr.ambulance;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.common.EmergencyResponseBase;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.eqr.messages.HospitalArrivalMessage;
@@ -18,6 +20,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
@@ -25,6 +28,7 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 	boolean done = false;
 	AmbulanceDetails ambulance;
 	PatientDetails patient;
+	Logger logger;
 	AID command_center = null;
 	boolean req_made = false;
 
@@ -33,15 +37,20 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 		super(agent);
 		this.ambulance = ambulance;
 		this.patient = patient;
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		command_center = EQRAgentsHelper.locateControlCenter(myAgent);
 	}
 
 	@Override
 	public void action() {
-		if (command_center == null)
+		while (command_center == null)
 			command_center = EQRAgentsHelper.locateControlCenter(myAgent);
-		ACLMessage msg = myAgent.receive();
+		MessageTemplate temp = MessageTemplate.MatchSender(command_center);
+		ACLMessage msg = myAgent.receive(temp);
+
 		if (msg == null && !req_made) {
+			EQRLogger.log(logger, msg, myAgent.getLocalName(),
+					getBehaviourName() + ":Sending request to Command Center");
 			msg = new ACLMessage(ACLMessage.REQUEST);
 			msg.addReceiver(command_center);
 			HospitalRequestMessage hrm = new HospitalRequestMessage(
@@ -53,11 +62,16 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 				msg.setContentObject(hrm);
 				myAgent.send(msg);
 				req_made = true;
+				EQRLogger.log(logger, msg, myAgent.getLocalName(),
+						getBehaviourName()
+								+ ":Sending request to Command Center");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else if (msg != null && req_made) {
+			EQRLogger.log(logger, msg, myAgent.getLocalName(),
+					getBehaviourName() + ":Command Center Response received");
 			switch (msg.getPerformative()) {
 			case ACLMessage.INFORM:
 				try {
@@ -76,6 +90,13 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 			}
 		} else {
 			if (msg != null) {
+				EQRLogger
+						.log(EQRLogger.LOG_EERROR,
+								logger,
+								msg,
+								myAgent.getLocalName(),
+								getBehaviourName()
+										+ ": Should not happen, wrong message received ");
 				myAgent.send(msg);
 				done = true;
 			}
@@ -85,20 +106,28 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 
 	private void handleToHospital(HospitalRequestMessage msg) {
 		Object[] data = ((HospitalRequestMessage) msg).getMessage();
+		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()
+				+ ":Received route to hospital");
 		if (data.length == 2) {
 			EmergencyResponseBase base = (EmergencyResponseBase) data[0];
 			EQRRoutingResult route = (EQRRoutingResult) data[1];
 			if (route instanceof EQRRoutingError) {
+				EQRLogger.log(EQRLogger.LOG_EERROR, logger, null,
+						myAgent.getLocalName(), getBehaviourName()
+								+ ": No route to hospital found!!");
 				System.out.println(myAgent.getLocalName()
 						+ " ERROR: cant find route to hospital");
 			} else {
 				List<EQRPoint> points = ((EQRGraphHopperResult) route)
 						.getPoints();
+
 				System.out.println(myAgent.getLocalName()
 						+ ": Response Base found to be: " + base.getLocation()
 						+ " length " + points.size());
 				long duration = ((EQRGraphHopperResult) route).getDuration();
-
+				EQRLogger.log(logger, null, myAgent.getLocalName(),
+						getBehaviourName() + ": Route of duration: " + duration
+								+ " and points :" + points.size() + " found ");
 				for (EQRPoint p : points) {
 
 					ambulance.setCurrentLocation(p);
@@ -112,6 +141,14 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 						e.printStackTrace();
 					}
 				}
+				EQRLogger.log(
+						logger,
+						null,
+						myAgent.getLocalName(),
+						getBehaviourName() + ": Patient "
+								+ patient.getAID().getLocalName()
+								+ " arrived safely to hospital at "
+								+ base.getLocation());
 				System.out.println(myAgent.getLocalName()
 						+ " Patient arrived safely at hospital "
 						+ patient.getAID() + " BASE: " + base.getLocation());
@@ -124,6 +161,8 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 				try {
 					notify.setContentObject(ham);
 					myAgent.send(notify);
+					EQRLogger.log(logger, notify, myAgent.getLocalName(),
+							getBehaviourName() + "Message sent");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

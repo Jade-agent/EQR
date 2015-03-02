@@ -2,8 +2,10 @@ package org.nkigen.eqr.ambulance;
 
 import java.io.IOException;
 import java.util.List;
+import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.BaseRouteMessage;
 import org.nkigen.eqr.messages.EQRRoutingCriteria;
 import org.nkigen.eqr.messages.EQRRoutingError;
@@ -16,6 +18,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
@@ -24,18 +27,24 @@ public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
 	AmbulanceDetails ambulance;
 	AID command_center = null;
 	boolean req_made = false;
+	Logger logger;
 
 	public AmbulanceToBaseBehaviour(Agent agent, AmbulanceDetails ambulance) {
 		super(agent);
 		this.ambulance = ambulance;
 		command_center = EQRAgentsHelper.locateControlCenter(myAgent);
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 
 	}
 
 	@Override
 	public void action() {
-		ACLMessage msg = myAgent.receive();
+		while (command_center == null)
+			command_center = EQRAgentsHelper.locateControlCenter(myAgent);
+		MessageTemplate temp = MessageTemplate.MatchSender(command_center);
+		ACLMessage msg = myAgent.receive(temp);
 		if (msg == null && !req_made) {
+
 			msg = new ACLMessage(ACLMessage.REQUEST);
 			msg.addReceiver(command_center);
 			BaseRouteMessage brm = new BaseRouteMessage(
@@ -48,11 +57,16 @@ public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
 				msg.setContentObject(brm);
 				myAgent.send(msg);
 				req_made = true;
+				EQRLogger.log(logger, msg, myAgent.getLocalName(),
+						getBehaviourName()
+								+ ":Sending request to command Center");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else if (msg != null && req_made) {
+			EQRLogger.log(logger, msg, myAgent.getLocalName(),
+					getBehaviourName() + ":Command Center Response received");
 			switch (msg.getPerformative()) {
 			case ACLMessage.INFORM:
 				try {
@@ -75,6 +89,14 @@ public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
 		} else {
 			if (msg != null) {
 				myAgent.send(msg);
+				EQRLogger
+				.log(EQRLogger.LOG_EERROR,
+						logger,
+						msg,
+						myAgent.getLocalName(),
+						getBehaviourName()
+								+ ": Should not happen, wrong message received ");
+		
 				done = true;
 			}
 		}
@@ -84,15 +106,23 @@ public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
 		System.out.println(myAgent.getLocalName()
 				+ " : Finally I'm heading to Base. CurrentLocation is "
 				+ ambulance.getCurrentLocation());
+		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()
+				+ ":Received route to Base");
 		EQRRoutingResult route = msg.getResult();
 		if (route instanceof EQRRoutingError) {
 			System.out.println(myAgent.getLocalName()
 					+ " Route to base wasn't found!!");
+			EQRLogger.log(EQRLogger.LOG_EERROR, logger, null,
+					myAgent.getLocalName(), getBehaviourName()
+							+ ": No route to Base found!!");
 			return;
 		}
 
 		List<EQRPoint> points = ((EQRGraphHopperResult) route).getPoints();
 		long duration = ((EQRGraphHopperResult) route).getDuration();
+		EQRLogger.log(logger, null, myAgent.getLocalName(),
+				getBehaviourName() + ": Route of duration: " + duration
+						+ " and points :" + points.size() + " found ");
 		for (EQRPoint p : points) {
 
 			ambulance.setCurrentLocation(p);
@@ -107,6 +137,9 @@ public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
 			}
 
 		}
+		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()
+				+ " Ambulance Arrived at base. Time to rest now");
+		/* TODO: Send message to Control Center about Arrival */
 	}
 
 	@Override

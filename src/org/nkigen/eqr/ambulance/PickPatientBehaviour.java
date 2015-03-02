@@ -3,7 +3,9 @@ package org.nkigen.eqr.ambulance;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import jade.util.Logger;
 
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
 import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.eqr.messages.PickPatientMessage;
@@ -28,12 +30,13 @@ public class PickPatientBehaviour extends SimpleBehaviour {
 	PatientDetails patient;
 	EQRGraphHopperResult route;
 	AmbulanceDetails ambulance;
-
+	Logger logger;
 	public PickPatientBehaviour(Agent agent, AmbulanceNotifyMessage msg,
 			AmbulanceDetails ambulance) {
 		super(agent);
 		this.patient = msg.getPatient();
 		this.route = (EQRGraphHopperResult) msg.getResult();
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		this.ambulance = ambulance;
 	}
 
@@ -51,6 +54,7 @@ public class PickPatientBehaviour extends SimpleBehaviour {
 				+ " duration " + duration + " dist " + distance + " points "
 				+ route.getPoints().size() + " sleep " + (long) duration
 				/ route.getPoints().size());
+		EQRLogger.log(logger, null, myAgent.getLocalName(),	getBehaviourName()+": Picking up Patient "+ patient.getAID().getLocalName());
 		for (EQRPoint p : points) {
 
 			ambulance.setCurrentLocation(p);
@@ -78,7 +82,8 @@ public class PickPatientBehaviour extends SimpleBehaviour {
 					+ patient.getAID());
 			msg.setContentObject(ppm);
 			msg2.setContentObject(ppm2);
-
+			EQRLogger.log(logger, msg, myAgent.getLocalName(), getBehaviourName()+": Message sent");
+			EQRLogger.log(logger, msg2, myAgent.getLocalName(), getBehaviourName()+": Message sent");
 			myAgent.send(msg2);
 			myAgent.send(msg);
 

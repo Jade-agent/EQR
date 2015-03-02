@@ -3,8 +3,10 @@ package org.nkigen.eqr.fireengine;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import jade.util.Logger;
 
 import org.nkigen.eqr.fires.FireDetails;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceNotifyMessage;
 import org.nkigen.eqr.messages.AttendToFireMessage;
 import org.nkigen.eqr.messages.EQRRoutingResult;
@@ -30,11 +32,12 @@ public class AttendToFireBehaviour extends SimpleBehaviour {
 	FireDetails fire;
 	EQRGraphHopperResult route;
 	FireEngineDetails engine;
-
+	Logger logger;
 	public AttendToFireBehaviour(Agent agent, FireEngineRequestMessage msg,
 			FireEngineDetails engine) {
 		super(agent);
 		this.fire = msg.getFire();
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		this.route = (EQRGraphHopperResult) msg.getRoute();
 		this.engine = engine;
 	}
@@ -53,6 +56,7 @@ public class AttendToFireBehaviour extends SimpleBehaviour {
 				+ " duration " + duration + " dist " + distance + " points "
 				+ route.getPoints().size() + " sleep " + (long) duration
 				/ route.getPoints().size());
+		EQRLogger.log(logger, null, myAgent.getLocalName(),	getBehaviourName()+": Attending to Fire  "+ fire.getAID().getLocalName());
 		for (EQRPoint p : points) {
 
 			engine.setCurrentLocation(p);
@@ -81,7 +85,8 @@ public class AttendToFireBehaviour extends SimpleBehaviour {
 					+ fire.getAID());
 			msg.setContentObject(atf);
 			msg2.setContentObject(atf2);
-
+			EQRLogger.log(logger, msg, myAgent.getLocalName(), getBehaviourName()+": Message sent");
+			EQRLogger.log(logger, msg2, myAgent.getLocalName(), getBehaviourName()+": Message sent");
 			myAgent.send(msg2);
 			myAgent.send(msg);
 
