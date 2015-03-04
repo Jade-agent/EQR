@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.1.8" icons="true" automaticImage="PNG">  
+  <object id="1" language="java" name="org.nkigen.eqr.agents.AmbulanceAgent" project="ERQ" 
+    file="/ERQ/src/org/nkigen/eqr/agents/AmbulanceAgent.java" binary="false" label="ambulanceAgent" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="100" y="0"/>    
+    <execution id="2">      
+      <position height="54" width="120" x="5" y="114"/>    
+    </execution>    
+    <execution id="5">      
+      <position height="18" width="120" x="5" y="389"/>    
+    </execution>  
+  </object>  
+  <object id="6" language="java" name="org.nkigen.eqr.agents.EmergencyControlCenterAgent" project="ERQ" 
+    file="/ERQ/src/org/nkigen/eqr/agents/EmergencyControlCenterAgent.java" binary="false" 
+    label="emergencyControlCenterAgent" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="294" y="0"/>    
+    <execution id="4">      
+      <position height="18" width="200" x="129" y="132"/>    
+    </execution>    
+    <execution id="7">      
+      <position height="54" width="200" x="129" y="158"/>    
+    </execution>    
+    <execution id="10">      
+      <position height="18" width="200" x="129" y="323"/>    
+    </execution>    
+    <execution id="11">      
+      <position height="54" width="200" x="129" y="371"/>    
+    </execution>  
+  </object>  
+  <object id="13" language="java" name="org.nkigen.eqr.agents.RoutingAgent" project="ERQ" 
+    file="/ERQ/src/org/nkigen/eqr/agents/RoutingAgent.java" binary="false" label="routingAgent" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="391" y="0"/>    
+    <execution id="9">      
+      <position height="18" width="99" x="333" y="176"/>    
+    </execution>    
+    <execution id="14">      
+      <position height="54" width="99" x="333" y="201"/>    
+    </execution>    
+    <execution id="17">      
+      <position height="18" width="99" x="333" y="274"/>    
+    </execution>    
+    <execution id="18">      
+      <position height="54" width="99" x="333" y="305"/>    
+    </execution>  
+  </object>  
+  <object id="20" language="java" name="org.nkigen.maps.routing.graphhopper.GraphHopperServer" project="ERQ" 
+    file="/ERQ/src/org/nkigen/maps/routing/graphhopper/GraphHopperServer.java" binary="false" label="graphHopperServer" 
+    type="class" autoSize="true">    
+    <position height="-1" width="-1" x="536" y="0"/>    
+    <execution id="16">      
+      <position height="18" width="161" x="436" y="219"/>    
+    </execution>    
+    <execution id="21">      
+      <position height="54" width="161" x="436" y="256"/>    
+    </execution>  
+  </object>  
+  <message id="3" operation="send(jade.lang.acl.ACLMessage):void">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </message>  
+  <message id="8" operation="send(jade.lang.acl.ACLMessage):void">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="9"/>  
+  </message>  
+  <message id="12" operation="send(jade.lang.acl.ACLMessage):void">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="5"/>  
+  </message>  
+  <message id="15" operation="requestRouting():org.nkigen.maps.routing.graphhopper.GraphHopperServer">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="16"/>  
+  </message>  
+  <message id="19" operation="send(jade.lang.acl.ACLMessage):void">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="10"/>  
+  </message>  
+  <message id="22">    
+    <end type="SOURCE" refId="21"/>    
+    <end type="TARGET" refId="17"/>  
+  </message>
+</sequence-diagram>

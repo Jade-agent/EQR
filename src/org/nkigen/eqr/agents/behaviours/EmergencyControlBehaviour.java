@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -13,8 +14,13 @@ import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+
 import jade.util.Logger;
 
+import org.nkigen.eqr.agents.EmergencyControlCenterAgent;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EQRAgentTypes;
 import org.nkigen.eqr.common.EmergencyDetails;
@@ -28,6 +34,8 @@ import org.nkigen.eqr.messages.ControlCenterInitMessage;
 import org.nkigen.eqr.messages.FireEngineRequestMessage;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
 
+import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
+
 public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		EmergencyStateChangeListener {
 
@@ -35,35 +43,46 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 	List<EmergencyResponseBase> ambulance_bases;
 	List<EmergencyResponseBase> hospital_bases;
 	List<EmergencyResponseBase> fire_engine_bases;
+
+	/* Mutex Locks for the bases */
+
 	ArrayList<AID> ambulances;
 	ArrayList<AID> fire_engines;
 	Logger logger;
 	EmergencyControlCenterGoals goals;
 	boolean is_setup_complete = false;
+	private ThreadedBehaviourFactory tbf;
 
 	public EmergencyControlBehaviour(Agent a) {
 		super(a);
 		// EmergencyStateChangeInitiator.getInstance().addListener(this);
 		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		goals = new EmergencyControlCenterGoals();
+		tbf =  ((EmergencyControlCenterAgent)a).getTbf();
 		initAmbulances();
 		initFireEngines();
+
 	}
 
 	@Override
 	public void action() {
 
-		ACLMessage msg = myAgent.receive();
+		final ACLMessage msg = myAgent.receive();
 		if (msg == null) {
 			block();
 			return;
 		}
-		EQRLogger.log(logger, msg, myAgent.getLocalName(), getBehaviourName()+": Message received");
-		//logger.info("message received: "+ msg.getSender());
+		EQRLogger.log(logger, msg, myAgent.getLocalName(), getBehaviourName()
+				+ ": Message received");
+		// logger.info("message received: "+ msg.getSender());
+
 		switch (msg.getPerformative()) {
 		case ACLMessage.REQUEST:
-			if (is_setup_complete)
+			if (is_setup_complete) {
 				handleRequestMessage(msg);
+
+			}
+
 			else
 				myAgent.send(msg);
 			break;
@@ -88,6 +107,10 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		ambulance_bases = msg.getAmbulance_bases();
 		fire_engine_bases = msg.getFire_engine_bases();
 		hospital_bases = msg.getHospital_bases();
+		EQRLogger.log(logger, null, myAgent.getLocalName(), "INIT: "
+				+ "ambulances :" + ambulance_bases.size()
+				+ " fire engine bases: " + fire_engine_bases.size()
+				+ " hospitals: " + hospital_bases.size());
 		System.out.println(getBehaviourName() + " " + myAgent.getLocalName()
 				+ ": amb_b " + ambulance_bases.size() + " fireb "
 				+ fire_engine_bases.size() + " :nfb "
@@ -97,19 +120,24 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 
 	private void handleRequestMessage(ACLMessage msg) {
 		try {
-			Object content = msg.getContentObject();
-			if (content instanceof AmbulanceRequestMessage) {
-				Object[] params = new Object[3];
-				params[0] = myAgent;
-				params[1] = ((AmbulanceRequestMessage) content).getPatient();
-				System.out.println(" Ambulance " + ambulance_bases.size());
-				params[2] = getAvailableAmbulanceBases();
-				Behaviour b = goals
-						.executePlan(
-								EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT,
-								params);
-				if (b != null)
-					myAgent.addBehaviour(b);
+			final Object content = msg.getContentObject();
+			if (content instanceof AmbulanceRequestMessage) { 
+						// TODO Auto-generated method stub
+						Object[] params = new Object[4];
+						params[0] = myAgent;
+						params[1] = ((AmbulanceRequestMessage) content)
+								.getPatient();
+						System.out.println(" Ambulance "
+								+ ambulance_bases.size());
+						params[2] = getAvailableAmbulanceBases();
+						Behaviour b = goals
+								.executePlan(
+										EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT,
+										params);
+						if (b != null)
+							myAgent.addBehaviour(tbf.wrap(b));
+ 
+
 			} else if (content instanceof HospitalRequestMessage) {
 				if (((HospitalRequestMessage) content).getType() == HospitalRequestMessage.HOSPITAL_REQUEST) {
 					System.out
@@ -126,7 +154,7 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 							EmergencyControlCenterGoals.GET_NEAREST_HOSPITAL,
 							params);
 					if (b != null)
-						myAgent.addBehaviour(b);
+						myAgent.addBehaviour(tbf.wrap(b));
 				}
 			} else if (content instanceof BaseRouteMessage) {
 				BaseRouteMessage brm = (BaseRouteMessage) content;
@@ -141,24 +169,24 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 							EmergencyControlCenterGoals.GET_RESPONDER_TO_BASE,
 							params);
 					if (b != null)
-						myAgent.addBehaviour(b);
-				
+						myAgent.addBehaviour(tbf.wrap(b));
+
 				}
-			}
-			else if(content instanceof FireEngineRequestMessage){
+			} else if (content instanceof FireEngineRequestMessage) {
 				FireEngineRequestMessage fer = (FireEngineRequestMessage) content;
-				if(fer.getType() == FireEngineRequestMessage.REQUEST){
+				if (fer.getType() == FireEngineRequestMessage.REQUEST) {
 					System.out.println(myAgent.getLocalName()
 							+ " Fire Engine request Message received");
 					Object[] params = new Object[3];
 					params[0] = myAgent;
 					params[1] = fer.getFire();
 					params[2] = getAvailableFireEngineBases();
-					Behaviour b = goals.executePlan(
-							EmergencyControlCenterGoals.ASSIGN_FIREENGINE_TO_FIRE,
-							params);
+					Behaviour b = goals
+							.executePlan(
+									EmergencyControlCenterGoals.ASSIGN_FIREENGINE_TO_FIRE,
+									params);
 					if (b != null)
-						myAgent.addBehaviour(b);
+						myAgent.addBehaviour(tbf.wrap(b));
 				}
 			}
 		} catch (UnreadableException e) {
@@ -176,14 +204,23 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 			return avail;
 		return null;
 	}
+
 	private List<EmergencyResponseBase> getAvailableAmbulanceBases() {
+
 		ArrayList<EmergencyResponseBase> avail = new ArrayList<EmergencyResponseBase>();
-		for (EmergencyResponseBase b : ambulance_bases)
-			if (b.getAvailable().size() > 0)
-				avail.add(b);
-		if (avail.size() > 0)
-			return avail;
+		try {
+			for (EmergencyResponseBase b : ambulance_bases)
+				if (b.getAvailable().size() > 0)
+					avail.add(b);
+			if (avail.size() > 0)
+				return avail;
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
+
 	}
 
 	private void initAmbulances() {

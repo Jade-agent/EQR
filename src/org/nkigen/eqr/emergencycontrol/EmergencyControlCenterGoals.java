@@ -16,6 +16,8 @@ import org.nkigen.eqr.fires.FireDetails;
 import org.nkigen.eqr.messages.BaseRouteMessage;
 import org.nkigen.eqr.patients.PatientDetails;
 
+import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
+
 public class EmergencyControlCenterGoals extends EQRGoal {
 
 	public static final int ASSIGN_AMBULANCE_TO_PATIENT = 1;
@@ -77,7 +79,7 @@ public class EmergencyControlCenterGoals extends EQRGoal {
 		
 		if (p.length == 3) {
 			if (p[0] instanceof EmergencyControlCenterAgent
-					&& p[1] instanceof PatientDetails && p[2] instanceof ArrayList<?>) 
+					&& p[1] instanceof PatientDetails && p[2] instanceof ArrayList<?> ) 
 				return new AssignAmbulanceBehaviour(
 						(EmergencyControlCenterAgent) p[0],
 						(PatientDetails) p[1], (List<EmergencyResponseBase>) p[2]);

@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.lang.acl.ACLMessage;
 
 import java.io.IOException;
@@ -20,8 +21,10 @@ import org.nkigen.maps.viewer.updates.EQRUpdateWindow;
 
 public class UpdateServerBehaviour extends CyclicBehaviour {
 
+	ThreadedBehaviourFactory tbf ;
 	public UpdateServerBehaviour(Agent agent) {
 		super(agent);
+		tbf = new ThreadedBehaviourFactory();
 	}
 
 	@Override
@@ -37,8 +40,8 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 			switch (msg.getPerformative()) {
 			case ACLMessage.PROPAGATE:
 				if (content instanceof EQRLocationUpdate) {
-					myAgent.addBehaviour(new HandleLocationUpdate(
-							(EQRLocationUpdate) content));
+					myAgent.addBehaviour(tbf.wrap(new HandleLocationUpdate(
+							(EQRLocationUpdate) content)));
 				}
 				break;
 			default:
@@ -51,16 +54,16 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 
 	private class HandleLocationUpdate extends OneShotBehaviour {
 		EQRLocationUpdate msg;
-		EQRUpdateWindow win;
+		//EQRUpdateWindow win;
 
 		public HandleLocationUpdate(EQRLocationUpdate msg) {
 			this.msg = msg;
-			win = EQRUpdateWindow.getInstance();
+			//win = EQRUpdateWindow.getInstance();
 		}
 
 		@Override
 		public void action() {
-			sendToUpdateWindow();
+			//sendToUpdateWindow();
 			sendToViewer();
 
 		}
@@ -92,7 +95,7 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 			}
 
 		}
-
+/*
 		private void sendToUpdateWindow() {
 			int type = msg.getType();
 			EQRStatusPanelItem update;
@@ -125,10 +128,10 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 						.setFireLocation(msg.getCurrent());
 				((EQRFiresUpdatesItem) update).setClosest_engine(msg
 						.getHeading());
-				/* Get Closest Engines */
+				
 				break;
 			case EQRLocationUpdate.PATIENT_LOCATION:
-				/* Get Closest Ambulance */
+				
 				update = new EQRPatientStatusItem();
 				((EQRPatientStatusItem) update).setItem_id(msg.getItemId());
 				((EQRPatientStatusItem) update).setEst_time_to_reach(0);
@@ -137,12 +140,12 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 				((EQRPatientStatusItem) update).setClosest_vehicle_loc(msg
 						.getHeading());
 				((EQRPatientStatusItem) update).setDeadline(0);
-				/* SET DEADLINE */
+			
 				break;
 			}
 
 		}
-
+*/
 	}
 
 }

@@ -3,6 +3,7 @@ package org.nkigen.eqr.emergencycontrol;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
@@ -14,6 +15,8 @@ import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.eqr.messages.MultipleRoutingRequestMessage;
 import org.nkigen.eqr.messages.MultipleRoutingResponseMessage;
 import org.nkigen.eqr.patients.PatientDetails;
+
+import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -30,7 +33,7 @@ public class AssignAmbulanceBehaviour extends SimpleBehaviour {
 	PatientDetails patient;
 	List<EmergencyResponseBase> bases;
 	AID router;
-	Logger logger; 
+	Logger logger;
 	/* Assumption: This list of bases contain atleast an ambulance */
 	public AssignAmbulanceBehaviour(Agent a, PatientDetails p,
 			List<EmergencyResponseBase> bases) {
