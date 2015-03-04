@@ -14,17 +14,15 @@ import org.nkigen.eqr.common.EQRAgentTypes;
  *
  */
 public class EmergencyControlCenterAgent extends EQRAgent {
-	private ThreadedBehaviourFactory tbf;
+	
 
 	protected void setup(){
-		tbf =  new ThreadedBehaviourFactory();
+		
 		setType(EQRAgentTypes.EMERGENCY_CONTROL_CENTER_AGENT);
 		SequentialBehaviour sb = new SequentialBehaviour();
 		sb.addSubBehaviour(new RegisterInDF(this,getMyType(), getMyType()));
-		sb.addSubBehaviour(tbf.wrap(new EmergencyControlBehaviour(this)));
+		sb.addSubBehaviour(new EmergencyControlBehaviour(this));
 		addBehaviour(sb);
 	}
-	public ThreadedBehaviourFactory getTbf(){
-		return tbf;
-	}
+	
 }

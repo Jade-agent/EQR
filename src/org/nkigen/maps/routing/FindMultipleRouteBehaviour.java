@@ -23,10 +23,11 @@ public class FindMultipleRouteBehaviour extends OneShotBehaviour {
 	private static final long serialVersionUID = 1L;
 
 	MultipleRoutingRequestMessage request;
-
+	String conversation_id;
 	public FindMultipleRouteBehaviour(Agent agent,
-			MultipleRoutingRequestMessage request) {
+			MultipleRoutingRequestMessage request,String con_id) {
 		super(agent);
+		conversation_id = con_id;
 		this.request = request;
 	}
 
@@ -37,6 +38,7 @@ public class FindMultipleRouteBehaviour extends OneShotBehaviour {
 		EQRRoutingCriteria req = null;
 		ACLMessage reply = new ACLMessage(ACLMessage.INFORM);
 		reply.addReceiver(request.getReply_to());
+		reply.setConversationId(conversation_id);
 		EQRRoutingResult res = null;
 		EmergencyResponseBase closest = null;
 		EQRGraphHopperResult closest_res = null;

@@ -3,6 +3,7 @@ package org.nkigen.eqr.emergencycontrol;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
@@ -26,6 +27,7 @@ import jade.lang.acl.UnreadableException;
 
 public class AssignFireEngineBehaviour extends SimpleBehaviour {
 
+	public static final String FIREENGINE_ROUTER_ID = "fireengine_router_msg";
 	boolean done = false;
 	boolean req_r = false; /* Not yet made a request to the router */
 	FireDetails fire;
@@ -47,7 +49,8 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 	public void action() {
 		while (router == null)
 			router = EQRAgentsHelper.locateRoutingServer(myAgent);
-		MessageTemplate template = MessageTemplate.MatchSender(router);
+		MessageTemplate template = MessageTemplate.and(MessageTemplate.MatchSender(router),MessageTemplate.MatchConversationId(FIREENGINE_ROUTER_ID));
+		
 		ACLMessage msg = myAgent.receive(template);
 
 		if (!req_r) {
@@ -57,12 +60,13 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 			req.setTo(fire.getLocation());
 			ACLMessage to_send = new ACLMessage(ACLMessage.REQUEST);
 			to_send.addReceiver(router);
+			to_send.setConversationId(FIREENGINE_ROUTER_ID);
 			try {
 				to_send.setContentObject(req);
 
 				myAgent.send(to_send);
 				req_r = true;
-				EQRLogger.log(logger, to_send, myAgent.getLocalName(), "Message sent to the Router:"+ router.getLocalName());
+				EQRLogger.log(logger, to_send, myAgent.getLocalName(), getBehaviourName()+": Message sent to the Router:"+ router.getLocalName());
 				System.out.println(getBehaviourName()
 						+ " FIRE ENGINE ROUTE REQ SENt to ROUTER "
 						+ fire.getAID());
@@ -80,10 +84,21 @@ public class AssignFireEngineBehaviour extends SimpleBehaviour {
 					if (content instanceof MultipleRoutingResponseMessage) {
 						System.out.println(getBehaviourName()
 								+ " route found for fire_engine-fire");
-						EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message received from router "+ router.getLocalName());
+						EQRLogger.log(logger, msg, myAgent.getLocalName(), getBehaviourName()+": Message received from router "+ router.getLocalName());
 						informParties((MultipleRoutingResponseMessage) content);
 						done = true;
 						return;
+					}
+					else{
+						EQRLogger
+						.log(EQRLogger.LOG_EERROR,
+								logger,
+								msg,
+								myAgent.getLocalName(),
+								getBehaviourName()
+										+ ": wrong message received ");
+						
+						myAgent.send(msg);
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block

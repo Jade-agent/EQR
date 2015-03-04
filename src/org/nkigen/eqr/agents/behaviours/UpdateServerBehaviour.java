@@ -6,10 +6,12 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.lang.acl.ACLMessage;
+import jade.util.Logger;
 
 import java.io.IOException;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.maps.viewer.EQRViewerPoint;
 import org.nkigen.maps.viewer.updates.EQRAmbulanceLocations;
@@ -21,10 +23,13 @@ import org.nkigen.maps.viewer.updates.EQRUpdateWindow;
 
 public class UpdateServerBehaviour extends CyclicBehaviour {
 
-	ThreadedBehaviourFactory tbf ;
+	//ThreadedBehaviourFactory tbf ;
+	Logger logger;
 	public UpdateServerBehaviour(Agent agent) {
 		super(agent);
-		tbf = new ThreadedBehaviourFactory();
+
+		//tbf = new ThreadedBehaviourFactory();
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 	}
 
 	@Override
@@ -35,20 +40,23 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 			return;
 		}
 
-		try {
-			Object content = msg.getContentObject();
-			switch (msg.getPerformative()) {
-			case ACLMessage.PROPAGATE:
+		EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message received");
+		switch (msg.getPerformative()) {
+		case ACLMessage.PROPAGATE:
+			try {
+				Object content = msg.getContentObject();
 				if (content instanceof EQRLocationUpdate) {
-					myAgent.addBehaviour(tbf.wrap(new HandleLocationUpdate(
-							(EQRLocationUpdate) content)));
+					myAgent.addBehaviour(new HandleLocationUpdate(
+							(EQRLocationUpdate) content));
+
 				}
-				break;
-			default:
-				break;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -70,6 +78,7 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 
 		private void sendToViewer() {
 			/* Prepare a msg to send to the veiwer agent */
+			EQRLogger.log(logger, null, myAgent.getLocalName(), "Sending update from "+ msg.getItemId().getLocalName());
 			int type = msg.getType();
 			EQRViewerPoint point = new EQRViewerPoint(msg.getItemId());
 			point.setIsMoving(msg.getIsMoving());

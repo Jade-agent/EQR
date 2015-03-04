@@ -36,11 +36,11 @@ public class RoutingGoals extends EQRGoal {
 	}
 
 	private Behaviour findRouteFromMultiple(Object[] p) {
-		if (p.length != 2)
+		if (p.length != 3)
 			return null;
 		if (p[0] instanceof RoutingAgent && p[1] instanceof MultipleRoutingRequestMessage)
 			return new FindMultipleRouteBehaviour((RoutingAgent) p[0],
-					(MultipleRoutingRequestMessage) p[1]);
+					(MultipleRoutingRequestMessage) p[1],(String)p[2]);
 		return null;
 	}
 

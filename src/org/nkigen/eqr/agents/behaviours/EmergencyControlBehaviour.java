@@ -10,6 +10,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.concurrent.locks.Lock;
 
 import jade.util.Logger;
 
+import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.agents.EmergencyControlCenterAgent;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EQRAgentTypes;
@@ -44,21 +46,24 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 	List<EmergencyResponseBase> hospital_bases;
 	List<EmergencyResponseBase> fire_engine_bases;
 
-	/* Mutex Locks for the bases */
-
+	/* "Mutex Locks" for the bases */
+	boolean is_ab = false;
+	ArrayList<AmbulanceRequestMessage> ab_queue;
 	ArrayList<AID> ambulances;
 	ArrayList<AID> fire_engines;
 	Logger logger;
 	EmergencyControlCenterGoals goals;
 	boolean is_setup_complete = false;
-	private ThreadedBehaviourFactory tbf;
+
+	// private ThreadedBehaviourFactory tbf;
 
 	public EmergencyControlBehaviour(Agent a) {
 		super(a);
 		// EmergencyStateChangeInitiator.getInstance().addListener(this);
 		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		goals = new EmergencyControlCenterGoals();
-		tbf =  ((EmergencyControlCenterAgent)a).getTbf();
+		// tbf = new ThreadedBehaviourFactory();
+		ab_queue = new ArrayList<AmbulanceRequestMessage>();
 		initAmbulances();
 		initFireEngines();
 
@@ -66,8 +71,28 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 
 	@Override
 	public void action() {
+		if (ab_queue.size() > 0 && !is_ab) {
+			is_ab = true;
+			Object[] params = new Object[4];
+			params[0] = myAgent;
+			params[1] = ab_queue.get(0).getPatient();
+			ab_queue.remove(0);
+			System.out.println(" Ambulance " + ambulance_bases.size());
+			params[2] = getAvailableAmbulanceBases();
+			params[3] = this;
 
-		final ACLMessage msg = myAgent.receive();
+			Behaviour b = goals.executePlan(
+					EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT,
+					params);
+			if (b != null)
+				myAgent.addBehaviour(b);
+			return;
+		}
+
+		AID router = EQRAgentsHelper.locateRoutingServer(myAgent);
+		MessageTemplate temp = MessageTemplate.not(MessageTemplate
+				.MatchSender(router));
+		final ACLMessage msg = myAgent.receive(temp);
 		if (msg == null) {
 			block();
 			return;
@@ -121,22 +146,28 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 	private void handleRequestMessage(ACLMessage msg) {
 		try {
 			final Object content = msg.getContentObject();
-			if (content instanceof AmbulanceRequestMessage) { 
-						// TODO Auto-generated method stub
-						Object[] params = new Object[4];
-						params[0] = myAgent;
-						params[1] = ((AmbulanceRequestMessage) content)
-								.getPatient();
-						System.out.println(" Ambulance "
-								+ ambulance_bases.size());
-						params[2] = getAvailableAmbulanceBases();
-						Behaviour b = goals
-								.executePlan(
-										EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT,
-										params);
-						if (b != null)
-							myAgent.addBehaviour(tbf.wrap(b));
- 
+			if (content instanceof AmbulanceRequestMessage) {
+				// TODO Auto-generated method stub
+				if (!is_ab) {
+					is_ab = true;
+					Object[] params = new Object[4];
+					params[0] = myAgent;
+					params[1] = ((AmbulanceRequestMessage) content)
+							.getPatient();
+					System.out.println(" Ambulance " + ambulance_bases.size());
+					params[2] = getAvailableAmbulanceBases();
+					params[3] = this;
+					Behaviour b = goals
+							.executePlan(
+									EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT,
+									params);
+					if (b != null)
+						myAgent.addBehaviour(b);
+				} else {
+					EQRLogger.log(logger, msg, myAgent.getLocalName(),
+							"Added to Ambulance queue");
+					ab_queue.add((AmbulanceRequestMessage) content);
+				}
 
 			} else if (content instanceof HospitalRequestMessage) {
 				if (((HospitalRequestMessage) content).getType() == HospitalRequestMessage.HOSPITAL_REQUEST) {
@@ -154,7 +185,7 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 							EmergencyControlCenterGoals.GET_NEAREST_HOSPITAL,
 							params);
 					if (b != null)
-						myAgent.addBehaviour(tbf.wrap(b));
+						myAgent.addBehaviour(b);
 				}
 			} else if (content instanceof BaseRouteMessage) {
 				BaseRouteMessage brm = (BaseRouteMessage) content;
@@ -169,7 +200,7 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 							EmergencyControlCenterGoals.GET_RESPONDER_TO_BASE,
 							params);
 					if (b != null)
-						myAgent.addBehaviour(tbf.wrap(b));
+						myAgent.addBehaviour(b);
 
 				}
 			} else if (content instanceof FireEngineRequestMessage) {
@@ -186,7 +217,7 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 									EmergencyControlCenterGoals.ASSIGN_FIREENGINE_TO_FIRE,
 									params);
 					if (b != null)
-						myAgent.addBehaviour(tbf.wrap(b));
+						myAgent.addBehaviour(b);
 				}
 			}
 		} catch (UnreadableException e) {
@@ -208,17 +239,13 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 	private List<EmergencyResponseBase> getAvailableAmbulanceBases() {
 
 		ArrayList<EmergencyResponseBase> avail = new ArrayList<EmergencyResponseBase>();
-		try {
-			for (EmergencyResponseBase b : ambulance_bases)
-				if (b.getAvailable().size() > 0)
-					avail.add(b);
-			if (avail.size() > 0)
-				return avail;
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		for (EmergencyResponseBase b : ambulance_bases)
+			if (b.getAvailable().size() > 0)
+				avail.add(b);
+		if (avail.size() > 0)
+			return avail;
+
 		return null;
 
 	}
@@ -262,6 +289,10 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		} catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
+	}
+
+	public void unlockAmbulanceQueue() {
+		is_ab = false;
 	}
 
 	@Override

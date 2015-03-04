@@ -248,7 +248,7 @@ public class EQRViewer extends JFrame implements JMapViewerEventListener  {
      new ColorWindow();
  }
  
- public MapMarkerDot addMarker(EQRViewerPoint p){
+ public  MapMarkerDot addMarker(EQRViewerPoint p){
 	// MapMarkerDot mp = new MapMarkerDot(trentoLayer, p.getPoint().getLatitude(), p.getPoint().getLongitude());
 	 MapMarkerDot mp = new MapMarkerDot( p.getPoint().getLatitude(), p.getPoint().getLongitude());
 	// MapMarkerCircle mp = new MapMarkerCircle(p.getPoint().getLatitude(), p.getPoint().getLongitude(), 5);
@@ -257,7 +257,7 @@ public class EQRViewer extends JFrame implements JMapViewerEventListener  {
 	 map().addMapMarker(mp);
 	 return mp;
  }
- public void removeMarker(MapMarkerDot mp){
+ public  void removeMarker(MapMarkerDot mp){
 	 map().removeMapMarker(mp);
  }
 
