@@ -1,6 +1,7 @@
 package org.nkigen.eqr.agents.behaviours;
 
 import java.io.IOException;
+
 import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
@@ -17,6 +18,7 @@ import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.FireEngineInitMessage;
 import org.nkigen.eqr.messages.FireEngineRequestMessage;
 import org.nkigen.eqr.messages.FireInitMessage;
+import org.nkigen.eqr.messages.TrafficUpdateMessage;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -32,6 +34,7 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 	EmergencyStateChangeInitiator listener;
 	FireEngineGoals goals;
 	Logger logger;
+	TrafficUpdateMessage traffic;
 
 	public FireEngineBehaviour(Agent agent) {
 		super(agent);
@@ -57,14 +60,27 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 								.getFireEngine();
 						details.setListener(listener);
 						initLocation();
-					} /*
-					 * else if (content instanceof FireEngineRequestMessage) {
-					 * FireEngineRequestMessage req = (FireEngineRequestMessage)
-					 * content; if (req.getType() ==
-					 * FireEngineRequestMessage.NOTIFY_ENGINE) {
-					 * 
-					 * } }
-					 */else if (content instanceof FireEngineRequestMessage) {
+						TrafficUpdateMessage tum = new TrafficUpdateMessage();
+						tum.subscribe();
+						ACLMessage msg_tum = new ACLMessage(
+								ACLMessage.SUBSCRIBE);
+						AID ecc = EQRAgentsHelper.locateControlCenter(myAgent);
+						while (ecc == null)
+							ecc = EQRAgentsHelper.locateControlCenter(myAgent);
+						msg_tum.addReceiver(ecc);
+						try {
+							msg_tum.setContentObject(tum);
+							myAgent.send(msg_tum);
+							EQRLogger.log(logger, msg_tum,
+									myAgent.getLocalName(),
+									" Traffic update subscription sent");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} else if (content instanceof TrafficUpdateMessage) {
+						this.traffic = (TrafficUpdateMessage) content;
+					} else if (content instanceof FireEngineRequestMessage) {
 						/* Attend to fire */
 						FireEngineRequestMessage req = (FireEngineRequestMessage) content;
 						if (req.getType() == FireEngineRequestMessage.NOTIFY_ENGINE) {
@@ -153,8 +169,9 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 			try {
 				msg.setContentObject(loc);
 				myAgent.send(msg);
-				//EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message sent");
-				
+				// EQRLogger.log(logger, msg, myAgent.getLocalName(),
+				// "Message sent");
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

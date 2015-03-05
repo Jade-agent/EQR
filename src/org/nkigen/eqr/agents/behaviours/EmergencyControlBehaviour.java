@@ -35,6 +35,7 @@ import org.nkigen.eqr.messages.BaseRouteMessage;
 import org.nkigen.eqr.messages.ControlCenterInitMessage;
 import org.nkigen.eqr.messages.FireEngineRequestMessage;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
+import org.nkigen.eqr.messages.TrafficUpdateMessage;
 
 import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
@@ -45,6 +46,7 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 	List<EmergencyResponseBase> ambulance_bases;
 	List<EmergencyResponseBase> hospital_bases;
 	List<EmergencyResponseBase> fire_engine_bases;
+	List<AID> traffic_subscribers;
 
 	/* "Mutex Locks" for the bases */
 	boolean is_ab = false;
@@ -125,6 +127,48 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 				e.printStackTrace();
 			}
 			break;
+		case ACLMessage.PROPAGATE:
+			try {
+				Object content = msg.getContentObject();
+				if (content instanceof TrafficUpdateMessage) {
+					Object[] params = new Object[3];
+					params[0] = myAgent;
+					params[1] = ((TrafficUpdateMessage) content);
+					params[2] = traffic_subscribers;
+					Behaviour b = goals
+							.executePlan(
+									EmergencyControlCenterGoals.NOTIFY_TRAFFIC_SUBSCRIBERS,
+									params);
+					if (b != null)
+						myAgent.addBehaviour(b);
+				}
+			} catch (UnreadableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+		case ACLMessage.SUBSCRIBE:
+			try {
+				Object content = msg.getContentObject();
+				if (content instanceof TrafficUpdateMessage) {
+					TrafficUpdateMessage tum = (TrafficUpdateMessage) content;
+					if (traffic_subscribers == null)
+						traffic_subscribers = new ArrayList<AID>();
+					/* TODO: Also add support for remove */
+					if (tum.isSubscribed()) {
+						EQRLogger.log(logger, msg, myAgent.getLocalName(),
+								"New Traffic Subscriber Added: "
+										+ msg.getSender().getLocalName());
+						traffic_subscribers.add(msg.getSender());
+					}
+
+				}
+			} catch (UnreadableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+
 		}
 	}
 

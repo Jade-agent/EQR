@@ -10,6 +10,7 @@ import org.nkigen.eqr.common.EmergencyResponseBase;
 import org.nkigen.eqr.fireengine.FireEngineDetails;
 import org.nkigen.eqr.fires.FireDetails;
 import org.nkigen.eqr.hospital.HospitalDetails;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceInitMessage;
 import org.nkigen.eqr.messages.ControlCenterInitMessage;
 import org.nkigen.eqr.messages.FireEngineInitMessage;
@@ -29,6 +30,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import jade.util.Logger;
 
 public class SimulationBehaviour extends CyclicBehaviour {
 
@@ -41,18 +43,22 @@ public class SimulationBehaviour extends CyclicBehaviour {
 	boolean init_complete = false;
 	String config;
 	SimulationGoals goals;
+	Logger logger;
 
 	public SimulationBehaviour(Agent a, String config) {
 		super(a);
 		System.out.println(config);
 		this.config = config;
 		goals = new SimulationGoals();
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 	}
 
 	@Override
 	public void action() {
 		ACLMessage msg = myAgent.receive();
+		
 		if (msg != null) {
+			EQRLogger.log(logger, msg, myAgent.getLocalName(), "message recevied");
 			switch (msg.getPerformative()) {
 			case ACLMessage.INFORM:
 				try {
@@ -110,6 +116,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		try {
 			acl.setContentObject(msg);
 			acl.addReceiver(control_center);
+			EQRLogger.log(logger, acl, myAgent.getLocalName(), " init control center");
 			myAgent.send(acl);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -141,6 +148,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 					try {
 						msg.setContentObject(m);
 						msg.addReceiver(pd.getAID());
+						EQRLogger.log(logger, msg, myAgent.getLocalName(), " setup fire engine : "+pd.getAID().getLocalName());
 						myAgent.send(msg);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -174,6 +182,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 					try {
 						msg.setContentObject(m);
 						msg.addReceiver(pd.getAID());
+						EQRLogger.log(logger, msg, myAgent.getLocalName(), " setup Ambulance : "+pd.getAID().getLocalName());
 						myAgent.send(msg);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
@@ -202,6 +211,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				try {
 					msg.setContentObject(m);
 					msg.addReceiver(pd.getAID());
+					EQRLogger.log(logger, msg, myAgent.getLocalName(), " setup Hospital : "+pd.getAID().getLocalName());
 					myAgent.send(msg);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -225,6 +235,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				try {
 					msg.setContentObject(m);
 					msg.addReceiver(pd.getAID());
+					EQRLogger.log(logger, msg, myAgent.getLocalName(), " setup fire Agent : "+pd.getAID().getLocalName());
 					myAgent.send(msg);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -248,6 +259,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				try {
 					msg.setContentObject(m);
 					msg.addReceiver(pd.getAID());
+					EQRLogger.log(logger, msg, myAgent.getLocalName(), " setup Patient Agent : "+pd.getAID().getLocalName());
 					myAgent.send(msg);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

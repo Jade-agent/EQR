@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
+import org.nkigen.eqr.messages.TrafficUpdateMessage;
 import org.nkigen.maps.viewer.EQRViewer;
 import org.nkigen.maps.viewer.EQRViewerPoint;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
@@ -68,10 +69,12 @@ public class ViewerBehaviour extends CyclicBehaviour {
 								.println("EQRViewer: New message received....Message understood");
 						handle((EQRViewerPoint) content);
 						return;
-					} else {
-						System.out
-								.println("EQRViewer: Reply from router not understood");
 					}
+					else if(content instanceof TrafficUpdateMessage){
+						TrafficUpdateMessage update = (TrafficUpdateMessage) content;
+					 viewer.getTrafficWindow().updateTraffic(update.getTraffic(), update.getDelay());	
+					}
+					
 				default:
 					System.out.println("EQRViewer: Wrong msg from router");
 				}

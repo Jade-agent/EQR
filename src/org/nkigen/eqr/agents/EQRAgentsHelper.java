@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.nkigen.eqr.common.EQRAgentTypes;
+import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.models.EmergencyArrivalModel;
 
 import desmoj.core.simulator.Experiment;
@@ -14,6 +15,7 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.util.Logger;
 
 public class EQRAgentsHelper {
 	static Experiment experiment;
@@ -98,10 +100,13 @@ public class EQRAgentsHelper {
 		template.addServices(sd);
 		try {
 			DFAgentDescription[] result = DFService.search(agent, template);
-			
+			if(result.length > 0)
 			command_center = result[0].getName();
 		
 		} catch (FIPAException fe) {
+			Logger logger = null;
+			logger = EQRLogger.prep(logger, agent.getLocalName());
+			EQRLogger.log(logger, null, agent.getLocalName(), fe.getStackTrace().toString());
 			fe.printStackTrace();
 		}
 

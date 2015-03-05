@@ -13,6 +13,7 @@ import java.io.IOException;
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
+import org.nkigen.eqr.messages.TrafficUpdateMessage;
 import org.nkigen.maps.viewer.EQRViewerPoint;
 import org.nkigen.maps.viewer.updates.EQRAmbulanceLocations;
 import org.nkigen.maps.viewer.updates.EQRFireEngineLocation;
@@ -25,6 +26,7 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 
 	//ThreadedBehaviourFactory tbf ;
 	Logger logger;
+	boolean is_subscribed = false;
 	public UpdateServerBehaviour(Agent agent) {
 		super(agent);
 
@@ -34,6 +36,24 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 
 	@Override
 	public void action() {
+		if(!is_subscribed){
+			TrafficUpdateMessage tum = new TrafficUpdateMessage();
+			tum.subscribe();
+			ACLMessage msg_tum = new ACLMessage(ACLMessage.SUBSCRIBE);
+			AID ecc = EQRAgentsHelper.locateControlCenter(myAgent);
+			while(ecc == null)
+				ecc= EQRAgentsHelper.locateControlCenter(myAgent);
+			msg_tum.addReceiver(ecc);
+			try {
+				msg_tum.setContentObject(tum);
+				myAgent.send(msg_tum);
+				is_subscribed = true;
+				EQRLogger.log(logger, msg_tum, myAgent.getLocalName(), " Traffic update subscription sent");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		ACLMessage msg = myAgent.receive();
 		if (msg == null) {
 			block();
@@ -55,6 +75,28 @@ public class UpdateServerBehaviour extends CyclicBehaviour {
 			}
 
 			break;
+		case ACLMessage.INFORM:
+			try {
+				Object content = msg.getContentObject();
+				if (content instanceof TrafficUpdateMessage) {
+					AID viewer = EQRAgentsHelper.locateViewer(myAgent);
+					while(viewer == null)
+						viewer = EQRAgentsHelper.locateViewer(myAgent);
+					
+					ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+					try {
+						msg2.setContentObject((TrafficUpdateMessage)content);
+						msg2.addReceiver(viewer);
+						myAgent.send(msg2);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		default:
 			break;
 		}

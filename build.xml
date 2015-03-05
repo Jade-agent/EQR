@@ -858,6 +858,11 @@
             <classpath refid="run.Deploy JADE4 Agent EQRUpdatesAgent.classpath"/>
         </java>
     </target>
+    <target name="TrafficWindow">
+        <java classname="org.nkigen.maps.viewer.TrafficWindow" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
     <target name="Deploy JADE4 Agent EQRPatientAgent1">
         <java classname="jade.Boot" dir="../../../../ERQ/bin" failonerror="true" fork="yes">
             <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
