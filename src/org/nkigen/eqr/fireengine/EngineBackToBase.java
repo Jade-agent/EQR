@@ -2,6 +2,7 @@ package org.nkigen.eqr.fireengine;
 
 import java.io.IOException;
 import java.util.List;
+
 import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
@@ -11,6 +12,7 @@ import org.nkigen.eqr.messages.EQRRoutingCriteria;
 import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
+import org.nkigen.eqr.messages.TrafficUpdateMessage;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
 
@@ -28,9 +30,11 @@ public class EngineBackToBase extends SimpleBehaviour {
 	AID command_center = null;
 	boolean req_made = false;
 	Logger logger;
-	public EngineBackToBase(Agent agent, FireEngineDetails engine) {
+	TrafficUpdateMessage traffic;
+	public EngineBackToBase(Agent agent, FireEngineDetails engine, TrafficUpdateMessage traffic) {
 		super(agent);
 		this.engine = engine;
+		this.traffic = traffic;
 		command_center = EQRAgentsHelper.locateControlCenter(myAgent);
 		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 	}
@@ -97,15 +101,10 @@ public class EngineBackToBase extends SimpleBehaviour {
 	}
 
 	private void goToBase(BaseRouteMessage msg) {
-		System.out.println(myAgent.getLocalName()
-				+ " : Finally I'm heading to Base. CurrentLocation is "
-				+ engine.getCurrentLocation());
 		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()
 				+ ":Received route to Base");
 		EQRRoutingResult route = msg.getResult();
 		if (route instanceof EQRRoutingError) {
-			System.out.println(myAgent.getLocalName()
-					+ " Route to base wasn't found!!");
 			EQRLogger.log(EQRLogger.LOG_EERROR, logger, null,
 					myAgent.getLocalName(), getBehaviourName()
 							+ ": No route to Base found!!");
@@ -114,23 +113,52 @@ public class EngineBackToBase extends SimpleBehaviour {
 
 		List<EQRPoint> points = ((EQRGraphHopperResult) route).getPoints();
 		long duration = ((EQRGraphHopperResult) route).getDuration();
+		double distance = ((EQRGraphHopperResult) route).getDistance();
+		double delay = 0;
+		double rate = 1;
+		if (traffic != null) {
+			delay = traffic.getDelay();
+			rate = traffic.getSimulationRate();
+		}
+
+		double sim_speed = distance / (duration * rate);
+
 		EQRLogger.log(logger, null, myAgent.getLocalName(),
 				getBehaviourName() + ": Route of duration: " + duration
 						+ " and points :" + points.size() + " found ");
-		for (EQRPoint p : points) {
+		MessageTemplate traffic_temp = MessageTemplate.MatchConversationId(TrafficUpdateMessage.TRAFFIC_SUBSCRIBERS_CONV);
+		for (int i = 0; i < points.size() - 1; i++) {
 
-			engine.setCurrentLocation(p);
-			// System.out.println(myAgent.getLocalName()+ " loc: "+ p);
+			ACLMessage up = myAgent.receive(traffic_temp);
+			if (up != null) {
+				try {
+					Object content = up.getContentObject();
+					if (content instanceof TrafficUpdateMessage) {
+						traffic = (TrafficUpdateMessage) content;
+						delay = traffic.getDelay();
+						rate = traffic.getSimulationRate();
+						sim_speed = distance / (duration * rate);
+					}
 
+				} catch (UnreadableException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			EQRPoint curr = points.get(i);
+			EQRPoint nxt = points.get(i + 1);
+			engine.setCurrentLocation(curr);
+			double dist = EQRAgentsHelper.getDistanceFromGPSCood(curr, nxt);
+			double st = (dist / sim_speed) + delay * rate;
 			try {
-				Thread.sleep((long) duration / points.size());
+				Thread.sleep((long) st);
 
 			} catch (InterruptedException e) {
 
 				e.printStackTrace();
 			}
-
 		}
+		engine.setCurrentLocation(points.get(points.size() - 1));
 		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()
 				+ " Fire Engine Arrived at base. Time to rest now");
 	}

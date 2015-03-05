@@ -85,29 +85,35 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 						FireEngineRequestMessage req = (FireEngineRequestMessage) content;
 						if (req.getType() == FireEngineRequestMessage.NOTIFY_ENGINE) {
 							/* Handle this */
-							Object[] params = new Object[3];
+							Object[] params = new Object[4];
 							params[0] = myAgent;
 							params[1] = req;
 							params[2] = details;
+							params[3] = traffic;
 							Behaviour b = goals.executePlan(
 									FireEngineGoals.ATTEND_TO_FIRE, params);
 							if (b != null) {
 								myAgent.addBehaviour(b);
-							}
+							}else
+								EQRLogger.log(logger, msg, myAgent.getLocalName(), "BEHAVIOUR NULL");
 						}
+						
 					} else if (content instanceof AttendToFireMessage) {
 						/* Now head back to base */
 						AttendToFireMessage atf = (AttendToFireMessage) content;
 						if (atf.getType() == AttendToFireMessage.TO_FIRE_ENGINE) {
-							Object[] params = new Object[2];
+							EQRLogger.log(logger, msg, myAgent.getLocalName(), "TO FIRE ENGINE");
+							Object[] params = new Object[3];
 							params[0] = myAgent;
 							params[1] = details;
+							params[2] = traffic;
 							Behaviour b = goals.executePlan(
 									FireEngineGoals.BACK_TO_BASE, params);
 							if (b != null) {
 								myAgent.addBehaviour(b);
 							}
 						}
+						
 					} else {
 						// myAgent.send(msg); // Requeue the message
 					}
