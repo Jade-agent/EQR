@@ -28,6 +28,7 @@ public class NotifyTrafficBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setConversationId(TrafficUpdateMessage.TRAFFIC_SUBSCRIBERS_CONV);
 		for(AID recv : subscribers){
 			msg.addReceiver(recv);
 		}

@@ -58,10 +58,11 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 						System.out.println(getBehaviourName() + " "
 								+ myAgent.getLocalName()
 								+ " recv notification msg");
-						Object[] params = new Object[3];
+						Object[] params = new Object[4];
 						params[0] = myAgent;
 						params[1] = (AmbulanceNotifyMessage) content;
 						params[2] = details;
+						params[3] = traffic;
 						sendAmbulanceInitLoc();
 						Behaviour b = goals.executePlan(
 								AmbulanceGoals.PICK_PATIENT, params);
@@ -95,10 +96,11 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 										+ " : Trying to find the neareset hospital for "
 										+ ((PickPatientMessage) content)
 												.getPatient().getAID());
-						Object[] params = new Object[3];
+						Object[] params = new Object[4];
 						params[0] = myAgent;
 						params[1] = ((PickPatientMessage) content).getPatient();
 						params[2] = details;
+						params[3] = traffic;
 						Behaviour b = goals.executePlan(
 								AmbulanceGoals.TO_NEAREST_HOSPITAL, params);
 						if (b != null)
@@ -109,9 +111,10 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 										+ " : Dropped Patient successfully. Now going back to base "
 										+ ((HospitalArrivalMessage) content)
 												.getPatient().getAID());
-						Object[] params = new Object[2];
+						Object[] params = new Object[3];
 						params[0] = myAgent;
 						params[1] = details;
+						params[2] = traffic;
 						Behaviour b = goals.executePlan(
 								AmbulanceGoals.BACK_TO_BASE, params);
 						if (b != null)

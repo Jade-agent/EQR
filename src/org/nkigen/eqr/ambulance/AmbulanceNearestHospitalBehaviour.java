@@ -3,6 +3,7 @@ package org.nkigen.eqr.ambulance;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import jade.util.Logger;
 
 import org.nkigen.eqr.agents.EQRAgentsHelper;
@@ -12,6 +13,7 @@ import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
+import org.nkigen.eqr.messages.TrafficUpdateMessage;
 import org.nkigen.eqr.patients.PatientDetails;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
@@ -31,12 +33,13 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 	Logger logger;
 	AID command_center = null;
 	boolean req_made = false;
-
+	TrafficUpdateMessage traffic;
 	public AmbulanceNearestHospitalBehaviour(Agent agent,
-			PatientDetails patient, AmbulanceDetails ambulance) {
+			PatientDetails patient, AmbulanceDetails ambulance, TrafficUpdateMessage traffic) {
 		super(agent);
 		this.ambulance = ambulance;
 		this.patient = patient;
+		this.traffic = traffic;
 		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		command_center = EQRAgentsHelper.locateControlCenter(myAgent);
 	}
@@ -46,6 +49,7 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 		while (command_center == null)
 			command_center = EQRAgentsHelper.locateControlCenter(myAgent);
 		MessageTemplate temp = MessageTemplate.MatchSender(command_center);
+		
 		ACLMessage msg = myAgent.receive(temp);
 
 		if (msg == null && !req_made) {
@@ -121,26 +125,52 @@ public class AmbulanceNearestHospitalBehaviour extends SimpleBehaviour {
 				List<EQRPoint> points = ((EQRGraphHopperResult) route)
 						.getPoints();
 
-				System.out.println(myAgent.getLocalName()
-						+ ": Response Base found to be: " + base.getLocation()
-						+ " length " + points.size());
 				long duration = ((EQRGraphHopperResult) route).getDuration();
+				double distance = ((EQRGraphHopperResult) route).getDistance();
+				double delay = 0;
+				double rate = 1;
+				if (traffic != null) {
+					delay = traffic.getDelay();
+					rate = traffic.getSimulationRate();
+				}
+
+				double sim_speed = distance / (duration * rate);
 				EQRLogger.log(logger, null, myAgent.getLocalName(),
 						getBehaviourName() + ": Route of duration: " + duration
 								+ " and points :" + points.size() + " found ");
-				for (EQRPoint p : points) {
+				MessageTemplate traffic_temp = MessageTemplate.MatchConversationId(TrafficUpdateMessage.TRAFFIC_SUBSCRIBERS_CONV);
+				for (int i = 0; i < points.size() - 1; i++) {
 
-					ambulance.setCurrentLocation(p);
-					// System.out.println(myAgent.getLocalName()+ " loc: "+ p);
+					ACLMessage up = myAgent.receive(traffic_temp);
+					if (up != null) {
+						try {
+							Object content = up.getContentObject();
+							if (content instanceof TrafficUpdateMessage) {
+								traffic = (TrafficUpdateMessage) content;
+								delay = traffic.getDelay();
+								rate = traffic.getSimulationRate();
+								sim_speed = distance / (duration * rate);
+							}
 
+						} catch (UnreadableException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					EQRPoint curr = points.get(i);
+					EQRPoint nxt = points.get(i + 1);
+					ambulance.setCurrentLocation(curr);
+					double dist = EQRAgentsHelper.getDistanceFromGPSCood(curr, nxt);
+					double st = (dist / sim_speed) + delay * rate;
 					try {
-						Thread.sleep((long) duration / points.size());
+						Thread.sleep((long) st);
 
 					} catch (InterruptedException e) {
 
 						e.printStackTrace();
 					}
 				}
+				ambulance.setCurrentLocation(points.get(points.size() - 1));
 				EQRLogger.log(
 						logger,
 						null,

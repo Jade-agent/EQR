@@ -3,12 +3,18 @@ package org.nkigen.eqr.messages;
 import java.io.Serializable;
 
 public class TrafficUpdateMessage implements Serializable {
+	public static final String TRAFFIC_SUBSCRIBERS_CONV = "traffic_subscribers";
 	public static final int TRAFFIC_HIGH = 0;
 	public static final int TRAFFIC_MEDIUM = 1;
 	public static final int TRAFFIC_LOW = 2;
 
 	int traffic;
 	long delay;
+	double rate = 0.01;
+	
+	public double getSimulationRate(){
+		return rate;
+	}
 	boolean is_subscribed = false;
 	
 	public boolean isSubscribed(){
