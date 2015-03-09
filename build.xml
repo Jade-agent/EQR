@@ -905,4 +905,9 @@
             <classpath refid="run.Deploy JADE4 Agent AmbulanceAgent3.classpath"/>
         </java>
     </target>
+    <target name="AgentTest">
+        <java classname="org.nkigen.eqr.AgentTest" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
 </project>

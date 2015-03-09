@@ -91,6 +91,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 						}
 						
 					} else if (content instanceof PickPatientMessage) {
+						details.setArrived(false);
 						System.out
 								.println(myAgent.getLocalName()
 										+ " : Trying to find the neareset hospital for "
@@ -165,7 +166,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 							+ ((AmbulanceDetails) ed).getCurrentLocation());
 			EQRLocationUpdate loc = new EQRLocationUpdate(
 					EQRLocationUpdate.AMBULANCE_LOCATION, myAgent.getAID());
-			loc.setIsMoving(true);
+			loc.setIsMoving(!((AmbulanceDetails) ed).getArrived());
 			loc.setIsDead(false);
 			loc.setCurrent(((AmbulanceDetails) ed).getCurrentLocation());
 			loc.setHeading(ed.getLocation());

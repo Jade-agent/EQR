@@ -158,7 +158,10 @@ public class EngineBackToBase extends SimpleBehaviour {
 				e.printStackTrace();
 			}
 		}
+		engine.setArrived(true);
 		engine.setCurrentLocation(points.get(points.size() - 1));
+		/*TODO: Notify Base Arrival*/
+		
 		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()
 				+ " Fire Engine Arrived at base. Time to rest now");
 	}

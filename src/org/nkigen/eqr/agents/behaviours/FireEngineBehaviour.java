@@ -7,6 +7,7 @@ import jade.util.Logger;
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EmergencyDetails;
+import org.nkigen.eqr.common.EmergencyResponseBase;
 import org.nkigen.eqr.common.EmergencyStateChangeInitiator;
 import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.fireengine.FireEngineDetails;
@@ -19,6 +20,7 @@ import org.nkigen.eqr.messages.FireEngineInitMessage;
 import org.nkigen.eqr.messages.FireEngineRequestMessage;
 import org.nkigen.eqr.messages.FireInitMessage;
 import org.nkigen.eqr.messages.TrafficUpdateMessage;
+import org.nkigen.maps.routing.EQRPoint;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -85,6 +87,7 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 						FireEngineRequestMessage req = (FireEngineRequestMessage) content;
 						if (req.getType() == FireEngineRequestMessage.NOTIFY_ENGINE) {
 							/* Handle this */
+							details.setArrived(false);
 							Object[] params = new Object[4];
 							params[0] = myAgent;
 							params[1] = req;
@@ -94,15 +97,18 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 									FireEngineGoals.ATTEND_TO_FIRE, params);
 							if (b != null) {
 								myAgent.addBehaviour(b);
-							}else
-								EQRLogger.log(logger, msg, myAgent.getLocalName(), "BEHAVIOUR NULL");
+							} else
+								EQRLogger.log(logger, msg,
+										myAgent.getLocalName(),
+										"BEHAVIOUR NULL");
 						}
-						
+
 					} else if (content instanceof AttendToFireMessage) {
 						/* Now head back to base */
 						AttendToFireMessage atf = (AttendToFireMessage) content;
 						if (atf.getType() == AttendToFireMessage.TO_FIRE_ENGINE) {
-							EQRLogger.log(logger, msg, myAgent.getLocalName(), "TO FIRE ENGINE");
+							EQRLogger.log(logger, msg, myAgent.getLocalName(),
+									"TO FIRE ENGINE");
 							Object[] params = new Object[3];
 							params[0] = myAgent;
 							params[1] = details;
@@ -113,7 +119,7 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 								myAgent.addBehaviour(b);
 							}
 						}
-						
+
 					} else {
 						// myAgent.send(msg); // Requeue the message
 					}
@@ -153,6 +159,11 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 
 	}
 
+	private boolean isSameLocation(EQRPoint b1, EQRPoint b2) {
+		return b1.getLatitude() == b2.getLatitude()
+				&& b1.getLongitude() == b2.getLongitude();
+	}
+
 	@Override
 	public void onEmergencyStateChange(EmergencyDetails ed) {
 		// TODO Auto-generated method stub
@@ -165,7 +176,8 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 		if (ed instanceof FireEngineDetails) {
 			EQRLocationUpdate loc = new EQRLocationUpdate(
 					EQRLocationUpdate.FIRE_ENGINE_LOCATION, myAgent.getAID());
-			loc.setIsMoving(true);
+			
+			loc.setIsMoving(!((FireEngineDetails) ed).getArrived());
 			loc.setIsDead(false);
 			loc.setCurrent(((FireEngineDetails) ed).getCurrentLocation());
 			loc.setHeading(ed.getLocation());
@@ -189,5 +201,4 @@ public class FireEngineBehaviour extends CyclicBehaviour implements
 		}
 
 	}
-
 }

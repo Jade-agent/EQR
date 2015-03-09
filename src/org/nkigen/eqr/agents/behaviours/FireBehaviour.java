@@ -1,8 +1,8 @@
 package org.nkigen.eqr.agents.behaviours;
 
 import java.io.IOException;
-import jade.util.Logger;
 
+import jade.util.Logger;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -19,6 +19,7 @@ import org.nkigen.eqr.fires.FireDetails;
 import org.nkigen.eqr.fires.FireGoals;
 import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceInitMessage;
+import org.nkigen.eqr.messages.AttendToFireMessage;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.FireInitMessage;
 
@@ -55,6 +56,11 @@ public class FireBehaviour extends CyclicBehaviour implements
 								+ myAgent.getLocalName());
 						fire.setStatus(EmergencyStatus.FIRE_STATUS_ACTIVE);
 					}
+					if (content instanceof AttendToFireMessage) {
+						
+						fire.setStatus(EmergencyStatus.FIRE_STATUS_OFF);
+					}
+					
 				} catch (UnreadableException e) {
 					e.printStackTrace();
 				}

@@ -15,6 +15,12 @@ public class SimulationParamsMessage implements Serializable {
 	ArrayList<EmergencyResponseBase> ambulances;
 	ArrayList<EmergencyResponseBase> fire_engines;
 	ArrayList<EmergencyResponseBase> hospitals;
+	/*Simulation parameters*/
+	double rate;
+	
+	/*Routing files*/
+	String routing_config_file;
+	String routing_data_dir;
 	
 	public SimulationParamsMessage() {
 	patients = new ArrayList<EQRPoint>();
@@ -62,5 +68,29 @@ public class SimulationParamsMessage implements Serializable {
 
 	public void setHospitals(ArrayList<EmergencyResponseBase> hospitals) {
 		this.hospitals = hospitals;
+	}
+
+	public double getRate() {
+		return rate;
+	}
+
+	public void setRate(double rate) {
+		this.rate = rate;
+	}
+
+	public String getRouting_config_file() {
+		return routing_config_file;
+	}
+
+	public void setRouting_config_file(String routing_config_file) {
+		this.routing_config_file = routing_config_file;
+	}
+
+	public String getRouting_data_dir() {
+		return routing_data_dir;
+	}
+
+	public void setRouting_data_dir(String routing_data_dir) {
+		this.routing_data_dir = routing_data_dir;
 	}
 }

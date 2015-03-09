@@ -8,6 +8,14 @@ public class AmbulanceDetails extends EmergencyDetails{
 
 	EQRPoint current_location;
 	EmergencyStateChangeInitiator listener;
+	private boolean arrived = false;
+	
+	public void setArrived(boolean b){
+		arrived = b;
+	}
+	public boolean getArrived(){
+		return arrived ;
+	}
 	public AmbulanceDetails() {
 		// TODO Auto-generated constructor stub
 	}

@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilder;
 import org.nkigen.eqr.common.EmergencyResponseBase;
 import org.nkigen.maps.routing.EQRPoint;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
@@ -32,6 +33,8 @@ public class ParseinitXMLFile {
 			Document doc = dBuilder.parse(file);
 			doc.getDocumentElement().normalize();
 
+			parseSimulationParams(doc.getElementsByTagName("simulation"));
+			parseRoutingParams(doc.getElementsByTagName("routing"));
 			/* Parse Patients */
 			NodeList nList = doc.getElementsByTagName("patient-locations");
 			parsePatientLocations(nList);
@@ -49,13 +52,48 @@ public class ParseinitXMLFile {
 		}
 
 	}
-	
 
-	public SimulationParamsMessage getSimulationParams(){
+	public SimulationParamsMessage getSimulationParams() {
 		return params;
 	}
+
 	private EQRPoint getPoint(String lat, String lon) {
 		return new EQRPoint(Double.parseDouble(lat), Double.parseDouble(lon));
+	}
+
+	private void parseSimulationParams(NodeList nList) {
+		NamedNodeMap items = null;
+		try {
+			Node nNode = nList.item(0);
+			items = nNode.getAttributes();
+			System.out.println("Simulation Rate set to:"
+					+ items.getNamedItem("rate").getTextContent());
+			params.setRate(Double.valueOf(items.getNamedItem("rate")
+					.getTextContent()));
+		} catch (NullPointerException e) {
+			System.out.println("ERROR: Using default Simulation rate value os:"
+					+ items.getNamedItem("rate").getTextContent());
+		}
+
+	}
+	private void parseRoutingParams(NodeList nList) {
+		
+		try {
+				Node nNode = nList.item(0);	
+				NamedNodeMap items = nNode.getAttributes();
+				System.out.println("Data Dir:"
+						+ items.getNamedItem("data-dir").getTextContent());
+				System.out.println("Routing File:"
+						+ items.getNamedItem("config-file").getTextContent());
+				
+				params.setRouting_data_dir(items.getNamedItem("data-dir").getTextContent());
+				params.setRouting_config_file(items.getNamedItem("config-file").getTextContent());
+			
+			
+		} catch (NullPointerException e) {
+			System.out.println("ERROR: Using default Simulation rate value of : "+ 0.1);
+		}
+
 	}
 
 	private void parsePatientLocations(NodeList nList) {
@@ -192,7 +230,7 @@ public class ParseinitXMLFile {
 					base.setLocation(getPoint(lat, lon));
 					base.setMax(num);
 					bases.add(base);
-					
+
 				}
 
 			}
@@ -200,9 +238,11 @@ public class ParseinitXMLFile {
 		params.setAmbulances(bases);
 	}
 
+	/*
 	public static void main(String[] a) {
 		new ParseinitXMLFile(new File(
 				"/home/nkigen/development/git/EQR/src/config.xml")).Parse();
 		;
 	}
+	*/
 }

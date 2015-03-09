@@ -166,6 +166,7 @@ public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
 				e.printStackTrace();
 			}
 		}
+		ambulance.setArrived(true);
 		ambulance.setCurrentLocation(points.get(points.size() - 1));
 		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()
 				+ " Ambulance Arrived at base. Time to rest now");

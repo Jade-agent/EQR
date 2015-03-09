@@ -7,7 +7,7 @@ import org.nkigen.maps.routing.EQRPoint;
 public class FireEngineDetails extends EmergencyDetails {
 
 	EmergencyStateChangeInitiator listener;
-
+	boolean arrived = false;
 	public FireEngineDetails() {
 		// TODO Auto-generated constructor stub
 	}
@@ -17,7 +17,12 @@ public class FireEngineDetails extends EmergencyDetails {
 	public EQRPoint getCurrentLocation() {
 		return current_location;
 	}
-
+	public void setArrived(boolean b){
+		arrived = b;
+	}
+	public boolean getArrived(){
+		return arrived;
+	}
 	public void setCurrentLocation(EQRPoint current_location) {
 		this.current_location = current_location;
 		if (listener != null)
