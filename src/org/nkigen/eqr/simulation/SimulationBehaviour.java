@@ -7,8 +7,12 @@ import org.nkigen.eqr.agents.AmbulanceAgent;
 import org.nkigen.eqr.agents.EQRAgentsHelper;
 import org.nkigen.eqr.agents.EQRFireAgent;
 import org.nkigen.eqr.agents.EQRPatientAgent;
+import org.nkigen.eqr.agents.EQRUpdatesAgent;
+import org.nkigen.eqr.agents.EQRViewerAgent;
+import org.nkigen.eqr.agents.EmergencyControlCenterAgent;
 import org.nkigen.eqr.agents.FireEngineAgent;
 import org.nkigen.eqr.agents.HospitalAgent;
+import org.nkigen.eqr.agents.RoutingAgent;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EQRAgentTypes;
 import org.nkigen.eqr.common.EmergencyResponseBase;
@@ -106,28 +110,28 @@ public class SimulationBehaviour extends CyclicBehaviour {
 	}
 
 	private void initSimulation(SimulationParamsMessage params) {
+		createRoutePlanner(params);
+		createUpdateServer();
+		createViewerServer();
+		createControlCenter();
 		initPatients(params.getPatients().size());
 		initFire(params.getFires().size());
 		initHospitals(params.getHospitals().size());
-		int nEngines = 0, nAmbulances=0;
-		for(EmergencyResponseBase base: params.getFire_engines())
+		int nEngines = 0, nAmbulances = 0;
+		for (EmergencyResponseBase base : params.getFire_engines())
 			nEngines += base.getMax();
-		for(EmergencyResponseBase base: params.getAmbulances())
+		for (EmergencyResponseBase base : params.getAmbulances())
 			nAmbulances += base.getMax();
 		initFireEngines(nEngines);
 		initAmbulances(nAmbulances);
-		/*
-		 * initPatients(params.getPatients().size()); initFires();
-		 * setupPatients(params.getPatients()); setupFires(params.getFires());
-		 * setupHospitals(params.getHospitals());
-		 * setupAmbulances(params.getAmbulances());
-		 * setupFireEngines(params.getFire_engines());
-		 * initControlCenter(params); init_complete = true;
-		 */
+		setupFireEngines(params.getFire_engines());
+		setupAmbulances(params.getAmbulances());
+		setupPatients(params.getPatients());
+		setupFires(params.getFires());
+		setupHospitals(params.getHospitals());
+		initControlCenter(params);
 		init_complete = true;
 	}
-
-	
 
 	private void initControlCenter(SimulationParamsMessage m) {
 		control_center = EQRAgentsHelper.locateControlCenter(myAgent);
@@ -139,9 +143,9 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		try {
 			acl.setContentObject(msg);
 			acl.addReceiver(control_center);
+			myAgent.send(acl);
 			EQRLogger.log(logger, acl, myAgent.getLocalName(),
 					" init control center");
-			myAgent.send(acl);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -151,74 +155,75 @@ public class SimulationBehaviour extends CyclicBehaviour {
 	private void setupFireEngines(ArrayList<EmergencyResponseBase> loc) {
 		fire_engines = EQRAgentsHelper.locateBases(
 				EQRAgentTypes.FIRE_ENGINE_AGENT, myAgent);
-
-		// System.out.println(getBehaviourName()+" "+
-		// myAgent.getLocalName()+" fire engines: "+ fire_engines.size()+
-		// " loc size" + loc.size());
-		if (fire_engines != null) {
-			int k = 0;
-			for (int j = 0, i = 0; j < loc.size(); j++) {
-				// System.out.println(getBehaviourName()+" "+
-				// myAgent.getLocalName()+ " MAX value :"+loc.get(j).getMax());
-
-				for (; i < fire_engines.size() && i < loc.get(j).getMax(); i++, k++) {
-					loc.get(j).addResponder(fire_engines.get(i));
-					System.out.println(getBehaviourName() + " "
-							+ myAgent.getLocalName() + " fer added");
-					FireEngineDetails pd = new FireEngineDetails();
-					pd.setAID(fire_engines.get(i));
-					pd.setId(k);
-					pd.setLocation(loc.get(j).getLocation());
-					pd.setCurrentLocation(loc.get(j).getLocation());
-					FireEngineInitMessage m = new FireEngineInitMessage();
-					m.setFireEngine(pd);
-					ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-					try {
-						msg.setContentObject(m);
-						msg.addReceiver(pd.getAID());
-						EQRLogger.log(logger, msg, myAgent.getLocalName(),
-								" setup fire engine : "
-										+ pd.getAID().getLocalName());
-						myAgent.send(msg);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
+		if (fire_engines == null) {
+			EQRLogger.log(logger, null, myAgent.getLocalName(),
+					"Error!! No Fire Engines present");
+			return;
 		}
 
+		int i = 0;
+		for (int j = 0; j < loc.size(); j++) {
+			for (int k = 0; k < loc.get(j).getMax(); k++, i++) {
+				loc.get(j).addResponder(fire_engines.get(i));
+				System.out.println(getBehaviourName() + " "
+						+ myAgent.getLocalName() + " fer added");
+				FireEngineDetails pd = new FireEngineDetails();
+				pd.setAID(fire_engines.get(i));
+				pd.setId(i);
+				pd.setLocation(loc.get(j).getLocation());
+				pd.setCurrentLocation(loc.get(j).getLocation());
+				FireEngineInitMessage m = new FireEngineInitMessage();
+				m.setFireEngine(pd);
+				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+				try {
+					msg.setContentObject(m);
+					msg.addReceiver(pd.getAID());
+					myAgent.send(msg);
+					EQRLogger.log(logger, msg, myAgent.getLocalName(),
+							" setup fire engine : "
+									+ pd.getAID().getLocalName());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
 	}
 
 	private void setupAmbulances(ArrayList<EmergencyResponseBase> loc) {
 		ambulances = EQRAgentsHelper.locateBases(EQRAgentTypes.AMBULANCE_AGENT,
 				myAgent);
 
-		if (ambulances != null) {
-			int k = 0;
-			for (int j = 0, i = 0; j < loc.size(); j++) {
-				for (; i < ambulances.size() && i < loc.get(j).getMax(); i++, k++) {
-					loc.get(j).addResponder(ambulances.get(i));
-					AmbulanceDetails pd = new AmbulanceDetails();
-					pd.setAID(ambulances.get(i));
+		if (ambulances == null) {
+			EQRLogger.log(logger, null, myAgent.getLocalName(),
+					"Error!! No Ambulances present");
+			return;
+		}
 
-					pd.setId(k);
-					pd.setLocation(loc.get(j).getLocation());
-					pd.setCurrentLocation(loc.get(j).getLocation());
-					AmbulanceInitMessage m = new AmbulanceInitMessage();
-					m.setAmbulance(pd);
-					ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-					try {
-						msg.setContentObject(m);
-						msg.addReceiver(pd.getAID());
-						EQRLogger.log(logger, msg, myAgent.getLocalName(),
-								" setup Ambulance : "
-										+ pd.getAID().getLocalName());
-						myAgent.send(msg);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+		int i = 0;
+		for (int j = 0; j < loc.size(); j++) {
+			for (int k = 0; k < loc.get(j).getMax(); k++, i++) {
+				loc.get(j).addResponder(ambulances.get(i));
+				AmbulanceDetails pd = new AmbulanceDetails();
+				pd.setAID(ambulances.get(i));
+
+				pd.setId(i);
+				pd.setLocation(loc.get(j).getLocation());
+				pd.setCurrentLocation(loc.get(j).getLocation());
+				AmbulanceInitMessage m = new AmbulanceInitMessage();
+				m.setAmbulance(pd);
+				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+				try {
+					msg.setContentObject(m);
+					msg.addReceiver(pd.getAID());
+					myAgent.send(msg);
+					EQRLogger.log(logger, msg, myAgent.getLocalName(),
+							" setup Ambulance : " + pd.getAID().getLocalName());
+
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
@@ -242,9 +247,10 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				try {
 					msg.setContentObject(m);
 					msg.addReceiver(pd.getAID());
+					myAgent.send(msg);
 					EQRLogger.log(logger, msg, myAgent.getLocalName(),
 							" setup Hospital : " + pd.getAID().getLocalName());
-					myAgent.send(msg);
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -255,6 +261,22 @@ public class SimulationBehaviour extends CyclicBehaviour {
 	}
 
 	private void setupFires(ArrayList<EQRPoint> loc) {
+
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType(EQRAgentTypes.FIRE_AGENT);
+		template.addServices(sd);
+		try {
+			DFAgentDescription[] result = DFService.search(myAgent, template);
+			fires.clear();
+			for (int i = 0; i < result.length; ++i) {
+				fires.add(result[i].getName());
+				System.out.println(result[i].getName().getLocalName()
+						+ " Added to fires");
+			}
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
 		if (fires != null) {
 			for (int i = 0, j = 0; i < fires.size() && j < loc.size(); i++, j++) {
 				FireDetails pd = new FireDetails();
@@ -267,11 +289,12 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				try {
 					msg.setContentObject(m);
 					msg.addReceiver(pd.getAID());
+					myAgent.send(msg);
 					EQRLogger
 							.log(logger, msg, myAgent.getLocalName(),
 									" setup fire Agent : "
 											+ pd.getAID().getLocalName());
-					myAgent.send(msg);
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -282,6 +305,21 @@ public class SimulationBehaviour extends CyclicBehaviour {
 	}
 
 	private void setupPatients(ArrayList<EQRPoint> loc) {
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType(EQRAgentTypes.PATIENT_AGENT);
+		template.addServices(sd);
+		try {
+			DFAgentDescription[] result = DFService.search(myAgent, template);
+			patients.clear();
+			for (int i = 0; i < result.length; ++i) {
+				patients.add(result[i].getName());
+				System.out.println(result[i].getName().getLocalName()
+						+ " Added to Patients");
+			}
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
 		if (patients != null) {
 			for (int i = 0, j = 0; i < patients.size() && j < loc.size(); i++, j++) {
 				PatientDetails pd = new PatientDetails();
@@ -294,10 +332,11 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				try {
 					msg.setContentObject(m);
 					msg.addReceiver(pd.getAID());
+					myAgent.send(msg);
 					EQRLogger.log(logger, msg, myAgent.getLocalName(),
 							" setup Patient Agent : "
 									+ pd.getAID().getLocalName());
-					myAgent.send(msg);
+
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -326,7 +365,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		}
 
 	}
-	
+
 	private void initHospitals(int num) {
 		hospitals = new ArrayList<AID>();
 		rt = Runtime.instance();
@@ -346,7 +385,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		}
 
 	}
-	
+
 	private void initFire(int size) {
 		fires = new ArrayList<AID>();
 		rt = Runtime.instance();
@@ -354,7 +393,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		jade.wrapper.AgentContainer cont = rt.createAgentContainer(pContainer);
 		try {
 			for (int i = 0; i < size; i++) {
-				AgentController pa = cont.acceptNewAgent("fire_" + i ,
+				AgentController pa = cont.acceptNewAgent("fire_" + i,
 						new EQRFireAgent());
 				pa.start();
 			}
@@ -362,7 +401,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void initFireEngines(int size) {
@@ -373,7 +412,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		jade.wrapper.AgentContainer cont = rt.createAgentContainer(pContainer);
 		try {
 			for (int i = 0; i < size; i++) {
-				AgentController pa = cont.acceptNewAgent("fireEngine_" + i ,
+				AgentController pa = cont.acceptNewAgent("fireEngine_" + i,
 						new FireEngineAgent());
 				pa.start();
 			}
@@ -381,9 +420,9 @@ public class SimulationBehaviour extends CyclicBehaviour {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 	}
+
 	private void initAmbulances(int size) {
 		// TODO Auto-generated method stub
 		fire_engines = new ArrayList<AID>();
@@ -392,7 +431,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		jade.wrapper.AgentContainer cont = rt.createAgentContainer(pContainer);
 		try {
 			for (int i = 0; i < size; i++) {
-				AgentController pa = cont.acceptNewAgent("ambulance_" + i ,
+				AgentController pa = cont.acceptNewAgent("ambulance_" + i,
 						new AmbulanceAgent());
 				pa.start();
 			}
@@ -400,27 +439,70 @@ public class SimulationBehaviour extends CyclicBehaviour {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
-
-	private void initFires() {
-		fires = new ArrayList<AID>();
-		DFAgentDescription template = new DFAgentDescription();
-		ServiceDescription sd = new ServiceDescription();
-		sd.setType(EQRAgentTypes.FIRE_AGENT);
-		template.addServices(sd);
+	private void createControlCenter() {
+		rt = Runtime.instance();
+		ProfileImpl pContainer = new ProfileImpl(null, 1211, null);
+		jade.wrapper.AgentContainer cont = rt.createAgentContainer(pContainer);
 		try {
-			DFAgentDescription[] result = DFService.search(myAgent, template);
-			fires.clear();
-			for (int i = 0; i < result.length; ++i) {
-				fires.add(result[i].getName());
-				System.out.println(result[i].getName().getLocalName()
-						+ " Added to fires");
-			}
-		} catch (FIPAException fe) {
-			fe.printStackTrace();
+
+			AgentController pa = cont.acceptNewAgent("control_center",
+					new EmergencyControlCenterAgent());
+			pa.start();
+
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void createUpdateServer() {
+		rt = Runtime.instance();
+		ProfileImpl pContainer = new ProfileImpl(null, 1211, null);
+		jade.wrapper.AgentContainer cont = rt.createAgentContainer(pContainer);
+		try {
+
+			AgentController pa = cont.acceptNewAgent("update_server",
+					new EQRUpdatesAgent());
+			pa.start();
+
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private void createViewerServer() {
+		rt = Runtime.instance();
+		ProfileImpl pContainer = new ProfileImpl(null, 1211, null);
+		jade.wrapper.AgentContainer cont = rt.createAgentContainer(pContainer);
+		try {
+
+			AgentController pa = cont.acceptNewAgent("viewer_server",
+					new EQRViewerAgent());
+			pa.start();
+
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private void createRoutePlanner(SimulationParamsMessage params) {
+		rt = Runtime.instance();
+		ProfileImpl pContainer = new ProfileImpl(null, 1211, null);
+		jade.wrapper.AgentContainer cont = rt.createAgentContainer(pContainer);
+		try {
+
+			Object[] p = new Object[2];
+			p[0] = params.getRouting_config_file();
+			p[1] = params.getRouting_data_dir();
+			AgentController pa = cont.createNewAgent("route_planner", RoutingAgent.class.getName(), p);
+			pa.start();
+
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
