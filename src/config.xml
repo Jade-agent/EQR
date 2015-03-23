@@ -8,7 +8,7 @@
 
 	<!-- Simulation Configurations rate is be greater than 0 Patient_inter-arrival 
 		time is in milliseconds -->
-	<simulation rate="0.01">
+	<simulation rate="0.001">
 		<patients inter-arrival="900000" />
 		<fires inter-arrival="900000" />
 		<!-- Traffic params both in milliseconds -->

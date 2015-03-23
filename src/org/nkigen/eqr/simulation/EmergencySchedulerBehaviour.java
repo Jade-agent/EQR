@@ -26,6 +26,7 @@ import jade.util.Logger;
  * @author nkigen
  *
  */
+/*TODO: Change to simple behaviour*/
 public class EmergencySchedulerBehaviour extends TickerBehaviour {
 
 	public static final long REAL_TIME_PERIOD = 1000;
@@ -66,11 +67,13 @@ public class EmergencySchedulerBehaviour extends TickerBehaviour {
 
 	@Override
 	protected void onTick() {
+		
 		if(current == schedule.size()){
 			//this.stop();
 			return;
 		}
-		if (clock.currentSimulationTime() > schedule.get(current))
+		
+		if (clock.currentSimulationTime() < schedule.get(current))
 			return;
 		if (type == EmergencyScheduleMessage.SCHEDULE_TYPE_FIRES) {
 			ChangeEmergencyStatusMessage cesm = new ChangeEmergencyStatusMessage(

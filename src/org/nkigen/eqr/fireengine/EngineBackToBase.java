@@ -12,6 +12,7 @@ import org.nkigen.eqr.messages.EQRRoutingCriteria;
 import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
+import org.nkigen.eqr.messages.MissionCompleteNotificaton;
 import org.nkigen.eqr.messages.TrafficUpdateMessage;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
@@ -164,6 +165,18 @@ public class EngineBackToBase extends SimpleBehaviour {
 		
 		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()
 				+ " Fire Engine Arrived at base. Time to rest now");
+		MissionCompleteNotificaton mcn = new MissionCompleteNotificaton(MissionCompleteNotificaton.FIREENGINE_MISSION, engine);
+		ACLMessage inf = new  ACLMessage(ACLMessage.INFORM);
+		inf.addReceiver(command_center);
+		try {
+			inf.setContentObject(mcn);
+			myAgent.send(inf);
+			EQRLogger.log(logger, inf, myAgent.getLocalName(), getBehaviourName()
+					+ " Mission Complete Notification Sent");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

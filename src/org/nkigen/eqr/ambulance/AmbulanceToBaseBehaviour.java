@@ -12,6 +12,7 @@ import org.nkigen.eqr.messages.EQRRoutingCriteria;
 import org.nkigen.eqr.messages.EQRRoutingError;
 import org.nkigen.eqr.messages.EQRRoutingResult;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
+import org.nkigen.eqr.messages.MissionCompleteNotificaton;
 import org.nkigen.eqr.messages.TrafficUpdateMessage;
 import org.nkigen.maps.routing.EQRPoint;
 import org.nkigen.maps.routing.graphhopper.EQRGraphHopperResult;
@@ -170,7 +171,18 @@ public class AmbulanceToBaseBehaviour extends SimpleBehaviour {
 		ambulance.setCurrentLocation(points.get(points.size() - 1));
 		EQRLogger.log(logger, null, myAgent.getLocalName(), getBehaviourName()
 				+ " Ambulance Arrived at base. Time to rest now");
-		/* TODO: Send message to Control Center about Arrival */
+		MissionCompleteNotificaton mcn = new MissionCompleteNotificaton(MissionCompleteNotificaton.AMBULANCE_MISSION, ambulance);
+		ACLMessage inf = new  ACLMessage(ACLMessage.INFORM);
+		inf.addReceiver(command_center);
+		try {
+			inf.setContentObject(mcn);
+			myAgent.send(inf);
+			EQRLogger.log(logger, inf, myAgent.getLocalName(), getBehaviourName()
+					+ " Mission Complete Notification Sent");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

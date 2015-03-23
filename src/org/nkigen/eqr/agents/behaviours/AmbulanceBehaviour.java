@@ -55,15 +55,11 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 				try {
 					Object content = msg.getContentObject();
 					if (content instanceof AmbulanceNotifyMessage) {
-						System.out.println(getBehaviourName() + " "
-								+ myAgent.getLocalName()
-								+ " recv notification msg");
 						Object[] params = new Object[4];
 						params[0] = myAgent;
 						params[1] = (AmbulanceNotifyMessage) content;
 						params[2] = details;
 						params[3] = traffic;
-						sendAmbulanceInitLoc();
 						Behaviour b = goals.executePlan(
 								AmbulanceGoals.PICK_PATIENT, params);
 						if (b != null)
@@ -74,6 +70,7 @@ public class AmbulanceBehaviour extends CyclicBehaviour implements
 						details = ((AmbulanceInitMessage) content)
 								.getAmbulance();
 						details.setListener(listener);
+						sendAmbulanceInitLoc();
 						TrafficUpdateMessage tum = new TrafficUpdateMessage();
 						tum.subscribe();
 						ACLMessage msg_tum = new ACLMessage(ACLMessage.SUBSCRIBE);

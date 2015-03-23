@@ -35,6 +35,7 @@ import org.nkigen.eqr.messages.BaseRouteMessage;
 import org.nkigen.eqr.messages.ControlCenterInitMessage;
 import org.nkigen.eqr.messages.FireEngineRequestMessage;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
+import org.nkigen.eqr.messages.MissionCompleteNotificaton;
 import org.nkigen.eqr.messages.TrafficUpdateMessage;
 
 import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
@@ -122,6 +123,9 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 					initControlCenter((ControlCenterInitMessage) content);
 					is_setup_complete = true;
 				}
+				else if( content instanceof MissionCompleteNotificaton){
+					completeMission((MissionCompleteNotificaton) content);
+				}
 			} catch (UnreadableException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -172,6 +176,24 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		}
 	}
 
+	private void completeMission(MissionCompleteNotificaton not){
+		EmergencyDetails det = not.getDetails();
+		if(not.getType() == MissionCompleteNotificaton.AMBULANCE_MISSION){
+			for(EmergencyResponseBase b : ambulance_bases){
+				if(b.getLocation() == det.getLocation()){
+					b.addResponder(det.getAID());
+				}
+			}
+		}
+		else if(not.getType() == MissionCompleteNotificaton.FIREENGINE_MISSION){
+			for(EmergencyResponseBase b : fire_engine_bases){
+				if(b.getLocation() == det.getLocation()){
+					b.addResponder(det.getAID());
+				}
+			}
+		}
+		
+	}
 	private void initControlCenter(ControlCenterInitMessage msg) {
 		ambulance_bases = msg.getAmbulance_bases();
 		fire_engine_bases = msg.getFire_engine_bases();

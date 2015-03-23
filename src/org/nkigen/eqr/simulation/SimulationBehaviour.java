@@ -36,6 +36,7 @@ import jade.core.Agent;
 import jade.core.ProfileImpl;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.ParallelBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -175,24 +176,27 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		setupHospitals(params.getHospitals());
 		initControlCenter(params);
 		init_complete = true;
-		createSchedule(EmergencyScheduleMessage.SCHEDULE_TYPE_FIRES,
-				params.getFire_inter_arrival(), fires.size());
-		createSchedule(EmergencyScheduleMessage.SCHEDULE_TYPE_PATIENTS,
-				params.getPatient_inter_arrival(), patients.size());
+		ParallelBehaviour b = new ParallelBehaviour();
+		b.addSubBehaviour(createSchedule(
+				EmergencyScheduleMessage.SCHEDULE_TYPE_FIRES,
+				params.getFire_inter_arrival(), fires.size()));
+		b.addSubBehaviour(createSchedule(
+				EmergencyScheduleMessage.SCHEDULE_TYPE_PATIENTS,
+				params.getPatient_inter_arrival(), patients.size()));
+		myAgent.addBehaviour(b);
 		/* create simulation schedules for Emergencies */
 	}
 
-	private void createSchedule(int type, double mean, int num) {
+	private Behaviour createSchedule(int type, double mean, int num) {
 		Object[] params = new Object[4];
 		params[0] = myAgent;
 		params[1] = type;
 		params[2] = mean;
 		params[3] = num;
 
-		Behaviour b = goals.executePlan(
-				SimulationGoals.CREATE_EMERGENCY_SCHEDULE, params);
-		if (b != null)
-			myAgent.addBehaviour(b);
+		return goals.executePlan(SimulationGoals.CREATE_EMERGENCY_SCHEDULE,
+				params);
+
 	}
 
 	private void initControlCenter(SimulationParamsMessage m) {
