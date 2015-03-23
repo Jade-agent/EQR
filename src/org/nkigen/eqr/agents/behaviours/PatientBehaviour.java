@@ -9,6 +9,7 @@ import org.nkigen.eqr.common.EmergencyStateChangeListener;
 import org.nkigen.eqr.common.EmergencyStatus;
 import org.nkigen.eqr.fires.RequestFireBehaviour;
 import org.nkigen.eqr.logs.EQRLogger;
+import org.nkigen.eqr.messages.ChangeEmergencyStatusMessage;
 import org.nkigen.eqr.messages.EQRLocationUpdate;
 import org.nkigen.eqr.messages.HospitalArrivalMessage;
 import org.nkigen.eqr.messages.PatientInitMessage;
@@ -68,8 +69,6 @@ public class PatientBehaviour extends CyclicBehaviour implements
 					patient.setListener(listener);
 					System.out.println(getClass().getName()
 							+ " Patient Initialized");
-					patient.setStatus(EmergencyStatus.PATIENT_WAITING);
-					
 				}
 			} else if (content instanceof PickPatientMessage) {
 				System.out.println(myAgent.getLocalName()
@@ -81,6 +80,12 @@ public class PatientBehaviour extends CyclicBehaviour implements
 				System.out.println(myAgent.getLocalName()
 						+ " Patient arrived at the hospital !!!");
 				patient.setStatus(EmergencyStatus.PATIENT_DELIVERED);
+			}
+			else if (content instanceof ChangeEmergencyStatusMessage) {
+				if (((ChangeEmergencyStatusMessage) content).getType() == ChangeEmergencyStatusMessage.TYPE_PATIENT)
+					patient.setStatus(((ChangeEmergencyStatusMessage) content)
+							.getStatus());
+
 			}
 			else{
 				System.out.println(myAgent.getLocalName()+" Message recv but not understood");

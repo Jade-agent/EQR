@@ -5,11 +5,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.nkigen.eqr.common.EQRAgentTypes;
 import org.nkigen.eqr.logs.EQRLogger;
-import org.nkigen.eqr.models.EmergencyArrivalModel;
 import org.nkigen.maps.routing.EQRPoint;
 
-import desmoj.core.simulator.Experiment;
-import desmoj.core.simulator.TimeInstant;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -19,7 +16,6 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.util.Logger;
 
 public class EQRAgentsHelper {
-	static Experiment experiment;
 	static AID update_server;
 	static AID routing_server;
 	static AID viewer;
@@ -41,35 +37,7 @@ public class EQRAgentsHelper {
 
 	}
 
-	public static void startSimulation() {
-
-		if (experiment != null) {
-			System.out.println("DESMOJ Experiment already started...");
-			return;
-		}
-		experiment = new Experiment("Emergency Resque Model", TimeUnit.SECONDS,
-				TimeUnit.MINUTES, null);
-
-		EmergencyArrivalModel vc_1st_p_Model = new EmergencyArrivalModel(null,
-				"Emergency Arrival Model", true, false);
-
-		vc_1st_p_Model.connectToExperiment(experiment);
-
-		experiment.tracePeriod(new TimeInstant(0), new TimeInstant(100));
-		experiment.setExecutionSpeedRate(0);
-		// now set the time this simulation should stop at
-		// let him work 1500 Minutes
-		experiment.stop(new TimeInstant(1500));
-		experiment.setShowProgressBar(false);
-
-		// start the Experiment with start time 0.0
-		experiment.start();
-
-		// experiment.report();
-
-		experiment.finish();
-	}
-
+	
 	public static final double EARTH_RADIUS = 6372.8 * 1000; // In kilometers
 
 	public static double haversine(double lat1, double lon1, double lat2,

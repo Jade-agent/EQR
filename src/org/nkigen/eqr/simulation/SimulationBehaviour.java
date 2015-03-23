@@ -15,6 +15,7 @@ import org.nkigen.eqr.agents.HospitalAgent;
 import org.nkigen.eqr.agents.RoutingAgent;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EQRAgentTypes;
+import org.nkigen.eqr.common.EQRClock;
 import org.nkigen.eqr.common.EmergencyResponseBase;
 import org.nkigen.eqr.fireengine.FireEngineDetails;
 import org.nkigen.eqr.fires.FireDetails;
@@ -22,6 +23,7 @@ import org.nkigen.eqr.hospital.HospitalDetails;
 import org.nkigen.eqr.logs.EQRLogger;
 import org.nkigen.eqr.messages.AmbulanceInitMessage;
 import org.nkigen.eqr.messages.ControlCenterInitMessage;
+import org.nkigen.eqr.messages.EmergencyScheduleMessage;
 import org.nkigen.eqr.messages.FireEngineInitMessage;
 import org.nkigen.eqr.messages.FireInitMessage;
 import org.nkigen.eqr.messages.HospitalInitMessage;
@@ -46,7 +48,6 @@ import jade.wrapper.StaleProxyException;
 import jade.core.Runtime;
 
 public class SimulationBehaviour extends CyclicBehaviour {
-
 	jade.core.Runtime rt;
 	ArrayList<AID> patients;
 	ArrayList<AID> fires;
@@ -58,6 +59,8 @@ public class SimulationBehaviour extends CyclicBehaviour {
 	String config;
 	SimulationGoals goals;
 	Logger logger;
+	static EQRClock clock;
+	SimulationParamsMessage sim_params;
 
 	public SimulationBehaviour(Agent a, String config) {
 		super(a);
@@ -65,6 +68,10 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		this.config = config;
 		goals = new SimulationGoals();
 		logger = EQRLogger.prep(logger, myAgent.getLocalName());
+	}
+
+	public static EQRClock getClock() {
+		return clock;
 	}
 
 	@Override
@@ -79,7 +86,38 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				try {
 					Object content = msg.getContentObject();
 					if (content instanceof SimulationParamsMessage) {
+						
 						initSimulation((SimulationParamsMessage) content);
+						/*Start Traffic updates*/
+						Object[] params = new Object[3];
+						params[0] = myAgent;
+						params[1] = sim_params.getTraffic_update_period();
+						params[2] = sim_params.getTraffic_max_delay();
+						Behaviour b = goals.executePlan(SimulationGoals.TRAFFIC_UPDATES, params);
+						if(b!=null)
+							myAgent.addBehaviour(b);
+					} else if (content instanceof EmergencyScheduleMessage) {
+						Object[] params = new Object[5];
+						params[0] = myAgent;
+						params[1] = ((EmergencyScheduleMessage) content)
+								.getType();
+
+						params[2] = (long) (EmergencySchedulerBehaviour.REAL_TIME_PERIOD * clock
+								.getRate());
+						/*Safety check*/
+						if((long)params[2] == 0)
+							params[2] = 1;
+						if (((EmergencyScheduleMessage) content).getType() == EmergencyScheduleMessage.SCHEDULE_TYPE_FIRES)
+							params[3] = fires;
+						else if (((EmergencyScheduleMessage) content).getType() == EmergencyScheduleMessage.SCHEDULE_TYPE_PATIENTS)
+							params[3] = patients;
+						else
+							params[3] = null;
+						params[4] =((EmergencyScheduleMessage) content).getSchedule();
+						Behaviour b = goals.executePlan(SimulationGoals.SCHEDULE_EMERGENCY, params);
+						if(b != null)
+							myAgent.addBehaviour(b);
+
 					}
 				} catch (UnreadableException e) {
 					// TODO Auto-generated catch block
@@ -87,6 +125,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				}
 
 				break;
+
 			}
 		} else {
 			block();
@@ -110,6 +149,8 @@ public class SimulationBehaviour extends CyclicBehaviour {
 	}
 
 	private void initSimulation(SimulationParamsMessage params) {
+		clock = new EQRClock(params.getRate());
+		sim_params = params;
 		createRoutePlanner(params);
 		createUpdateServer();
 		createViewerServer();
@@ -457,7 +498,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void createUpdateServer() {
 		rt = Runtime.instance();
 		ProfileImpl pContainer = new ProfileImpl(null, 1211, null);
@@ -473,6 +514,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 			e.printStackTrace();
 		}
 	}
+
 	private void createViewerServer() {
 		rt = Runtime.instance();
 		ProfileImpl pContainer = new ProfileImpl(null, 1211, null);
@@ -488,6 +530,7 @@ public class SimulationBehaviour extends CyclicBehaviour {
 			e.printStackTrace();
 		}
 	}
+
 	private void createRoutePlanner(SimulationParamsMessage params) {
 		rt = Runtime.instance();
 		ProfileImpl pContainer = new ProfileImpl(null, 1211, null);
@@ -497,7 +540,8 @@ public class SimulationBehaviour extends CyclicBehaviour {
 			Object[] p = new Object[2];
 			p[0] = params.getRouting_config_file();
 			p[1] = params.getRouting_data_dir();
-			AgentController pa = cont.createNewAgent("route_planner", RoutingAgent.class.getName(), p);
+			AgentController pa = cont.createNewAgent("route_planner",
+					RoutingAgent.class.getName(), p);
 			pa.start();
 
 		} catch (StaleProxyException e) {

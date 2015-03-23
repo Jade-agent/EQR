@@ -14,16 +14,19 @@ import jade.lang.acl.ACLMessage;
 import jade.util.Logger;
 
 public class TrafficUpdatesBehaviour extends TickerBehaviour {
-
-	private static final long UPDATE_PERIOD = 10000;
-	private static final long MAX_DELAY = 60000; // Max Delay caused by Traffic
 	AID ecc;
 	Random rand = new Random();
 	Logger logger;
-	public TrafficUpdatesBehaviour(Agent agent) {
-		super(agent, UPDATE_PERIOD);
+	long update_period;
+	long max_delay;
+
+	public TrafficUpdatesBehaviour(Agent agent, long update_period,
+			long max_delay) {
+		super(agent, update_period);
+		this.update_period = update_period;
+		this.max_delay = max_delay;
 		ecc = EQRAgentsHelper.locateControlCenter(myAgent);
-		 logger = EQRLogger.prep(logger, myAgent.getLocalName());
+		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 	}
 
 	@Override
@@ -36,8 +39,9 @@ public class TrafficUpdatesBehaviour extends TickerBehaviour {
 		msg.addReceiver(ecc);
 		try {
 			msg.setContentObject(update);
-			EQRLogger.log(logger, msg, myAgent.getLocalName(), "Traffic update sent with delay of: "+update.getDelay()+" ms");
 			myAgent.send(msg);
+			EQRLogger.log(logger, msg, myAgent.getLocalName(),
+					"Current Traffic Delay: " + update.getDelay() + " ms");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -46,21 +50,21 @@ public class TrafficUpdatesBehaviour extends TickerBehaviour {
 	}
 
 	private long getRandomDelay() {
-		return (long) (rand.nextDouble() * MAX_DELAY);
+		return (long) (rand.nextDouble() * max_delay);
 	}
 
 	private TrafficUpdateMessage getUpdate() {
 		TrafficUpdateMessage update = new TrafficUpdateMessage();
 		long d = getRandomDelay();
 		update.setDelay(d);
-		if (d <= 0.75 * MAX_DELAY && d >= MAX_DELAY * 0.25)
+		if (d <= 0.75 * max_delay && d >= max_delay * 0.25)
 			update.setTraffic(TrafficUpdateMessage.TRAFFIC_MEDIUM);
-		else if (d > MAX_DELAY * 0.75) {
+		else if (d > max_delay * 0.75) {
 			update.setTraffic(TrafficUpdateMessage.TRAFFIC_HIGH);
 		} else {
 			update.setTraffic(TrafficUpdateMessage.TRAFFIC_LOW);
 		}
-		
+
 		return update;
 	}
 

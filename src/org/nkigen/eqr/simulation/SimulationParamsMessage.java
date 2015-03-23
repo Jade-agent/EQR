@@ -17,11 +17,21 @@ public class SimulationParamsMessage implements Serializable {
 	ArrayList<EmergencyResponseBase> hospitals;
 	/*Simulation parameters*/
 	double rate;
-	
+	long patient_inter_arrival;
+	long fire_inter_arrival;
+	long traffic_update_period;
+	long traffic_max_delay;
 	/*Routing files*/
 	String routing_config_file;
 	String routing_data_dir;
 	
+	@Override
+	public String toString(){
+	String text ="";
+	text+= "routing file:="+routing_config_file+" routing data dir:="+routing_data_dir+" Simulation RATE:="+rate+" Patient IR:="+patient_inter_arrival+" Fire IR:="+fire_inter_arrival
+	+" Traffic Update:="+traffic_update_period+" Traffic max Delay:="+traffic_max_delay;
+	return text;
+	}
 	public SimulationParamsMessage() {
 	patients = new ArrayList<EQRPoint>();
 	fires = new ArrayList<EQRPoint>();
@@ -92,5 +102,37 @@ public class SimulationParamsMessage implements Serializable {
 
 	public void setRouting_data_dir(String routing_data_dir) {
 		this.routing_data_dir = routing_data_dir;
+	}
+
+	public long getPatient_inter_arrival() {
+		return patient_inter_arrival;
+	}
+
+	public void setPatient_inter_arrival(long patient_inter_arrival) {
+		this.patient_inter_arrival = patient_inter_arrival;
+	}
+
+	public long getFire_inter_arrival() {
+		return fire_inter_arrival;
+	}
+
+	public void setFire_inter_arrival(long fire_inter_arrival) {
+		this.fire_inter_arrival = fire_inter_arrival;
+	}
+
+	public long getTraffic_update_period() {
+		return traffic_update_period;
+	}
+
+	public void setTraffic_update_period(long traffic_update_period) {
+		this.traffic_update_period = traffic_update_period;
+	}
+
+	public long getTraffic_max_delay() {
+		return traffic_max_delay;
+	}
+
+	public void setTraffic_max_delay(long traffic_max_delay) {
+		this.traffic_max_delay = traffic_max_delay;
 	}
 }

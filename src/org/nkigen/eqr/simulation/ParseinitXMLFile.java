@@ -33,7 +33,7 @@ public class ParseinitXMLFile {
 			Document doc = dBuilder.parse(file);
 			doc.getDocumentElement().normalize();
 
-			parseSimulationParams(doc.getElementsByTagName("simulation"));
+			parseSimulationParams(doc);
 			parseRoutingParams(doc.getElementsByTagName("routing"));
 			/* Parse Patients */
 			NodeList nList = doc.getElementsByTagName("patient-locations");
@@ -46,6 +46,7 @@ public class ParseinitXMLFile {
 			parseFireEngineLocations(nList);
 			nList = doc.getElementsByTagName("ambulance-locations");
 			parseAmbulanceLocations(nList);
+			System.out.println("Simulations Params :"+ params);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,37 +62,61 @@ public class ParseinitXMLFile {
 		return new EQRPoint(Double.parseDouble(lat), Double.parseDouble(lon));
 	}
 
-	private void parseSimulationParams(NodeList nList) {
+	private void parseSimulationParams(Document doc) {
+		NodeList nList = doc.getElementsByTagName("simulation");
+		NodeList pList = doc.getElementsByTagName("patients");
+		NodeList fList = doc.getElementsByTagName("fires");
+		NodeList tList = doc.getElementsByTagName("traffic");
 		NamedNodeMap items = null;
+		NamedNodeMap fItems = null;
+		NamedNodeMap pItems = null;
+		NamedNodeMap tItems = null;
 		try {
 			Node nNode = nList.item(0);
+			Node fNode = fList.item(0);
+			Node pNode = pList.item(0);
+			Node tNode = tList.item(0);
 			items = nNode.getAttributes();
-			System.out.println("Simulation Rate set to:"
-					+ items.getNamedItem("rate").getTextContent());
+			fItems = fNode.getAttributes();
+			pItems = pNode.getAttributes();
+			tItems = tNode.getAttributes();
+			
 			params.setRate(Double.valueOf(items.getNamedItem("rate")
 					.getTextContent()));
+			params.setFire_inter_arrival(Long.valueOf(fItems.getNamedItem(
+					"inter-arrival").getTextContent()));
+			params.setPatient_inter_arrival(Long.valueOf(pItems.getNamedItem(
+					"inter-arrival").getTextContent()));
+			params.setTraffic_max_delay(Long.valueOf(tItems.getNamedItem(
+					"max-delay").getTextContent()));
+			params.setTraffic_update_period(Long.valueOf(tItems.getNamedItem(
+					"update-period").getTextContent()));
+		
+
 		} catch (NullPointerException e) {
-			System.out.println("ERROR: Using default Simulation rate value os:"
-					+ items.getNamedItem("rate").getTextContent());
+		e.printStackTrace();
 		}
 
 	}
+
 	private void parseRoutingParams(NodeList nList) {
-		
+
 		try {
-				Node nNode = nList.item(0);	
-				NamedNodeMap items = nNode.getAttributes();
-				System.out.println("Data Dir:"
-						+ items.getNamedItem("data-dir").getTextContent());
-				System.out.println("Routing File:"
-						+ items.getNamedItem("config-file").getTextContent());
-				
-				params.setRouting_data_dir(items.getNamedItem("data-dir").getTextContent());
-				params.setRouting_config_file(items.getNamedItem("config-file").getTextContent());
-			
-			
+			Node nNode = nList.item(0);
+			NamedNodeMap items = nNode.getAttributes();
+			System.out.println("Data Dir:"
+					+ items.getNamedItem("data-dir").getTextContent());
+			System.out.println("Routing File:"
+					+ items.getNamedItem("config-file").getTextContent());
+
+			params.setRouting_data_dir(items.getNamedItem("data-dir")
+					.getTextContent());
+			params.setRouting_config_file(items.getNamedItem("config-file")
+					.getTextContent());
+
 		} catch (NullPointerException e) {
-			System.out.println("ERROR: Using default Simulation rate value of : "+ 0.1);
+			System.out
+					.println("ERROR: Using default Simulation rate value of : " + 0.1);
 		}
 
 	}
@@ -238,11 +263,11 @@ public class ParseinitXMLFile {
 		params.setAmbulances(bases);
 	}
 
-	/*
+	 /*
 	public static void main(String[] a) {
 		new ParseinitXMLFile(new File(
 				"/home/nkigen/development/git/EQR/src/config.xml")).Parse();
 		;
 	}
-	*/
+	 */
 }

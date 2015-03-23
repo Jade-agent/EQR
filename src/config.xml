@@ -2,18 +2,21 @@
 
 
 <eqr-config>
-    <!-- Router configuration params -->
+	<!-- Router configuration params -->
 	<routing config-file="/home/nkigen/development/git/EQR/src/trentino.xml"
 		data-dir="/home/nkigen/development/git/EQR/src/data" />
-	
-	<!-- Simulation Configurations 
-	rate is be greater than 0-->
+
+	<!-- Simulation Configurations rate is be greater than 0 Patient_inter-arrival 
+		time is in milliseconds -->
 	<simulation rate="0.01">
-	    
+		<patients inter-arrival="900000" />
+		<fires inter-arrival="900000" />
+		<!-- Traffic params both in milliseconds -->
+		<traffic update-period="30000" max-delay="120000" />
 	</simulation>
-	
-	<!-- List of possible patient locations.(Meant to avoid putting the patients in unnatural places such
-	as inaccessible places) -->
+
+	<!-- List of possible patient locations.(Meant to avoid putting the patients 
+		in unnatural places such as inaccessible places) -->
 	<patient-locations>
 		<location>
 			<lat>46.056332</lat>
@@ -45,7 +48,7 @@
 		<location>
 			<num>2</num>
 			<lat>46.048079</lat>
-			<lon>11.127478</lon>	
+			<lon>11.127478</lon>
 		</location>
 	</fire-engine-location>
 	<hospital-locations>

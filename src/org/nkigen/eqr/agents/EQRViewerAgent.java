@@ -2,8 +2,6 @@ package org.nkigen.eqr.agents;
 
 import jade.core.Agent;
 import jade.core.behaviours.SequentialBehaviour;
-
-import org.apache.commons.collections.set.CompositeSet.SetMutator;
 import org.nkigen.eqr.agents.behaviours.AmbulanceBehaviour;
 import org.nkigen.eqr.agents.behaviours.RegisterInDF;
 import org.nkigen.eqr.agents.behaviours.ViewerBehaviour;
