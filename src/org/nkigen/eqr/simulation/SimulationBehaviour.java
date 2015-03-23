@@ -86,15 +86,16 @@ public class SimulationBehaviour extends CyclicBehaviour {
 				try {
 					Object content = msg.getContentObject();
 					if (content instanceof SimulationParamsMessage) {
-						
+
 						initSimulation((SimulationParamsMessage) content);
-						/*Start Traffic updates*/
+						/* Start Traffic updates */
 						Object[] params = new Object[3];
 						params[0] = myAgent;
 						params[1] = sim_params.getTraffic_update_period();
 						params[2] = sim_params.getTraffic_max_delay();
-						Behaviour b = goals.executePlan(SimulationGoals.TRAFFIC_UPDATES, params);
-						if(b!=null)
+						Behaviour b = goals.executePlan(
+								SimulationGoals.TRAFFIC_UPDATES, params);
+						if (b != null)
 							myAgent.addBehaviour(b);
 					} else if (content instanceof EmergencyScheduleMessage) {
 						Object[] params = new Object[5];
@@ -104,8 +105,8 @@ public class SimulationBehaviour extends CyclicBehaviour {
 
 						params[2] = (long) (EmergencySchedulerBehaviour.REAL_TIME_PERIOD * clock
 								.getRate());
-						/*Safety check*/
-						if((long)params[2] == 0)
+						/* Safety check */
+						if ((long) params[2] == 0)
 							params[2] = 1;
 						if (((EmergencyScheduleMessage) content).getType() == EmergencyScheduleMessage.SCHEDULE_TYPE_FIRES)
 							params[3] = fires;
@@ -113,9 +114,11 @@ public class SimulationBehaviour extends CyclicBehaviour {
 							params[3] = patients;
 						else
 							params[3] = null;
-						params[4] =((EmergencyScheduleMessage) content).getSchedule();
-						Behaviour b = goals.executePlan(SimulationGoals.SCHEDULE_EMERGENCY, params);
-						if(b != null)
+						params[4] = ((EmergencyScheduleMessage) content)
+								.getSchedule();
+						Behaviour b = goals.executePlan(
+								SimulationGoals.SCHEDULE_EMERGENCY, params);
+						if (b != null)
 							myAgent.addBehaviour(b);
 
 					}
@@ -172,6 +175,24 @@ public class SimulationBehaviour extends CyclicBehaviour {
 		setupHospitals(params.getHospitals());
 		initControlCenter(params);
 		init_complete = true;
+		createSchedule(EmergencyScheduleMessage.SCHEDULE_TYPE_FIRES,
+				params.getFire_inter_arrival(), fires.size());
+		createSchedule(EmergencyScheduleMessage.SCHEDULE_TYPE_PATIENTS,
+				params.getPatient_inter_arrival(), patients.size());
+		/* create simulation schedules for Emergencies */
+	}
+
+	private void createSchedule(int type, double mean, int num) {
+		Object[] params = new Object[4];
+		params[0] = myAgent;
+		params[1] = type;
+		params[2] = mean;
+		params[3] = num;
+
+		Behaviour b = goals.executePlan(
+				SimulationGoals.CREATE_EMERGENCY_SCHEDULE, params);
+		if (b != null)
+			myAgent.addBehaviour(b);
 	}
 
 	private void initControlCenter(SimulationParamsMessage m) {

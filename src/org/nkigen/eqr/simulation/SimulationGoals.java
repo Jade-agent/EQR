@@ -12,7 +12,8 @@ public class SimulationGoals extends EQRGoal {
 
 	public static final int INIT_SIMULATION = 0;
 	public static final int SCHEDULE_EMERGENCY = 1;
-	public static final int TRAFFIC_UPDATES = 2;
+	public static final int CREATE_EMERGENCY_SCHEDULE = 2;
+	public static final int TRAFFIC_UPDATES = 3;
 
 	@Override
 	public Behaviour executePlan(int which, Object[] params) {
@@ -24,10 +25,24 @@ public class SimulationGoals extends EQRGoal {
 			return trafficUpdateGoal(params);
 		case SCHEDULE_EMERGENCY:
 			return scheduleEmergencyGoal(params);
+		case CREATE_EMERGENCY_SCHEDULE:
+			return createEmergencyScheduleGoal(params);
 		}
 		return null;
 	}
+	private Behaviour createEmergencyScheduleGoal(Object[] p) {
+		if (p.length != 4)
+			return null;
+		else {
+			if (p[0] instanceof SimulationAgent && p[1] instanceof Integer
+					&& p[2] instanceof Double && p[3] instanceof Integer) {
+				return new SimulationScheduleBehaviour((SimulationAgent) p[0],
+						(int) p[1], (double) p[2], (int) p[3]);
+			}
+		}
+		return null;
 
+	}
 	private Behaviour scheduleEmergencyGoal(Object[] p) {
 		if (p.length != 5)
 			return null;

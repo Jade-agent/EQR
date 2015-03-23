@@ -2,6 +2,7 @@ package org.nkigen.eqr.simulation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.nkigen.eqr.common.EQRClock;
 import org.nkigen.eqr.common.EmergencyDetails;
@@ -33,7 +34,8 @@ public class EmergencySchedulerBehaviour extends TickerBehaviour {
 	int type;
 	Logger logger;
 	int current = 0;
-   EQRClock clock = SimulationBehaviour.getClock();
+	EQRClock clock = SimulationBehaviour.getClock();
+
 	/**
 	 * 
 	 * @param a
@@ -42,7 +44,7 @@ public class EmergencySchedulerBehaviour extends TickerBehaviour {
 	 *            Agents to be started
 	 * @param schedule
 	 *            Schedule on how to start the Agents in agent above(Assumption:
-	 *            Schedule is sorted in assending order)
+	 *            Schedule is sorted in ascending order)
 	 */
 	public EmergencySchedulerBehaviour(Agent a, int type, long period,
 			ArrayList<AID> agents, ArrayList<Long> schedule) {
@@ -50,12 +52,25 @@ public class EmergencySchedulerBehaviour extends TickerBehaviour {
 		this.agents = agents;
 		this.schedule = schedule;
 		this.type = type;
+		
+		assert(agents.size() == schedule.size());
+		Collections.sort(schedule);
 		logger = EQRLogger.prep(logger, myAgent.getLocalName());
+		if (type == EmergencyScheduleMessage.SCHEDULE_TYPE_FIRES)
+			EQRLogger.log(logger, null, myAgent.getLocalName(),
+					"Period:"+period+" Fire schedule: " + schedule);
+		else if (type == EmergencyScheduleMessage.SCHEDULE_TYPE_PATIENTS)
+			EQRLogger.log(logger, null, myAgent.getLocalName(),
+					"Period:"+period+" Patient Schedule: " + schedule);
 	}
 
 	@Override
 	protected void onTick() {
-		if(clock.currentSimulationTime() > schedule.get(current))
+		if(current == schedule.size()){
+			//this.stop();
+			return;
+		}
+		if (clock.currentSimulationTime() > schedule.get(current))
 			return;
 		if (type == EmergencyScheduleMessage.SCHEDULE_TYPE_FIRES) {
 			ChangeEmergencyStatusMessage cesm = new ChangeEmergencyStatusMessage(

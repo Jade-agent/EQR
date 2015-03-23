@@ -1,5 +1,7 @@
 package org.nkigen.eqr.simulation;
 
+import java.io.IOException;
+
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
 import org.nkigen.eqr.common.EQRClock;
@@ -47,9 +49,16 @@ public class SimulationScheduleBehaviour extends OneShotBehaviour {
 		esm.setSchedule(s);
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.addReceiver(myAgent.getAID());
-		myAgent.send(msg);
-		EQRLogger.log(logger, msg, myAgent.getLocalName(),
-				"New Simulation schedule created");
+		try {
+			msg.setContentObject(esm);
+			myAgent.send(msg);
+			EQRLogger.log(logger, msg, myAgent.getLocalName(),
+					"New Simulation schedule created");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }
