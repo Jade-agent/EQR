@@ -16,5 +16,6 @@
 			<attribute name="javadoc_location" value="http://commons.apache.org/proper/commons-math/apidocs/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/development/development/git/EQR/lib/BasicOSMParser.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
