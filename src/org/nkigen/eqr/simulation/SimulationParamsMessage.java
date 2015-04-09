@@ -10,8 +10,14 @@ import org.nkigen.maps.routing.EQRPoint;
 
 public class SimulationParamsMessage implements Serializable {
 
+	//If location is set to auto for any of the Emergencies, They are to be generated automatically
 	ArrayList<EQRPoint> patients;
 	ArrayList<EQRPoint> fires;
+	
+	/*TODO: Remove this hack with a better fix*/
+	int num_patients;
+	int num_fires;
+
 	ArrayList<EmergencyResponseBase> ambulances;
 	ArrayList<EmergencyResponseBase> fire_engines;
 	ArrayList<EmergencyResponseBase> hospitals;
@@ -134,5 +140,17 @@ public class SimulationParamsMessage implements Serializable {
 
 	public void setTraffic_max_delay(long traffic_max_delay) {
 		this.traffic_max_delay = traffic_max_delay;
+	}
+	public int getNum_patients() {
+		return num_patients;
+	}
+	public void setNum_patients(int num_patients) {
+		this.num_patients = num_patients;
+	}
+	public int getNum_fires() {
+		return num_fires;
+	}
+	public void setNum_fires(int num_fires) {
+		this.num_fires = num_fires;
 	}
 }

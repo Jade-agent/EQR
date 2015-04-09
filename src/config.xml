@@ -9,8 +9,10 @@
 	<!-- Simulation Configurations rate is be greater than 0 Patient_inter-arrival 
 		time is in milliseconds -->
 	<simulation rate="0.001">
-		<patients inter-arrival="900000" />
-		<fires inter-arrival="900000" />
+	    <!-- location="auto" means generate points automatically from the config-file 
+	    passed to the router -->
+		<patients inter-arrival="900000" location="auto" num="100" />
+		<fires inter-arrival="900000" location="auto" num="100"/>
 		<!-- Traffic params both in milliseconds -->
 		<traffic update-period="30000" max-delay="120000" />
 	</simulation>

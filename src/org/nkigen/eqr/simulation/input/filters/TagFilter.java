@@ -61,11 +61,10 @@ public class TagFilter implements SimulationInputFilter {
 			for (String tag : e.getValue().getTags().keySet()) {
 				if (isFilter(tag)) {
 					EQRPoint point = null;
-					System.out.println(tag);
 					for (Node n : getNodes(e.getValue(), null)) {
 						point = new EQRPoint(n.getLat(), n.getLon());
 						input.add(new SimulationPoint(point));
-						
+
 					}
 
 				}

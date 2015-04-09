@@ -19,6 +19,6 @@ public class SimulationPoint {
 	
 	@Override
 	public String toString(){
-		return location.toString();
+		return location.toString()+"\n";
 	}
 }

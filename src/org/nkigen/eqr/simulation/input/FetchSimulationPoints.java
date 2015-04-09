@@ -39,11 +39,12 @@ public class FetchSimulationPoints extends ParseOSMMap {
 
 	public static void main(String[] args) {
 		FetchSimulationPoints p = new FetchSimulationPoints(
-				"/development/development/git/BasicOSMParser/res/xml/sample.osm");
+				"/home/nkigen/development/git/EQR/src/trentino.xml");
 		ArrayList<String> f = new ArrayList<String>();
 		f.add(TagFilter.HIGHWAY);
 		p.setFilter(new TagFilter(f));
-		System.out.println(p.findSimulationPoints());
+		List<SimulationPoint> pts = p.findSimulationPoints();
+		System.out.println(pts.size());
 
 	}
 
