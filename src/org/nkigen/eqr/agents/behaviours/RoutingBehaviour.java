@@ -13,6 +13,7 @@ import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -33,12 +34,13 @@ public class RoutingBehaviour extends CyclicBehaviour {
 	String storage_dir;
 	EQRRouter router;
 	RoutingGoals goals;
-
+	//ThreadedBehaviourFactory tbf;
 	public RoutingBehaviour(Agent agent, String local_file, String storage_dir) {
 		super(agent);
 		this.agent = agent;
 		this.local_file = local_file;
 		this.storage_dir = storage_dir;
+	//	tbf = new ThreadedBehaviourFactory();
 		System.out.println(local_file + " " + storage_dir);
 		router = new GraphHopperServer(null, local_file, storage_dir);
 		goals = new RoutingGoals();
@@ -69,13 +71,14 @@ public class RoutingBehaviour extends CyclicBehaviour {
 				} else if (content instanceof MultipleRoutingRequestMessage) {
 					System.out.println(getBehaviourName()
 							+ " New Multiple Route Request received");
-					Object[] params = new Object[2];
+					Object[] params = new Object[3];
 					params[0] = myAgent;
 					((MultipleRoutingRequestMessage) content).setReply_to(msg
 							.getSender());
 					((MultipleRoutingRequestMessage) content)
 							.setRouter((GraphHopperServer) router);
 					params[1] = (MultipleRoutingRequestMessage) content;
+					params[2] = (String)msg.getConversationId();
 					Behaviour b = goals.executePlan(
 							RoutingGoals.FIND_ROUTE_FROM_MULTIPLE, params);
 					agent.addBehaviour(b);

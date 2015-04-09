@@ -4,17 +4,25 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.behaviours.ThreadedBehaviourFactory;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 
+import jade.util.Logger;
+
+import org.nkigen.eqr.agents.EQRAgentsHelper;
+import org.nkigen.eqr.agents.EmergencyControlCenterAgent;
 import org.nkigen.eqr.ambulance.AmbulanceDetails;
 import org.nkigen.eqr.common.EQRAgentTypes;
 import org.nkigen.eqr.common.EmergencyDetails;
@@ -27,6 +35,10 @@ import org.nkigen.eqr.messages.BaseRouteMessage;
 import org.nkigen.eqr.messages.ControlCenterInitMessage;
 import org.nkigen.eqr.messages.FireEngineRequestMessage;
 import org.nkigen.eqr.messages.HospitalRequestMessage;
+import org.nkigen.eqr.messages.MissionCompleteNotificaton;
+import org.nkigen.eqr.messages.TrafficUpdateMessage;
+
+import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
 
 public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		EmergencyStateChangeListener {
@@ -35,35 +47,70 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 	List<EmergencyResponseBase> ambulance_bases;
 	List<EmergencyResponseBase> hospital_bases;
 	List<EmergencyResponseBase> fire_engine_bases;
+	List<AID> traffic_subscribers;
+
+	/* "Mutex Locks" for the bases */
+	boolean is_ab = false;
+	ArrayList<AmbulanceRequestMessage> ab_queue;
 	ArrayList<AID> ambulances;
 	ArrayList<AID> fire_engines;
 	Logger logger;
 	EmergencyControlCenterGoals goals;
 	boolean is_setup_complete = false;
 
+	// private ThreadedBehaviourFactory tbf;
+
 	public EmergencyControlBehaviour(Agent a) {
 		super(a);
 		// EmergencyStateChangeInitiator.getInstance().addListener(this);
 		logger = EQRLogger.prep(logger, myAgent.getLocalName());
 		goals = new EmergencyControlCenterGoals();
+		// tbf = new ThreadedBehaviourFactory();
+		ab_queue = new ArrayList<AmbulanceRequestMessage>();
 		initAmbulances();
 		initFireEngines();
+
 	}
 
 	@Override
 	public void action() {
+		if (ab_queue.size() > 0 && !is_ab) {
+			is_ab = true;
+			Object[] params = new Object[4];
+			params[0] = myAgent;
+			params[1] = ab_queue.get(0).getPatient();
+			ab_queue.remove(0);
+			System.out.println(" Ambulance " + ambulance_bases.size());
+			params[2] = getAvailableAmbulanceBases();
+			params[3] = this;
 
-		ACLMessage msg = myAgent.receive();
+			Behaviour b = goals.executePlan(
+					EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT,
+					params);
+			if (b != null)
+				myAgent.addBehaviour(b);
+			return;
+		}
+
+		AID router = EQRAgentsHelper.locateRoutingServer(myAgent);
+		MessageTemplate temp = MessageTemplate.not(MessageTemplate
+				.MatchSender(router));
+		final ACLMessage msg = myAgent.receive(temp);
 		if (msg == null) {
 			block();
 			return;
 		}
-		EQRLogger.log(logger, msg, myAgent.getLocalName(), "Message received");
-		//logger.info("message received: "+ msg.getSender());
+		EQRLogger.log(logger, msg, myAgent.getLocalName(), getBehaviourName()
+				+ ": Message received");
+		// logger.info("message received: "+ msg.getSender());
+
 		switch (msg.getPerformative()) {
 		case ACLMessage.REQUEST:
-			if (is_setup_complete)
+			if (is_setup_complete) {
 				handleRequestMessage(msg);
+
+			}
+
 			else
 				myAgent.send(msg);
 			break;
@@ -76,18 +123,85 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 					initControlCenter((ControlCenterInitMessage) content);
 					is_setup_complete = true;
 				}
+				else if( content instanceof MissionCompleteNotificaton){
+					completeMission((MissionCompleteNotificaton) content);
+				}
 			} catch (UnreadableException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			break;
+		case ACLMessage.PROPAGATE:
+			try {
+				Object content = msg.getContentObject();
+				if (content instanceof TrafficUpdateMessage) {
+					Object[] params = new Object[3];
+					params[0] = myAgent;
+					params[1] = ((TrafficUpdateMessage) content);
+					params[2] = traffic_subscribers;
+					Behaviour b = goals
+							.executePlan(
+									EmergencyControlCenterGoals.NOTIFY_TRAFFIC_SUBSCRIBERS,
+									params);
+					if (b != null)
+						myAgent.addBehaviour(b);
+				}
+			} catch (UnreadableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+		case ACLMessage.SUBSCRIBE:
+			try {
+				Object content = msg.getContentObject();
+				if (content instanceof TrafficUpdateMessage) {
+					TrafficUpdateMessage tum = (TrafficUpdateMessage) content;
+					if (traffic_subscribers == null)
+						traffic_subscribers = new ArrayList<AID>();
+					/* TODO: Also add support for remove */
+					if (tum.isSubscribed()) {
+						EQRLogger.log(logger, msg, myAgent.getLocalName(),
+								"New Traffic Subscriber Added: "
+										+ msg.getSender().getLocalName());
+						traffic_subscribers.add(msg.getSender());
+					}
+
+				}
+			} catch (UnreadableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			break;
+
 		}
 	}
 
+	private void completeMission(MissionCompleteNotificaton not){
+		EmergencyDetails det = not.getDetails();
+		if(not.getType() == MissionCompleteNotificaton.AMBULANCE_MISSION){
+			for(EmergencyResponseBase b : ambulance_bases){
+				if(b.getLocation() == det.getLocation()){
+					b.addResponder(det.getAID());
+				}
+			}
+		}
+		else if(not.getType() == MissionCompleteNotificaton.FIREENGINE_MISSION){
+			for(EmergencyResponseBase b : fire_engine_bases){
+				if(b.getLocation() == det.getLocation()){
+					b.addResponder(det.getAID());
+				}
+			}
+		}
+		
+	}
 	private void initControlCenter(ControlCenterInitMessage msg) {
 		ambulance_bases = msg.getAmbulance_bases();
 		fire_engine_bases = msg.getFire_engine_bases();
 		hospital_bases = msg.getHospital_bases();
+		EQRLogger.log(logger, null, myAgent.getLocalName(), "INIT: "
+				+ "ambulances :" + ambulance_bases.size()
+				+ " fire engine bases: " + fire_engine_bases.size()
+				+ " hospitals: " + hospital_bases.size());
 		System.out.println(getBehaviourName() + " " + myAgent.getLocalName()
 				+ ": amb_b " + ambulance_bases.size() + " fireb "
 				+ fire_engine_bases.size() + " :nfb "
@@ -97,19 +211,30 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 
 	private void handleRequestMessage(ACLMessage msg) {
 		try {
-			Object content = msg.getContentObject();
+			final Object content = msg.getContentObject();
 			if (content instanceof AmbulanceRequestMessage) {
-				Object[] params = new Object[3];
-				params[0] = myAgent;
-				params[1] = ((AmbulanceRequestMessage) content).getPatient();
-				System.out.println(" Ambulance " + ambulance_bases.size());
-				params[2] = getAvailableAmbulanceBases();
-				Behaviour b = goals
-						.executePlan(
-								EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT,
-								params);
-				if (b != null)
-					myAgent.addBehaviour(b);
+				// TODO Auto-generated method stub
+				if (!is_ab) {
+					is_ab = true;
+					Object[] params = new Object[4];
+					params[0] = myAgent;
+					params[1] = ((AmbulanceRequestMessage) content)
+							.getPatient();
+					System.out.println(" Ambulance " + ambulance_bases.size());
+					params[2] = getAvailableAmbulanceBases();
+					params[3] = this;
+					Behaviour b = goals
+							.executePlan(
+									EmergencyControlCenterGoals.ASSIGN_AMBULANCE_TO_PATIENT,
+									params);
+					if (b != null)
+						myAgent.addBehaviour(b);
+				} else {
+					EQRLogger.log(logger, msg, myAgent.getLocalName(),
+							"Added to Ambulance queue");
+					ab_queue.add((AmbulanceRequestMessage) content);
+				}
+
 			} else if (content instanceof HospitalRequestMessage) {
 				if (((HospitalRequestMessage) content).getType() == HospitalRequestMessage.HOSPITAL_REQUEST) {
 					System.out
@@ -142,21 +267,21 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 							params);
 					if (b != null)
 						myAgent.addBehaviour(b);
-				
+
 				}
-			}
-			else if(content instanceof FireEngineRequestMessage){
+			} else if (content instanceof FireEngineRequestMessage) {
 				FireEngineRequestMessage fer = (FireEngineRequestMessage) content;
-				if(fer.getType() == FireEngineRequestMessage.REQUEST){
+				if (fer.getType() == FireEngineRequestMessage.REQUEST) {
 					System.out.println(myAgent.getLocalName()
 							+ " Fire Engine request Message received");
 					Object[] params = new Object[3];
 					params[0] = myAgent;
 					params[1] = fer.getFire();
 					params[2] = getAvailableFireEngineBases();
-					Behaviour b = goals.executePlan(
-							EmergencyControlCenterGoals.ASSIGN_FIREENGINE_TO_FIRE,
-							params);
+					Behaviour b = goals
+							.executePlan(
+									EmergencyControlCenterGoals.ASSIGN_FIREENGINE_TO_FIRE,
+									params);
 					if (b != null)
 						myAgent.addBehaviour(b);
 				}
@@ -176,14 +301,19 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 			return avail;
 		return null;
 	}
+
 	private List<EmergencyResponseBase> getAvailableAmbulanceBases() {
+
 		ArrayList<EmergencyResponseBase> avail = new ArrayList<EmergencyResponseBase>();
+
 		for (EmergencyResponseBase b : ambulance_bases)
 			if (b.getAvailable().size() > 0)
 				avail.add(b);
 		if (avail.size() > 0)
 			return avail;
+
 		return null;
+
 	}
 
 	private void initAmbulances() {
@@ -225,6 +355,10 @@ public class EmergencyControlBehaviour extends CyclicBehaviour implements
 		} catch (FIPAException fe) {
 			fe.printStackTrace();
 		}
+	}
+
+	public void unlockAmbulanceQueue() {
+		is_ab = false;
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public class ColorWindow extends JFrame {
 		add(panel);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setAlwaysOnTop(true);
-		setResizable(false);
+		//setResizable(false);
 		setVisible(true);
 	}
 

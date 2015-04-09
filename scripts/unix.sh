@@ -15,11 +15,11 @@ AB="org.nkigen.eqr.agents" #Agents package with the execption of the simulation 
 CP=${JADE_PATH}/lib/jade.jar:${SRC_PATH}/bin:${SRC_PATH}/lib/*
 
 #AGENTS CONFIG
-NUM_PATIENT_AGENTS=2
-NUM_FIRE_AGENTS=2
+NUM_PATIENT_AGENTS=3
+NUM_FIRE_AGENTS=1
 NUM_HOSPITALS=1
-NUM_AMBULANCES=2
-NUM_FIREENGINE_AGENTS=2
+NUM_AMBULANCES=3
+NUM_FIREENGINE_AGENTS=1
 
 #Agent Arguements
 OSM_FILE_PATH=${SRC_PATH}"/src/trentino.xml"
@@ -67,7 +67,7 @@ export AGENTS="${VIEWER}${UPDATE}${ROUTER}${HOSPITALS}${PATIENTS}${FIRES}${FIRE_
 main(){
 	create_agents
 	ant -f ${SRC_PATH}/build.xml
-	java -cp ${CP} jade.Boot -gui -agents ${AGENTS} 
+	java -cp ${CP} jade.Boot -gui -agents sniffer:jade.tools.sniffer.Sniffer ${AGENTS}
 }
 
 main
