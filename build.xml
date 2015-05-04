@@ -23,7 +23,8 @@
         <pathelement location="lib/slf4j-simple-1.7.10.jar"/>
         <pathelement location="lib/SwingMapViewer-0.4.0.jar"/>
         <pathelement location="lib/trove4j-3.0.2.jar"/>
-        <pathelement location="lib/commons-math3-3.4.1-javadoc.jar"/>
+        <pathelement location="lib/commons-math3-3.4.1.jar"/>
+        <pathelement location="lib/BasicOSMParser.jar"/>
     </path>
     <path id="run.Deploy JADE4 Agent EQRPatientAgent2.classpath">
         <pathelement location="../../../../home/nkigen/eclipse2/eclipse/plugins/it.fbk.sra.ejade_0.9.0/lib/libjade4/jade.jar"/>
@@ -702,6 +703,11 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
+    <target name="Test">
+        <java classname="org.nkigen.eqr.Test" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
+        </java>
+    </target>
     <target name="ColorWindow">
         <java classname="org.nkigen.maps.viewer.ColorWindow" failonerror="true" fork="yes">
             <classpath refid="ERQ.classpath"/>
@@ -790,6 +796,11 @@
             <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
             <arg line=" -container -port 1099 -host localhost SimulationAgent:org.nkigen.eqr.simulation.SimulationAgent "/>
             <classpath refid="run.Deploy JADE4 Agent SimulationAgent.classpath"/>
+        </java>
+    </target>
+    <target name="FetchSimulationPoints">
+        <java classname="org.nkigen.eqr.simulation.input.FetchSimulationPoints" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
         </java>
     </target>
     <target name="Deploy JADE4 Agent EQRFireAgent">
@@ -901,6 +912,11 @@
             <jvmarg line="-Dhttp.proxyHost= -Dhttp.proxyPort="/>
             <arg line=" -container -port 1099 -host localhost SimulationAgent1:org.nkigen.eqr.simulation.SimulationAgent "/>
             <classpath refid="run.Deploy JADE4 Agent SimulationAgent1.classpath"/>
+        </java>
+    </target>
+    <target name="ParseOSMMap">
+        <java classname="org.nkigen.eqr.simulation.input.ParseOSMMap" failonerror="true" fork="yes">
+            <classpath refid="ERQ.classpath"/>
         </java>
     </target>
     <target name="Deploy JADE4 Agent AmbulanceAgent3">

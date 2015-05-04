@@ -1,7 +1,6 @@
 #! /bin/bash
 # (2015) nelson kigen <nellyk89@gmail.com>
 # Starts the EQR Simulation Platform 
-
 #set -x
 
 JADE_PATH="/home/nkigen/development/jade/jade"
